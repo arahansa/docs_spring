@@ -1,0 +1,3923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.2">
+<meta name="author" content="BioMed Central Development Team, 번역자 아라한사 fb.com/me.adunhansa">
+<title>Spring Data Elasticsearch</title>
+<link rel="stylesheet" href="./spring.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
+<script>document.addEventListener('DOMContentLoaded', prettyPrint)</script>
+
+
+<!-- My Custom Configuration -->
+<script src="js/slides.js"></script>
+<script src="js/jquery-1.11.1.min.js"></script>
+<script src="js/translate.js"></script>
+<style>
+@import url(http://fonts.googleapis.com/earlyaccess/kopubbatang.css);
+
+.originalArticle {
+  display: none;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.translateArticle {
+  font-family: 'KoPub Batang', serif; position : relative;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.btnTr {
+  position: absolute;
+  right: 0px;
+  top: 10px;
+  width: 45px;
+  height: 30px;
+  cursor: pointer;
+  z-index: 999;
+  font-size: 10px;
+}
+
+.content{
+  line-height: 20px;
+}
+</style>
+<!-- //My Custom Configuration -->
+</head>
+<body class="book">
+
+    <div class="translateArticle">
+      <div id="header">
+<h1>스프링 데이터 엘라스틱서치</h1>
+<div class="details">
+<span id="author" class="author">BioMed Central 개발팀, 번역자 아라한사</span><br>
+<span id="revnumber">버젼 1.2.1.RELEASE,</span>
+<span id="revdate">2015-06-30. 번역일 7월 22일 경
+해당 문구 위로 마우스를 올리시면 - 번역 버튼이 나옵니다. 문맥에 안 맞는 번역이 나올 시에는 버튼을 클릭하셔서 원문을 확인해주시면 되겠습니다^^; (역자 아라한사 올림. 수정요구사항 fb.com/me.adunhansa). 제 블로그 말고 깃헙에다가 올려두겠습니다. 한 타임 기모아서 마음먹고 쭈욱 번역하면서, 정독을 하는 번역이 아닌지라..^^; 오역이 있을 수 있습니다. 안 좋은 번역이 있다면 풀리퀘 주시면 감사하겠습니다 :) 
+</span>
+</div>
+</div>
+    </div>
+    <div class="originalArticle">
+      <div id="header">
+<h1>Spring Data Elasticsearch</h1>
+<div class="details">
+<span id="author" class="author">BioMed Central Development Team</span><br>
+<span id="revnumber">version 1.2.1.RELEASE,</span>
+<span id="revdate">2015-06-30</span>
+</div>
+</div>
+    </div>  
+
+      
+
+
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>&#169; 2013-2015 The original author(s).</p>
+</div>
+
+    <div class="translateArticle">
+      <div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+  이 문서의 복사본은 당신 자신을 위해서나, 다른 사람들에게 배포를 위해 만들어질 수 있습니다. 복사에 대해 어떤 비용을 청구하지 않아야 하며, 프린트되거나 전자적으로 배포될 때에도 Copyright 문구를 포함해야 합니다.
+</td>
+</tr>
+</table>
+</div>
+    </div>
+    <div class="originalArticle">
+      <div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically.
+</td>
+</tr>
+</table>
+</div>
+    </div>  
+
+      
+
+
+
+<div id="toc" class="toc">
+<div id="toctitle" class="title">목차</div>
+    <div class="translateArticle">
+      <ul class="sectlevel0">
+<li><a href="#_preface">서문</a>
+<ul class="sectlevel1">
+<li><a href="#project">1. 프로젝트 메타데이터</a></li>
+<li><a href="#requirements">2. 요구사항</a></li>
+<li><a href="#repositories">3. 스프링 데이터 레파지토리와 함께 작업하기</a>
+<ul class="sectlevel2">
+<li><a href="#repositories.core-concepts">3.1. 핵심 개념</a></li>
+<li><a href="#repositories.query-methods">3.2. 쿼리 메소드들</a></li>
+<li><a href="#repositories.definition">3.3. 레파지토리 인터페이스 정의하기</a>
+<ul class="sectlevel3">
+<li><a href="#repositories.definition-tuning">3.3.1. 리파지토리 정의 미세조정</a></li>
+</ul>
+</li>
+<li><a href="#repositories.query-methods.details">3.4. 쿼리 메소드들 정의하기</a>
+<ul class="sectlevel3">
+<li><a href="#repositories.query-methods.query-lookup-strategies">3.4.1. 쿼리 검색(lookup) 전략</a></li>
+<li><a href="#repositories.query-methods.query-creation">3.4.2. 쿼리생성</a></li>
+<li><a href="#repositories.query-methods.query-property-expressions">3.4.3. 프로퍼티 표현</a></li>
+<li><a href="#repositories.special-parameters">3.4.4. 특별한 파라미터 핸들링</a></li>
+<li><a href="#repositories.limit-query-result">3.4.5. 쿼리 결과 limit하기</a></li>
+<li><a href="#repositories.query-streaming">3.4.6. 쿼리 결과 스트리밍 하기</a></li>
+</ul>
+</li>
+<li><a href="#repositories.create-instances">3.5. 레파지토리 인스턴스 생성</a>
+<ul class="sectlevel3">
+<li><a href="#repositories.create-instances.spring">3.5.1. XML설정</a></li>
+<li><a href="#repositories.create-instances.java-config">3.5.2. 자바설정</a></li>
+<li><a href="#repositories.create-instances.standalone">3.5.3. 독립적사용(Standalone usage)</a></li>
+</ul>
+</li>
+<li><a href="#repositories.custom-implementations">3.6. 스프링 데이터 레파지토리를 위한 커스텀 구현</a>
+<ul class="sectlevel3">
+<li><a href="#repositories.single-repository-behaviour">3.6.1. 단일 레파지토리에 대해 커스텀 행동 추가 </a></li>
+<li><a href="#repositories.custom-behaviour-for-all-repositories">3.6.2. 모든 레파지토리에 대해 커스텀 행동 추가</a></li>
+</ul>
+</li>
+<li><a href="#core.extensions">3.7. 스프링데이터 확장</a>
+<ul class="sectlevel3">
+<li><a href="#core.web">3.7.1. 웹 서포트</a></li>
+<li><a href="#core.repository-populators">3.7.2. 레파지토리 populators</a></li>
+<li><a href="#web.legacy">3.7.3. 레거시 웹 서포트</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#reference">레퍼런스 문서 </a>
+<ul class="sectlevel1">
+<li><a href="#elasticsearch.repositories">4. 엘라스틱 서치 레파지토리들</a>
+<ul class="sectlevel2">
+<li><a href="#elasticsearch.introduction">4.1. 소개 </a>
+<ul class="sectlevel3">
+<li><a href="#elasticsearch.namespace">4.1.1. 스프링 네임스페이스</a></li>
+<li><a href="#elasticsearch.annotation">4.1.2. 어노테이션 기반 설정</a></li>
+<li><a href="#elasticsearch.cdi">4.1.3. CDI를 이용한 엘라스틱 레파지토리들</a></li>
+</ul>
+</li>
+<li><a href="#elasticsearch.query-methods">4.2. 쿼리 방법들</a>
+<ul class="sectlevel3">
+<li><a href="#elasticsearch.query-methods.finders">4.2.1. 쿼리 검색(lookup) 전략</a></li>
+<li><a href="#elasticsearch.query-methods.criterions">4.2.2. 쿼리 생성</a></li>
+<li><a href="#elasticsearch.query-methods.at-query">4.2.3. @Query 어노테이션 사용하기</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#elasticsearch.misc">5. 엘라스틱서치 운영 지원에 대한 오해 </a>
+<ul class="sectlevel2">
+<li><a href="#elasticsearch.misc.filter">5.1. 필터 빌더</a></li>
+<li><a href="#elasticsearch.scan.and.scroll">5.2. 큰 결과집합을 위해 스캔과 스크롤을 이용하는 것 </a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#appendix">부록(appendix)</a>
+<ul class="sectlevel1">
+<li><a href="#repositories.namespace-reference">Appendix A: 네임스페이스 레퍼런스 </a>
+<ul class="sectlevel2">
+<li><a href="#populator.namespace-dao-config"> &lt;repositories /&gt; 요소</a></li>
+</ul>
+</li>
+<li><a href="#populator.namespace-reference">부록 B: Populators 네임스페이스 레퍼런스</a>
+<ul class="sectlevel2">
+<li><a href="#namespace-dao-config">The &lt;populator /&gt; 요소</a></li>
+</ul>
+</li>
+<li><a href="#repository-query-keywords">부록 C: Repository 쿼리 키워드들</a>
+<ul class="sectlevel2">
+<li><a href="#_supported_query_keywords">지원되는 쿼리 키워드들</a></li>
+</ul>
+</li>
+<li><a href="#repository-query-return-types">부록 D: Repository 쿼리 반환 타입</a>
+<ul class="sectlevel2">
+<li><a href="#_supported_query_return_types">지원되는 쿼리 반환 타입</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+    </div>
+    <div class="originalArticle">
+      <ul class="sectlevel0">
+<li><a href="#_preface">Preface</a>
+<ul class="sectlevel1">
+<li><a href="#project">1. Project Metadata</a></li>
+<li><a href="#requirements">2. Requirements</a></li>
+<li><a href="#repositories">3. Working with Spring Data Repositories</a>
+<ul class="sectlevel2">
+<li><a href="#repositories.core-concepts">3.1. Core concepts</a></li>
+<li><a href="#repositories.query-methods">3.2. Query methods</a></li>
+<li><a href="#repositories.definition">3.3. Defining repository interfaces</a>
+<ul class="sectlevel3">
+<li><a href="#repositories.definition-tuning">3.3.1. Fine-tuning repository definition</a></li>
+</ul>
+</li>
+<li><a href="#repositories.query-methods.details">3.4. Defining query methods</a>
+<ul class="sectlevel3">
+<li><a href="#repositories.query-methods.query-lookup-strategies">3.4.1. Query lookup strategies</a></li>
+<li><a href="#repositories.query-methods.query-creation">3.4.2. Query creation</a></li>
+<li><a href="#repositories.query-methods.query-property-expressions">3.4.3. Property expressions</a></li>
+<li><a href="#repositories.special-parameters">3.4.4. Special parameter handling</a></li>
+<li><a href="#repositories.limit-query-result">3.4.5. Limiting query results</a></li>
+<li><a href="#repositories.query-streaming">3.4.6. Streaming query results</a></li>
+</ul>
+</li>
+<li><a href="#repositories.create-instances">3.5. Creating repository instances</a>
+<ul class="sectlevel3">
+<li><a href="#repositories.create-instances.spring">3.5.1. XML configuration</a></li>
+<li><a href="#repositories.create-instances.java-config">3.5.2. JavaConfig</a></li>
+<li><a href="#repositories.create-instances.standalone">3.5.3. Standalone usage</a></li>
+</ul>
+</li>
+<li><a href="#repositories.custom-implementations">3.6. Custom implementations for Spring Data repositories</a>
+<ul class="sectlevel3">
+<li><a href="#repositories.single-repository-behaviour">3.6.1. Adding custom behavior to single repositories</a></li>
+<li><a href="#repositories.custom-behaviour-for-all-repositories">3.6.2. Adding custom behavior to all repositories</a></li>
+</ul>
+</li>
+<li><a href="#core.extensions">3.7. Spring Data extensions</a>
+<ul class="sectlevel3">
+<li><a href="#core.web">3.7.1. Web support</a></li>
+<li><a href="#core.repository-populators">3.7.2. Repository populators</a></li>
+<li><a href="#web.legacy">3.7.3. Legacy web support</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#reference">Reference Documentation</a>
+<ul class="sectlevel1">
+<li><a href="#elasticsearch.repositories">4. Elasticsearch Repositories</a>
+<ul class="sectlevel2">
+<li><a href="#elasticsearch.introduction">4.1. Introduction</a>
+<ul class="sectlevel3">
+<li><a href="#elasticsearch.namespace">4.1.1. Spring Namespace</a></li>
+<li><a href="#elasticsearch.annotation">4.1.2. Annotation based configuration</a></li>
+<li><a href="#elasticsearch.cdi">4.1.3. Elasticsearch Repositores using CDI</a></li>
+</ul>
+</li>
+<li><a href="#elasticsearch.query-methods">4.2. Query methods</a>
+<ul class="sectlevel3">
+<li><a href="#elasticsearch.query-methods.finders">4.2.1. Query lookup strategies</a></li>
+<li><a href="#elasticsearch.query-methods.criterions">4.2.2. Query creation</a></li>
+<li><a href="#elasticsearch.query-methods.at-query">4.2.3. Using @Query Annotation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#elasticsearch.misc">5. Miscellaneous Elasticsearch Operation Support</a>
+<ul class="sectlevel2">
+<li><a href="#elasticsearch.misc.filter">5.1. Filter Builder</a></li>
+<li><a href="#elasticsearch.scan.and.scroll">5.2. Using Scan And Scroll For Big Result Set</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#appendix">Appendix</a>
+<ul class="sectlevel1">
+<li><a href="#repositories.namespace-reference">Appendix A: Namespace reference</a>
+<ul class="sectlevel2">
+<li><a href="#populator.namespace-dao-config">The &lt;repositories /&gt; element</a></li>
+</ul>
+</li>
+<li><a href="#populator.namespace-reference">Appendix B: Populators namespace reference</a>
+<ul class="sectlevel2">
+<li><a href="#namespace-dao-config">The &lt;populator /&gt; element</a></li>
+</ul>
+</li>
+<li><a href="#repository-query-keywords">Appendix C: Repository query keywords</a>
+<ul class="sectlevel2">
+<li><a href="#_supported_query_keywords">Supported query keywords</a></li>
+</ul>
+</li>
+<li><a href="#repository-query-return-types">Appendix D: Repository query return types</a>
+<ul class="sectlevel2">
+<li><a href="#_supported_query_return_types">Supported query return types</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+    </div>  
+
+      
+</div>
+</div>
+</div>
+
+
+
+    <div class="translateArticle">
+      <h1 id="_preface" class="sect0"><a class="anchor" href="#_preface"></a>Preface</h1>
+<div class="openblock partintro">
+<div class="content">스프링의 핵심 개념이 적용된, 스프링 데이터 엘라스틱 프로젝트는 엘라스틱 서치엔진을 사용하는 개발 솔루션이라 할 수 있습니다(의역). 우리는 문서를 저장,쿼리,정렬,페이셋하는데 대한 높은 추상화를 "template"으로 제공합니다.  스프링 프레임워크에서 스프링데이터솔라와 몽고디비에 대한 지원과 비슷함을 당신은 눈치챌 것입니다. </div>
+</div>
+    </div>
+    <div class="originalArticle">
+      <h1 id="_preface" class="sect0"><a class="anchor" href="#_preface"></a>Preface</h1>
+<div class="openblock partintro">
+<div class="content">
+The Spring Data Elasticsearch project applies core Spring concepts to the development of solutions using the Elasticsearch Search Engine. We have povided a "template" as a high-level abstraction for storing,querying,sorting and faceting documents. You will notice similarities to the Spring data solr and mongodb support in the Spring Framework.
+</div>
+</div>
+    </div>  
+
+      
+
+
+
+<div class="sect1">
+<h2 id="project"><a class="anchor" href="#project"></a>1. Project Metadata</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+    <div class="translateArticle">
+      <p>버젼컨트롤 - <a href="https://github.com/spring-projects/spring-data-elasticsearch" class="bare">https://github.com/spring-projects/spring-data-elasticsearch</a></p>
+</li>
+<li>
+<p>버그트래커 - <a href="https://jira.spring.io/browse/DATAES" class="bare">https://jira.spring.io/browse/DATAES</a></p>
+</li>
+<li>
+<p>릴리즈 리포지토리 - <a href="https://repo.spring.io/libs-release" class="bare">https://repo.spring.io/libs-release</a></p>
+</li>
+<li>
+<p>마일스톤 repository - <a href="https://repo.spring.io/libs-milestone" class="bare">https://repo.spring.io/libs-milestone</a></p>
+</li>
+<li>
+<p>스냅샷  repository - <a href="https://repo.spring.io/libs-snapshot" class="bare">https://repo.spring.io/libs-snapshot</a></p>
+    </div>
+    <div class="originalArticle">
+      <p>Version Control - <a href="https://github.com/spring-projects/spring-data-elasticsearch" class="bare">https://github.com/spring-projects/spring-data-elasticsearch</a></p>
+</li>
+<li>
+<p>Bugtracker - <a href="https://jira.spring.io/browse/DATAES" class="bare">https://jira.spring.io/browse/DATAES</a></p>
+</li>
+<li>
+<p>Release repository - <a href="https://repo.spring.io/libs-release" class="bare">https://repo.spring.io/libs-release</a></p>
+</li>
+<li>
+<p>Milestone repository - <a href="https://repo.spring.io/libs-milestone" class="bare">https://repo.spring.io/libs-milestone</a></p>
+</li>
+<li>
+<p>Snapshot repository - <a href="https://repo.spring.io/libs-snapshot" class="bare">https://repo.spring.io/libs-snapshot</a></p>
+    
+
+      
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="requirements"><a class="anchor" href="#requirements"></a>2. Requirements</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Requires <a href="http://www.elasticsearch.org/download/">Elasticsearch</a> 0.20.2 and above or optional dependency or not even that if you are using Embedded Node Client</p>
+</div>
+</div>
+</div>
+
+
+
+<div class="sect1">
+
+    <div class="translateArticle">
+      <h2 id="repositories"><a class="anchor" href="#repositories"></a>3. 스프링 데이터 레파지토리와 함께 작업하기</h2>
+    </div>
+    <div class="originalArticle">
+      <h2 id="repositories"><a class="anchor" href="#repositories"></a>3. Working with Spring Data Repositories</h2>
+    </div>  
+
+      
+
+<div class="sectionbody">
+
+    <div class="translateArticle">
+      <div class="paragraph">
+<p>스프링 데이터 레파지토리 추상화의 목표는,  다양한 영속화 저장소를 위한 데이터 액세스 레이어를 구현하는 데 있어 필요한, 상당한양의 보일러 플레이한 코드들을 줄이는 데 있습니다 </p>
+</div>
+    </div>
+    <div class="originalArticle">
+      <div class="paragraph">
+<p>The goal of Spring Data repository abstraction is to significantly reduce the amount of boilerplate code required to implement data access layers for various persistence stores.</p>
+</div>
+    </div>  
+
+      
+
+
+
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+    <div class="translateArticle">
+      <p><em>스프링 데이터 리파지토리 문서화와 당신의 모듈</em></p>
+
+    </div>
+    <div class="originalArticle">
+      <p><em>Spring Data repository documentation and your module</em></p>
+
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p> 이 챕터는 스프링 데이터 리파지토리들의 인터페이스와 핵심개념을 설명합니다. 이 챕터의 정보는 스프링데이터 공통모듈에서 나왔으며,  JPA모듈을 위한 설정과 코드 샘플을 사용해봅니다. 
+
+        XML 네임스페이스 선언과 당신이 사용할 특별한 모듈들같은 확장되는 타입들에 적응해봅시다. (의역)
+        <a href="#repositories.namespace-reference">Namespace reference</a> 는 repository API를 지원하는 모든 스프링데이터모듈쪽에서 XML 설정을 다루며,  <a href="#repository-query-keywords">Repository query keywords</a>는 일반적으로 레파지토리추상화에 의해 지원되는 쿼리 메소드 키워드들을 다룹니다. 당신 모듈의 특별한 특징에 관한 정보를 찾는다면, 이 문서에서 그 모듈에 대한 챕터를 살펴보세요. 
+
+       </p>
+    </div>
+    <div class="originalArticle">
+      <p>This chapter explains the core concepts and interfaces of Spring Data repositories. The information in this chapter is pulled from the Spring Data Commons module. It uses the configuration and code samples for the Java Persistence API (JPA) module. Adapt the XML namespace declaration and the types to be extended to the equivalents of the particular module that you are using. <a href="#repositories.namespace-reference">Namespace reference</a> covers XML configuration which is supported across all Spring Data modules supporting the repository API, <a href="#repository-query-keywords">Repository query keywords</a> covers the query method keywords supported by the repository abstraction in general. For detailed information on the specific features of your module, consult the chapter on that module of this document.</p>
+    </div>  
+
+      
+
+
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="repositories.core-concepts"><a class="anchor" href="#repositories.core-concepts"></a>3.1. Core concepts</h3>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p> 스프링 데이터 리파지토리 추상화에서 중심적인 인터페이스는 <code>Repository</code>(아마 놀라시않으실테지만)입니다.이것은 도메인클래스와 도메인의 id 타입을 타입아규먼트로 받습니다. 이 인터페이스는 주로 마커 인터페이스로 동작하며, 작업할 타입을 가지고 있으면서, 당신이 이것을 확장할 인터페이스를 발견하게 해줍니다. <code>CrudRepository</code> 는 관리되는 엔티티클래스에서 복잡한 CRUD기능을 제공해줍니다. 
+      </p>
+    </div>
+    <div class="originalArticle">
+      <p>The central interface in Spring Data repository abstraction is <code>Repository</code> (probably not that much of a surprise). It takes the domain class to manage as well as the id type of the domain class as type arguments. This interface acts primarily as a marker interface to capture the types to work with and to help you to discover interfaces that extend this one. The <code>CrudRepository</code> provides sophisticated CRUD functionality for the entity class that is being managed.</p>
+    </div>  
+
+      
+</div>
+<div id="repositories.repository" class="exampleblock">
+<div class="title">Example 1. CrudRepository interface</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public interface CrudRepository&lt;T, ID extends Serializable&gt;
+    extends Repository&lt;T, ID&gt; {
+
+    &lt;S extends T&gt; S save(S entity); <i class="conum" data-value="1"></i><b>(1)</b>
+
+    T findOne(ID primaryKey);       <i class="conum" data-value="2"></i><b>(2)</b>
+
+    Iterable&lt;T&gt; findAll();          <i class="conum" data-value="3"></i><b>(3)</b>
+
+    Long count();                   <i class="conum" data-value="4"></i><b>(4)</b>
+
+    void delete(T entity);          <i class="conum" data-value="5"></i><b>(5)</b>
+
+    boolean exists(ID primaryKey);  <i class="conum" data-value="6"></i><b>(6)</b>
+
+    // … more functionality omitted.
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+    <div class="translateArticle">
+      <table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>주어진 엔티티를 저장합니다.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>주어진 아이디로 식별된 엔티티를 반환합니다.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>모든 엔티티를 반환합니다.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>엔티티의 숫자를 반환합니다.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>주어진 엔티티를 삭제합니다.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>주어진 아이디로 엔티티가 존재하는지를 반환합니다.</td>
+</tr>
+</table>
+    </div>
+    <div class="originalArticle">
+      <table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Saves the given entity.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Returns the entity identified by the given id.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Returns all entities.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Returns the number of entities.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Deletes the given entity.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Indicates whether an entity with the given id exists.</td>
+</tr>
+</table>
+    </div>  
+
+      
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+    <div class="translateArticle">
+
+      우리는 또한 <code>JpaRepository</code> 나 <code>MongoRepository</code>같은 기술특징적인 추상화를 제공합니다. 이러한 인터페이스는 <code>CrudRepository</code> 를 확장하여 일반적인 기능에 좀 더 해당기술에 해당하는 기술을 사용할 수 있게 해줍니다(의역. 중요한 부분이 아니니 시간소비없이..=3=3)
+
+    </div>
+    <div class="originalArticle">
+      We also provide persistence technology-specific abstractions like e.g. <code>JpaRepository</code> or <code>MongoRepository</code>. Those interfaces extend <code>CrudRepository</code> and expose the capabilities of the underlying persistence technology in addition to the rather generic persistence technology-agnostic interfaces like e.g. CrudRepository.
+    </div>  
+
+      
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p><code>CrudRepository</code>를 확장한 것 중에 <code>PagingAndSortingRepository</code> 는 
+      쉽게 엔티티들에 대해 페이징을 할수있는 메소드를 제공합니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>On top of the <code>CrudRepository</code> there is a <code>PagingAndSortingRepository</code> abstraction that adds additional methods to ease paginated access to entities:</p>
+    </div>  
+
+      
+</div>
+<div class="exampleblock">
+<div class="title">Example 2. PagingAndSortingRepository</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public interface PagingAndSortingRepository&lt;T, ID extends Serializable&gt;
+  extends CrudRepository&lt;T, ID&gt; {
+
+  Iterable&lt;T&gt; findAll(Sort sort);
+
+  Page&lt;T&gt; findAll(Pageable pageable);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+      <div class="translateArticle">
+        <p><code>User</code>의 페이지사이즈를 20으로 잡고 두번째 페이지에 접근하는 것은간단하게 이렇게 해볼수 있습니다.:</p>
+      </div>
+      <div class="originalArticle">
+        <p>Accessing the second page of <code>User</code> by a page size of 20 you could simply do something like this:</p>
+      </div>  
+  
+        
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">PagingAndSortingRepository&lt;User, Long&gt; repository = // … get access to a bean
+Page&lt;User&gt; users = repository.findAll(new PageRequest(1, 20));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+       쿼리메소드들을 더 말해보자면, 쿼리 카운트나 삭제 만들기가 가능합니다. 
+    </div>
+    <div class="originalArticle">
+      In addition to query methods, query derivation for both count and delete queries, is available.
+    </div>  
+
+      </p>
+</div>
+<div class="exampleblock">
+<div class="title">예제 3. 카운트 쿼리 </div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public interface UserRepository extends CrudRepository&lt;User, Long&gt; {
+
+  Long countByLastname(String lastname);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock">
+<div class="title">예제 4. 삭제 쿼리 만들어보기</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public interface UserRepository extends CrudRepository&lt;User, Long&gt; {
+
+  Long deleteByLastname(String lastname);
+
+  List&lt;User&gt; removeByLastname(String lastname);
+
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="repositories.query-methods"><a class="anchor" href="#repositories.query-methods"></a>3.2. Query methods</h3>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      표준 CRUD기능들을 가진 리파지토들은 데이터소스에 대한 쿼리들을 가지고 있습니다. 스프링데이터와 함께 이러한 쿼리들을 4단계로 만들어봅시다. 
+    </div>
+    <div class="originalArticle">
+      Standard CRUD functionality repositories usually have queries on the underlying datastore. With Spring Data, declaring those queries becomes a four-step process:
+    </div>  
+
+      </p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+    <div class="translateArticle">
+
+      <p>Repository나 그 하위 인터페이스를 상속하는 인터페이스를 상속하여, 도메인클래스와 ID 타입을 적어줍시다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>Declare an interface extending Repository or one of its subinterfaces and type it to the domain class and ID type that it will handle.</p>
+    </div>  
+
+      
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">interface PersonRepository extends Repository&lt;User, Long&gt; { … }</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>    <div class="translateArticle">
+      그 인터페이스에 대해서 쿼리메소드를 선언합니다. 
+    </div>
+    <div class="originalArticle">
+      Declare query methods on the interface.
+    </div>  
+
+      </p>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">interface PersonRepository extends Repository&lt;User, Long&gt; {
+  List&lt;Person&gt; findByLastname(String lastname);
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+    <div class="translateArticle">
+      <p>스프링을 설정하여 이러한 인터페이스들을 위한 프록시 인스턴스를 생성하게 해줍니다. 
+
+        Set up Spring to create proxy instances for those interfaces. Either via <a href="#repositories.create-instances.java-config">자바 설정 </a>:</p>이나, XML을 통해 가능합니다. 
+    </div>
+    <div class="originalArticle">
+      <p>Set up Spring to create proxy instances for those interfaces. Either via <a href="#repositories.create-instances.java-config">JavaConfig</a>:</p>
+    </div>  
+
+      
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+@EnableJpaRepositories
+class Config {}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or via <a href="#repositories.create-instances">XML configuration</a>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+   xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans.xsd
+     http://www.springframework.org/schema/data/jpa
+     http://www.springframework.org/schema/data/jpa/spring-jpa.xsd"&gt;
+
+   &lt;jpa:repositories base-package="com.acme.repositories"/&gt;
+
+&lt;/beans&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p> JPA 네임스페이스는 이 예제에서 사용되었습니다. 만약 당신이 다른 데이터 저장소를 위한 추상화 리파지토리를 사용한다면, 이것을 위해 적적한 네임스페이스 선언으로 바꿔줘야할 것입니다. 예를 들자면 몽고디비나 JPA같이 말이죠 (생략의역)
+    </div>
+    <div class="originalArticle">
+      <p>The JPA namespace is used in this example. If you are using the repository abstraction for any other store, you need to change this to the appropriate namespace declaration of your store module which should be exchanging <code>jpa</code> in favor of, for example, <code>mongodb</code>.</p>
+    </div>  
+
+      
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p> 또한, 자바설정 방법은 기본적으로 사용되는 어노테이션된 클래스를 깔끔하게 설정을 해주지않으므로 패키지를 스캔하기 위하여 다음과 같은 설정을 적어주게 됩니다. <code>basePackage…</code>, <code>@Enable…</code>-어노테이션.</p>
+    </div>
+    <div class="originalArticle">
+      <p>Also, note that the JavaConfig variant doesn&#8217;t configure a package explictly as the package of the annotated class is used by default. To customize the package to scan use one of the <code>basePackage…</code> attribute of the data-store specific repository <code>@Enable…</code>-annotation.</p>
+    </div>  
+
+      
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Get the repository instance injected and use it.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public class SomeClient {
+
+  @Autowired
+  private PersonRepository repository;
+
+  public void doSomething() {
+    List&lt;Person&gt; persons = repository.findByLastname("Matthews");
+  }
+}</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      다음의 섹션이 각각의 단계를 세부적으로 설명할 것입니다. 
+    </div>
+    <div class="originalArticle">
+      The sections that follow explain each step in detail.
+    </div>  
+
+      </p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="repositories.definition"><a class="anchor" href="#repositories.definition"></a>    <div class="translateArticle">
+      3.3. 리파지토리 인터페이스 정의하기
+    </div>
+    <div class="originalArticle">
+      3.3. Defining repository interfaces
+    </div>  
+
+      </h3>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>첫번째 단계로, 당신은 도메인특정 리파지토리 인터페이스를 정의해야 합니다. 이 인터페이스는 반드시 Repository 를 상속해야 하며, 도메인 클래스와 아이디 타입을 적어줘야 합니다. 만약 당신이 CRUD메소드를 사용하기 원한다면, <code>Repository</code>대신에 <code>CrudRepository</code> 를 사용해줍니다. </p>    
+    </div>
+    <div class="originalArticle">
+      <p>As a first step you define a domain class-specific repository interface. The interface must extend Repository and be typed to the domain class and an ID type. If you want to expose CRUD methods for that domain type, extend <code>CrudRepository</code> instead of <code>Repository</code>.</p>
+    </div>  
+
+      
+</div>
+<div class="sect3">
+<h4 id="repositories.definition-tuning"><a class="anchor" href="#repositories.definition-tuning"></a>    <div class="translateArticle">
+      3.3.1. 좀 더 세밀한 리파지토리 정의 조정
+    </div>
+    <div class="originalArticle">
+      3.3.1. Fine-tuning repository definition
+    </div>  
+
+      </h4>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p> 일반적으로, 당신의 리파지토리 인터페이스는 <code>Repository</code>, <code>CrudRepository</code> or <code>PagingAndSortingRepository</code>같은 것을 상속할 것입니다. 또 다르게는, 만약 당신이 스프링 데이터 인터페이스를 상속하기를 원하지 않는다면 당신은 당신의 리파지토리에 <code>@RepositoryDefinition</code>를 붙일 수 있습니다(역주: 예제에서의 @NoRepositoryBean를 말하는 것인듯하다.). <code>CrudRepository</code>를 상속하는 것은 당신의 엔티티를 다루는 메소드들의 집합을 노출시킵니다. 만약 당신이 노출되는 메소드들에 관해서 선택적으로 하고 싶다면, 단순히 <code>CrudRepository</code>에서 당신이 노출시키는 부분을 복사하여 당신의 도메인 리파지토리에 붙여보셔요(^^)
+
+       
+    </div>
+    <div class="originalArticle">
+      <p>Typically, your repository interface will extend <code>Repository</code>, <code>CrudRepository</code> or <code>PagingAndSortingRepository</code>. Alternatively, if you do not want to extend Spring Data interfaces, you can also annotate your repository interface with <code>@RepositoryDefinition</code>. Extending <code>CrudRepository</code> exposes a complete set of methods to manipulate your entities. If you prefer to be selective about the methods being exposed, simply copy the ones you want to expose from <code>CrudRepository</code> into your domain repository.</p>
+    </div>  
+
+      
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+      <div class="translateArticle">
+        
+이것은 제공된 스프링데이터 리파지토리에서, 당신 자신의 추상화를 정의할 수 있게 합니다. 
+
+      </div>
+      <div class="originalArticle">
+        
+This allows you to define your own abstractions on top of the provided Spring Data Repositories functionality.
+
+      </div>  
+  
+        
+
+</td>
+</tr>
+</table>
+</div>
+<div class="exampleblock">
+<div class="title">Example 5. 선택적으로 CRUD 메소드 노출시키기</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@NoRepositoryBean
+interface MyBaseRepository&lt;T, ID extends Serializable&gt; extends Repository&lt;T, ID&gt; {
+
+  T findOne(ID id);
+
+  T save(T entity);
+}
+
+interface UserRepository extends MyBaseRepository&lt;User, Long&gt; {
+  User findByEmailAddress(EmailAddress emailAddress);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p> 이 첫번째 단계에서 당신은 모든 도메인 리파지토리들을 위한 기본 작업 인터페이스를 정의하였고, <code>findOne(…)</code>과  <code>save(…)</code>를 노출시켰습니다. 이러한 메소드들은 리파지토리 구현 구현체에 위치하게 될 것입니다.  당신이 스프링데이터에서 선택한 저장소. 예를 들자면 JPA이면 <code>SimpleJpaRepository</code>같은 것에 위치할 것입니다. 왜냐하면 이것들(역주:구현체?)은 <code>CrudRepository</code>의 메소드 시그니처를 매칭시키기 때문입니다. 그러므로 <code>UserRepository</code>는 사용자들을 저장하고 id로 단일유저를 찾을 수 있고, 뿐만 아니라 그들의 이메일 주소로 <code>Users</code>들을 찾는 쿼리를 동작시킬 것입니다. 
+
+       </p>
+    </div>
+    <div class="originalArticle">
+      <p>In this first step you defined a common base interface for all your domain repositories and exposed <code>findOne(…)</code> as well as <code>save(…)</code>.These methods will be routed into the base repository implementation of the store of your choice provided by Spring Data ,e.g. in the case if JPA <code>SimpleJpaRepository</code>, because they are matching the method signatures in <code>CrudRepository</code>. So the <code>UserRepository</code> will now be able to save users, and find single ones by id, as well as triggering a query to find <code>Users</code> by their email address.</p>
+    </div>  
+
+      
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+    <div class="translateArticle">
+      <code>@NoRepositoryBean</code> 중간 레파지토리 인터페이스를 한번 보세요. 당신이 저 어노테이션을 붙인 모든 리파지토리는 런타임에서 인스턴스를 생성하지 않습니다. 
+    </div>
+    <div class="originalArticle">
+      Note, that the intermediate repository interface is annotated with <code>@NoRepositoryBean</code>. Make sure you add that annotation to all repository interfaces that Spring Data should not create instances for at runtime.
+    </div>  
+
+      
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="repositories.query-methods.details"><a class="anchor" href="#repositories.query-methods.details"></a>3.4. 쿼리 메소드 정의하기</h3>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p> 리파지토리 프록시는 메소드 이름으로 저장소에 맞는 쿼리를 만들어내는 두가지 방법이 있습니다. 하나는 메소드이름으로 직접적으로 쿼리를 만들어내는 것이고, 아니면 수동적으로 정의된 쿼리를 사용하는 것입니다. 저장소에 따라서 옵션이 더 있을 수도 있습니다. 실제 쿼리를 생성하는 것을 결정할 전략이 있을 수 있습니다. 사용가능한 옵션을 살펴볼까요?</p>
+    </div>
+    <div class="originalArticle">
+      <p>The repository proxy has two ways to derive a store-specific query from the method name. It can derive the query from the method name directly, or by using a manually defined query. Available options depend on the actual store. However, there&#8217;s got to be a strategy that decides what actual query is created. Let&#8217;s have a look at the available options.</p>
+    </div>  
+
+      
+</div>
+<div class="sect3">
+<h4 id="repositories.query-methods.query-lookup-strategies"><a class="anchor" href="#repositories.query-methods.query-lookup-strategies"></a>3.4.1. 쿼리 탐색(lookup) 전략</h4>
+<div class="paragraph">
+<p>
+  다음 전략에서 리파지토리 하부구조가 쿼리를 해석하는 것이 가능합니다. XML 설정의 네임스페이스에서 <code>query-lookup-strategy</code>속성을 통하거나, 자바설정에서 Enable${store}Repositories어노테이션이 있는 곳에서 <code>queryLookupStrategy</code>속성을 통해 전략을 설정할 수 있습니다. 몇몇 전략은 특정 데이터베이스에서 지원되지 않습니다 .
+</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>    <div class="translateArticle">
+      <code>CREATE</code> 는 저장소에 맞는 쿼리를 쿼리메소드이름으로 부터 만들어내는 것을 시도합니다. 
+      일반적인 접근은 메소드이름으로부터 잘 알려진 접두어를 제거하고 나머지 부분을 파싱하는 것입니다. 쿼리생성에서 이 부분에서 좀 더 읽어보세요.<a href="#repositories.query-methods.query-creation">Query creation</a> 
+     
+    </div>
+    <div class="originalArticle">
+      <code>CREATE</code> attempts to construct a store-specific query from the query method name. The general approach is to remove a given set of well-known prefixes from the method name and parse the rest of the method. Read more about query construction in <a href="#repositories.query-methods.query-creation">Query creation</a>.
+    </div>  
+
+      </p>
+</li>
+<li>
+    <div class="translateArticle">
+      <p><code>USE_DECLARED_QUERY</code> 는 선언된 쿼리를 찾는 것을 시도하고, 찾을 수 없을 때는 예외를 날립니다. 
+      쿼리는 어노테이션이나 다른 방법으로 선언된 방식에 의해 정의될 수 있습니다. 특정 데이터 저장소의 문서를 참고하셔서 그 저장소에서 사용가능한 옵션들을 찾아보세요. 만약 리파지토리 인프라스트럭처가 부트스트랩 시간에 그 메소드를 위해 정의된 쿼리를 찾을 수 없으면 이것은 실패합니다. 
+       </p>
+    </div>
+    <div class="originalArticle">
+      <p><code>USE_DECLARED_QUERY</code> tries to find a declared query and will throw an exception in case it can&#8217;t find one. The query can be defined by an annotation somewhere or declared by other means. Consult the documentation of the specific store to find available options for that store. If the repository infrastructure does not find a declared query for the method at bootstrap time, it fails.</p>
+    </div>  
+
+      
+</li>
+<li>
+    <div class="translateArticle">
+      <p><code>CREATE_IF_NOT_FOUND</code> (default) <code>CREATE</code> 와 <code>USE_DECLARED_QUERY</code>를 조합합니다. 이것은 처음에 정의된 쿼리를 찾아보고 발견되지 않으면, 커스텀 메소드네임 기반의 쿼리를 생성합니다. 이것은 기본 탐색전략이고, 당신이 아무것도 명시적으로 설정하지 않으면 기본 설정이 될 것입니다. 이것은 메소드이름으로 빠른 쿼리 정의를 가능케 하며, 필요에 따라 선언된 쿼리를 소개하면서 이러한 쿼리들의 커스텀 튜닝또한 가능하게 합니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p><code>CREATE_IF_NOT_FOUND</code> (default) combines <code>CREATE</code> and <code>USE_DECLARED_QUERY</code>. It looks up a declared query first, and if no declared query is found, it creates a custom method name-based query. This is the default lookup strategy and thus will be used if you do not configure anything explicitly. It allows quick query definition by method names but also custom-tuning of these queries by introducing declared queries as needed.</p>
+    </div>  
+
+      
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="repositories.query-methods.query-creation"><a class="anchor" href="#repositories.query-methods.query-creation"></a>    <div class="translateArticle">
+      3.4.2. 쿼리 생성
+    </div>
+    <div class="originalArticle">
+      3.4.2. Query creation
+    </div>  
+
+      </h4>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>쿼리 빌더 메커니즘은 스프링 데이터 리파지토리 인프라스트럭쳐로 짜여져, 리파지토리의 엔티티들에 맞는 쿼리들을 만들어내는 데 유용합니다. 이 메커니즘은  <code>find…By</code>, <code>read…By</code>, <code>query…By</code>, <code>count…By</code>, 와 <code>get…By</code>같은 접두어들을 메소드에서 떼어내고 나머지부분을 파싱하기 시작합니다. 
+        
+        다음 소개하는 절은 <code>Distinct</code>(쿼리가 생성될지 결정하는 flag를 설정)같은 더 깊은 표현을 포함하고 있습니다. 그러나 처음의  <code>By</code>는 실제 크리테리아의 시작을 가리키는 구별자로 동작합니다. 기본레벨에서 당신은 엔티티의 속성을 결정할 조건을 정의할 수 있으며, 그것들을 <code>And</code> 와 <code>Or</code>로 연결할 수 있습니다. 
+       </p>
+
+    </div>
+    <div class="originalArticle">
+      <p>The query builder mechanism built into Spring Data repository infrastructure is useful for building constraining queries over entities of the repository. The mechanism strips the prefixes <code>find…By</code>, <code>read…By</code>, <code>query…By</code>, <code>count…By</code>, and <code>get…By</code> from the method and starts parsing the rest of it. The introducing clause can contain further expressions such as a <code>Distinct</code> to set a distinct flag on the query to be created. However, the first <code>By</code> acts as delimiter to indicate the start of the actual criteria. At a very basic level you can define conditions on entity properties and concatenate them with <code>And</code> and <code>Or</code>.</p>
+    </div>  
+
+      
+</div>
+<div class="exampleblock">
+<div class="title">예제 6. 메소드네임으로 쿼리 생성하기</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public interface PersonRepository extends Repository&lt;User, Long&gt; {
+
+  List&lt;Person&gt; findByEmailAddressAndLastname(EmailAddress emailAddress, String lastname);
+
+  // Enables the distinct flag for the query
+  List&lt;Person&gt; findDistinctPeopleByLastnameOrFirstname(String lastname, String firstname);
+  List&lt;Person&gt; findPeopleDistinctByLastnameOrFirstname(String lastname, String firstname);
+
+  // Enabling ignoring case for an individual property
+  List&lt;Person&gt; findByLastnameIgnoreCase(String lastname);
+  // Enabling ignoring case for all suitable properties
+  List&lt;Person&gt; findByLastnameAndFirstnameAllIgnoreCase(String lastname, String firstname);
+
+  // Enabling static ORDER BY for a query
+  List&lt;Person&gt; findByLastnameOrderByFirstnameAsc(String lastname);
+  List&lt;Person&gt; findByLastnameOrderByFirstnameDesc(String lastname);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>메소드에 파싱된 실제 결과는 쿼리를 생성하는 데이터베이스에 따라 다르지만, 생각해볼만한 일반적인 것들이 있습니다.  </p>
+    </div>
+    <div class="originalArticle">
+      <p>The actual result of parsing the method depends on the persistence store for which you create the query. However, there are some general things to notice.</p>
+    </div>  
+
+      
+</div>
+<div class="ulist">
+<ul>
+<li>
+    <div class="translateArticle">
+      이 표현은 보통 속성을 순회하며(영어 오타인듯?) 연결될 수 있는 연산자와 함께 조합됩니다. <code>AND</code> 나 <code>OR</code>같은 표현과 함께 속성을 조합할 수 있습니다. 당신은 또한 <code>Between</code>, <code>LessThan</code>, <code>GreaterThan</code>, <code>Like</code>같은 연산자의 지원을 받을 수 있습니다. 
+      이러한 지원되는 연산자는 데이터스토어에 따라 다를 수 있으니, 해당 레퍼런스 문서에 적절한 부분을 참고해보세요.
+
+    </div>
+    <div class="originalArticle">
+      <p>The expressions are usually property traversals combined with operators that can be concatenated. You can combine property expressions with <code>AND</code> and <code>OR</code>. You also get support for operators such as <code>Between</code>, <code>LessThan</code>, <code>GreaterThan</code>, <code>Like</code> for the property expressions. The supported operators can vary by datastore, so consult the appropriate part of your reference documentation.</p>
+    </div>  
+
+      
+</li>
+<li>
+    <div class="translateArticle">
+      <p>메소드파서는 code>IgnoreCase</code>에 대한 독립적인 flag 속성설정을 지원하며 예를 들자면 <code>findByLastnameIgnoreCase(…)</code>같은 것이 되거나  <code>findByLastnameAndFirstnameAllIgnoreCase(…)</code>같이 모든 <code>String</code>인스턴스에서도 지원을 할 수 있습니다. 이 부분도 저장소에 따라 다를 수 있으니 해당 저장소 레퍼런스 문서를 참조하세요 </p>
+    </div>
+    <div class="originalArticle">
+      <p>The method parser supports setting an <code>IgnoreCase</code> flag for individual properties (for example, <code>findByLastnameIgnoreCase(…)</code>) or for all properties of a type that support ignoring case (usually <code>String</code> instances, for example, <code>findByLastnameAndFirstnameAllIgnoreCase(…)</code>). Whether ignoring cases is supported may vary by store, so consult the relevant sections in the reference documentation for the store-specific query method.</p>
+    </div>  
+
+      
+</li>
+<li>
+    <div class="translateArticle">
+      <p>당신은 정적 순서를 <code>OrderBy</code>절을 추가하여 쿼리메소드의 정렬 방향을 정할 수 있습니다. <code>Asc</code> 나 <code>Desc</code> 로 말이죠.. 동적 정렬을 지원하는 쿼리를 만들기 위해 <a href="#repositories.special-parameters">특별 파라미터 핸들링</a>를 보시기 바랍니다. </p>
+
+      
+    </div>
+    <div class="originalArticle">
+      <p>You can apply static ordering by appending an <code>OrderBy</code> clause to the query method that references a property and by providing a sorting direction (<code>Asc</code> or <code>Desc</code>). To create a query method that supports dynamic sorting, see <a href="#repositories.special-parameters">Special parameter handling</a>.</p>
+    </div>  
+
+      
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="repositories.query-methods.query-property-expressions"><a class="anchor" href="#repositories.query-methods.query-property-expressions"></a>3.4.3. 속성 표현</h4>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>속성표현은 이전 예제에서 나타난대로, 관리되는 엔티티의 직접적인 속성을 참조할 수 있습니다. 쿼리 생성 시간에 당신은 이미 파싱된 속성이 관리되는 도메인 클래스의 일부라는 것을 확실하게 하고 가야 합니다. 그러나 당신은 중첩속성에 대한 제약을 정의할 수 있습니다. <code>Person</code>이 <code>ZipCode</code>와 함께 있는 <code>Address</code>를 가지고 있다고 생각해봅시다. 이러한 경우 메소드 네임은  </p>
+
+   
+    </div>
+    <div class="originalArticle">
+      <p>Property expressions can refer only to a direct property of the managed entity, as shown in the preceding example. At query creation time you already make sure that the parsed property is a property of the managed domain class. However, you can also define constraints by traversing nested properties. Assume a <code>Person</code> has an <code>Address</code> with a <code>ZipCode</code>. In that case a method name of</p>
+    </div>  
+
+      
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">List&lt;Person&gt; findByAddressZipCode(ZipCode zipCode);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p> 이렇게 되며, <code>x.address.zipCode</code> 이라는 속성에 접근하게 됩니다.   이렇게 해석하는 알고리즘은 전체 부분(<code>AddressZipCode</code>)을 속성으로 인터프리팅하면서 시작되어 속성에 맞는 도메인 클래스를 검사합니다. 만약 알고리즘이 성공하면, 이것은 저 속성을 사용할 것이고. 그렇지 않다면 알고리즘은 저 부분을 Camel case 부분의 오른쪽부터 왼쪽으로 그리고 꼬리부분으로 나눠보며, 맞는 속성을 찾으려 할 것입니다. 우리의 예제에서는 <code>AddressZip</code> 와 <code>Code</code>일 것입니다. 만약 알고리즘이 앞에서 맞는 속성을 찾아내면, 거기서부터 뒷부분을 가지고서 트리다운을 만들기 시작합니다. (역주: 그 뒷부부분으로 변수를 만든다는 뜻인듯^^;) 이전에 설명한 방법대로 뒷부분을 잘라보면서 말입니다. 만약 처음 나누기가 매칭이 되지 않으면 알고리즘은 나누는 지점을 왼쪽으로 이동해보게 됩니다.  (<code>Address</code>, <code>ZipCode</code>) 그리고 다시 시작합니다. </p>
+
+        
+    </div>
+    <div class="originalArticle">
+      <p>creates the property traversal <code>x.address.zipCode</code>. The resolution algorithm starts with interpreting the entire part (<code>AddressZipCode</code>) as the property and checks the domain class for a property with that name (uncapitalized). If the algorithm succeeds it uses that property. If not, the algorithm splits up the source at the camel case parts from the right side into a head and a tail and tries to find the corresponding property, in our example, <code>AddressZip</code> and <code>Code</code>. If the algorithm finds a property with that head it takes the tail and continue building the tree down from there, splitting the tail up in the way just described. If the first split does not match, the algorithm move the split point to the left (<code>Address</code>, <code>ZipCode</code>) and continues.</p>
+    </div>  
+
+      
+
+
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+  <p>비록 이러한 작업이 대부분의 경우 잘 동작하지만, 잘못 동작할 경우가 있습니다.  <code>Person</code> 가 <code>addressZip</code>이라는 속성도 가지고 있다고 생각해봅시다. 이러한 알고리즘은 처음 나누면서 본질적으로 잘못된 뒷부분을 <code>addressZip</code>가지게 되어 아무런 속성도 아닌(<code>code</code>)것을 고르게 됩니다.   </p>
+
+    
+    </div>
+    <div class="originalArticle">
+      <p>Although this should work for most cases, it is possible for the algorithm to select the wrong property. Suppose the <code>Person</code> class has an <code>addressZip</code> property as well. The algorithm would match in the first split round already and essentially choose the wrong property and finally fail (as the type of <code>addressZip</code> probably has no <code>code</code> property).</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>
+        이러한 모호한 점을 해결하기 위해 당신은 <code>_</code> 를 당신의 메소드 이름 내에 사용하여 수동적으로 횡단지점(tracersal이라고 나와있는데 나누는 지점이라 해야 맞을듯)을 정의할 수 있습니다. 그래서 메소드 이름은 다음과 같이 끝나게 됩니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>To resolve this ambiguity you can use <code>_</code> inside your method name to manually define traversal points. So our method name would end up like so:</p>
+    </div>  
+
+      
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">List&lt;Person&gt; findByAddress_ZipCode(ZipCode zipCode);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>우리가 _를 예약된 문자어로 썼기 때문에, 우리는 강력하게 표준 자바 작명 관습을 따르기를 권합니다 .
+            (i.e. <strong>카멜케이스CamelCase</strong> 쓰세요^^)</p>
+
+      
+    </div>
+    <div class="originalArticle">
+      <p>As we treat underscore as a reserved character we stongly advise to follow standard Java naming conventions (i.e. <strong>not</strong> using underscores in property names but camel case instead).</p>
+    </div>  
+
+      
+</div>
+</div>
+<div class="sect3">
+<h4 id="repositories.special-parameters"><a class="anchor" href="#repositories.special-parameters"></a>3.4.4. 스페셜 파라미터 핸들링</h4>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>당신의 쿼리에서 파라미터를 다루기 위해, 당신은 간단히 메소드파라미터를 예전에 봤던 예제에서 처럼 정의할 수 있습니다. 게다가 인프라스트럭쳐가 <code>Pageable</code>, <code>Sort</code>같은 특정 타입을 인식하여 당신의 쿼리에서 페이징과 정렬을 동적으로 하게 해줄 것입니다.  </p>
+    </div>
+    <div class="originalArticle">
+      <p>To handle parameters in your query you simply define method parameters as already seen in the examples above. Besides that the infrastructure will recognize certain specific types like <code>Pageable</code> and <code>Sort</code> to apply pagination and sorting to your queries dynamically.</p>
+    </div>  
+
+      
+</div>
+<div class="exampleblock">
+<div class="title">예제 7. 쿼리메소드에서 Pageable, Slice와 Sort를 사용하기</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">Page&lt;User&gt; findByLastname(String lastname, Pageable pageable);
+
+Slice&lt;User&gt; findByLastname(String lastname, Pageable pageable);
+
+List&lt;User&gt; findByLastname(String lastname, Sort sort);
+
+List&lt;User&gt; findByLastname(String lastname, Pageable pageable);</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+        <p>첫번째 메소드는 <code>org.springframework.data.domain.Pageable</code>인스턴스를 쿼리메소드에 전달하여 정적으로 정의된 쿼리에 동적으로 페이징을 추가하게 해줍니다. <code>Page</code>는 전체적인 요소의 숫자와 가능한 페이지의 개수를 알 수 있습니다. 하부구조에서 숫자조회 쿼리를 발동하여 전체적인 숫자를 계산함으로써 그것이 가능해집니다. 이것은 사용하는 저장소에 따라서 비싼 작업이 될 수도 있습니다. <code>Slice</code>가 반환형으로 대신 리턴될 수도 있습니다.  <code>Slice</code>는 오직 다음 <code>Slice</code> 가 가능한지만을 알고 있으며 많은 결과 셋을 가지고 작업할 때 쓰기 충분할 것입니다.  </p>
+
+     
+    </div>
+    <div class="originalArticle">
+      <p>The first method allows you to pass an <code>org.springframework.data.domain.Pageable</code> instance to the query method to dynamically add paging to your statically defined query. A <code>Page</code> knows about the total number of elements and pages available. It does so by the infrastructure triggering a count query to calculate the overall number. As this might be expensive depending on the store used, <code>Slice</code> can be used as return instead. A <code>Slice</code> only knows about whether there&#8217;s a next <code>Slice</code> available which might be just sufficient when walking thought a larger result set.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>정렬 옵션은 <code>Pageable</code> 인스턴스를 통해서도 다뤄지기도 합니다. 오직 정렬만을 필요로 한다면 <code>org.springframework.data.domain.Sort</code> 를 당신의 메소드에 파라미터로 전달해보세요. 당신이 보듯이, 단순히 <code>List</code>를 리턴하는 것이 가능할 것입니다. 이러한 경우 실제 <code>Page</code>인스턴스를 만들어내는 데 필요한 추가적인 메타데이터 생성되지 않을 것입니다 ( 여기서는 필요할지도 모르는 추가적인 카운트 쿼리가 발생되지 않는다는 것을 의미합니다 ) 대신에 단순히 쿼리를 오직 주어진 범위의 엔티티에서만으로 제한하는 것입니다. </p>
+
+
+      
+    </div>
+    <div class="originalArticle">
+      <p>Sorting options are handled through the <code>Pageable</code> instance too. If you only need sorting, simply add an <code>org.springframework.data.domain.Sort</code> parameter to your method. As you also can see, simply returning a <code>List</code> is possible as well. In this case the additional metadata required to build the actual <code>Page</code> instance will not be created (which in turn means that the additional count query that would have been necessary not being issued) but rather simply restricts the query to look up only the given range of entities.</p>
+    </div>  
+
+      
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+    <div class="translateArticle">
+      당신이 쿼리에서 얼마나 많은 페이지를 얻을 수 있는지 알아보기 위해,  당신은 추가적인 count 쿼리를 동작시켜야 합니다. 기본적으로 이 쿼리는 당신이 실제적으로 동작하는 쿼리로부터 만들어집니다. 
+      (역주 : 말이 이상한 것같은데;; 그냥 페이징 하면서 카운트 쿼리가 같이 날아간다 그런 말인 듯하다.)
+    </div>
+    <div class="originalArticle">
+      To find out how many pages you get for a query entirely you have to trigger an additional count query. By default this query will be derived from the query you actually trigger.
+    </div>  
+
+      
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="repositories.limit-query-result"><a class="anchor" href="#repositories.limit-query-result"></a>3.4.5. 쿼리 결과 Limit 하기</h4>
+<div class="paragraph">
+    <div class="translateArticle">
+      쿼리메소드의 결과는 <code>first</code>나 <code>top</code>를 통해서 제한될 수 있으며 바꿔 쓸수 있습니다. 선택적인 숫자값이 top/first 로 추가되어 반환될 최대 결과 크기를 명시할 수 있습니다. 만약 숫자가 무시하면 1로 가정합니다. 
+    </div>
+    <div class="originalArticle">
+      <p>The results of query methods can be limited via the keywords <code>first</code> or <code>top</code>, which can be used interchangeably. An optional numeric value can be appended to top/first to specify the maximum result size to be returned. If the number is left out, a result size of 1 is assumed.</p>
+    </div>  
+
+      
+</div>
+<div class="exampleblock">
+<div class="title">예제 8. <code>Top</code> 과 <code>First</code>로 결과 크기를 한계짓기 : </div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">User findFirstByOrderByLastnameAsc();
+
+User findTopByOrderByAgeDesc();
+
+Page&lt;User&gt; queryFirst10ByLastname(String lastname, Pageable pageable);
+
+Slice&lt;User&gt; findTop3ByLastname(String lastname, Pageable pageable);
+
+List&lt;User&gt; findFirst10ByLastname(String lastname, Sort sort);
+
+List&lt;User&gt; findTop10ByLastname(String lastname, Pageable pageable);</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p> Limiting 표현은 또한 <code>Distinct</code>키워드를 지원합니다. 또한 결과 셋이 하나의 인스턴스로 제한된 쿼리들을 위해 결과를 <code>Optional</code>로 포장(wrapping)하는 것도 지원됩니다 .
+      </p>
+    </div>
+    <div class="originalArticle">
+      <p>The limiting expressions also support the <code>Distinct</code> keyword. Also, for the queries limiting the result set to one instance, wrapping the result into an <code>Optional</code> is supported.</p>
+    </div>  
+
+      
+
+
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>만약 페이지네이션이나 슬라이싱이 제한된 쿼리 페이지네이션에 적용이 되면, (사용가능한 페이지숫자들에 적용이 되면) 이것은 제한된 결과내에서 적용됩니다. </p>
+
+     
+    </div>
+    <div class="originalArticle">
+      <p>If pagination or slicing is applied to a limiting query pagination (and the calculation of the number of pages available) then it is applied within the limited result.</p>
+    </div>  
+
+      
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+    <div class="translateArticle">
+      <code>Sort</code>파라미터를 통한 동적 정렬과 결과값을 limiting 하는 것의 조합은 쿼리메소드를 나타내게 하는 것을 허용하게 해줍니다. ( 뒷부분에 나온 for문인데 잘 이해가 안된다.  for the 'K' smallest as well as for the 'K' biggest elements.)
+    </div>
+    <div class="originalArticle">
+      Note that limiting the results in combination with dynamic sorting via a <code>Sort</code> parameter allows to express query methods for the 'K' smallest as well as for the 'K' biggest elements.
+    </div>  
+
+      
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="repositories.query-streaming"><a class="anchor" href="#repositories.query-streaming"></a>3.4.6. 쿼리 결과 Streaming 하기</h4>
+<div class="paragraph">
+    <div class="translateArticle">
+     <p> 쿼리 메소드의 결과값은 Java8의 <code>Stream&lt;T&gt;</code>를 이용하여 점차적으로 처리될 수 있습니다. 단순히 쿼리의 결과를 <code>Stream</code> 으로 포장( wrapping )하여, 데이터 스토어 특정 메소드들은 스트리밍을 하는데 사용됩니다. </p>
+
+
+     
+    </div>
+    <div class="originalArticle">
+      <p>The results of query methods can be processed incrementally by using a Java 8 <code>Stream&lt;T&gt;</code> as return type. Instead of simply wrapping the query results in a <code>Stream</code> data store specific methods are used to perform the streaming.</p>
+    </div>  
+
+      
+</div>
+<div class="exampleblock">
+<div class="title">예제 9. 자바8로 결과값 하기 : <code>Stream&lt;T&gt;</code></div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Query("select u from User u")
+Stream&lt;User&gt; findAllByCustomQueryAndStream();
+
+Stream&lt;User&gt; readAllByFirstnameNotNull();
+
+@Query("select u from User u")
+Stream&lt;User&gt; streamAllPaged(Pageable pageable);</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+    <div class="translateArticle">
+      <code>Stream</code>은 잠재적으로 데이터스토어특정자원을 포장(wrap)하고 사용뒤에 반드시 닫혀져야 합니다. 당신은 직접 <code>Stream</code> 를 <code>close()</code>를 사용하여 닫아주거나 Java7의 try-with-resources블록을 사용할 수도 있습니다 .
+    </div>
+    <div class="originalArticle">
+      A <code>Stream</code> potentially wraps underlying data store specific resources and must therefore be closed after usage. You can either manually close the <code>Stream</code> using the <code>close()</code> method or by using a Java 7 try-with-resources block.
+    </div>  
+
+      
+</td>
+</tr>
+</table>
+</div>
+<div class="exampleblock">
+<div class="title">예제 10. <code>Stream&lt;T&gt;</code> 와 try-with-resources 블록으로 작업해보기</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">try (Stream&lt;User&gt; stream = repository.findAllByCustomQueryAndStream()) {
+  stream.forEach(…);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+    <div class="translateArticle">
+      모든 스프링 데이터 모듈이 현재 <code>Stream&lt;T&gt;</code>를 반환타입으로 제공하는 것은 아닙니다 .
+    </div>
+    <div class="originalArticle">
+      Not all Spring Data modules currently support <code>Stream&lt;T&gt;</code> as a return type.
+    </div>  
+      
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="repositories.create-instances"><a class="anchor" href="#repositories.create-instances"></a>3.5. 리파지토리 인스턴스 생성하기</h3>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>이 섹션에서는 당신은 리파지토리 인터페이스 정의를 위한 인스턴스들을 생성해보고 빈도 정의해봅니다.. 이것을 하는 한가지 방법은 스프링데이터모듈에 있는 Spring 네임 스페이스를 사용하는 것입니다. 비록 우리가 일반적으로 자바설정 스타일의 설정을 추천하지만, 스프링 데이터 모듈은 리파지토리 메커니즘을 지원합니다. </p>
+
+    </div>
+    <div class="originalArticle">
+      <p>In this section you create instances and bean definitions for the repository interfaces defined. One way to do so is using the Spring namespace that is shipped with each Spring Data module that supports the repository mechanism although we generally recommend to use the Java-Config style configuration.</p>
+    </div>  
+
+      
+</div>
+<div class="sect3">
+<h4 id="repositories.create-instances.spring"><a class="anchor" href="#repositories.create-instances.spring"></a>3.5.1. XML configuration</h4>
+<div class="paragraph">
+    <div class="translateArticle">
+     <p> 각각의 스프링 데이터 모듈은 repository 요소들을 포함하며 이 요소들은 단순하게 스프링이 스캔하는 base Package를 정의하게 해줍니다. </p>
+     
+    </div>
+    <div class="originalArticle">
+      <p>Each Spring Data module includes a repositories element that allows you to simply define a base package that Spring scans for you.</p>
+    </div>  
+
+      
+</div>
+<div class="exampleblock">
+<div class="title">예제 11. XML을 통한 SPring data Repository 활성화</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.springframework.org/schema/data/jpa"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/data/jpa
+    http://www.springframework.org/schema/data/jpa/spring-jpa.xsd"&gt;
+
+  &lt;repositories base-package="com.acme.repositories" /&gt;
+
+&lt;/beans:beans&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>예전의 예제에서, 스프링은 <code>Repository</code>나 그 하위 인터페이스를 상속한 인터페이스들을 위해서 <code>com.acme.repositories</code>를 스캔을 하기로 되어있으며, 여기서의 모든 하위패키지들들을 스캔하기로 되어있습니다. 각각의 인터페이스가 발견되면 인프라스트럭쳐는 특정기술-영속 <code>FactoryBean</code>에 등록을 하여 적절한 프록시를 만들어 쿼리 메소드의 실행을 다루게 됩니다. 각각의 빈은 인터페이스로 추론된 빈 네임 아래 등록됩니다. 그래서 <code>UserRepository</code> 의 인터페이스는 <code>userRepository</code>로 등록이 될 것입니다. <code>base-package</code>속성은 와일드카드를 허용하여 당신은 스캔될 패키지로 패턴을 사용할 수도 있습니다 .</p>
+    </div>
+    <div class="originalArticle">
+      <p>In the preceding example, Spring is instructed to scan <code>com.acme.repositories</code> and all its sub-packages for interfaces extending <code>Repository</code> or one of its sub-interfaces. For each interface found, the infrastructure registers the persistence technology-specific <code>FactoryBean</code> to create the appropriate proxies that handle invocations of the query methods. Each bean is registered under a bean name that is derived from the interface name, so an interface of <code>UserRepository</code> would be registered under <code>userRepository</code>. The <code>base-package</code> attribute allows wildcards, so that you can define a pattern of scanned packages.</p>
+    </div>  
+
+      
+</div>
+<div class="sect4">
+<h5 id="_using_filters"><a class="anchor" href="#_using_filters"></a>Using filters</h5>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>기본적으로 인프라스트럭쳐는 설정된 base package 밑의 각각의 특정영속기술 <code>Repository</code>하위 인터페이스를 골라서, 그것을 위한 빈 인스턴스를 생성합니다. 그러나 당신은 좀더 상세한 설정을 원할 수도 있습니다. 이를 위해서 당신은 <code>&lt;include-filter /&gt;</code> 나 <code>&lt;exclude-filter /&gt;</code>를 요소를 <code>&lt;repositories /&gt;</code> 내부에 사용할 수도 있습니다. 이러한 문법은 스프링의 콘텍스트 네임스페이스와 정확히 동일합니다. 세부적인 사항은  <a href="{spring-framework-docs}/beans.html#beans-scanning-filters">스프링 레퍼런스 문서</a>를 보시길 바랍니다. (역주: 번역문서라 스프링 공홈 변수 설정이 안됨ㅠ)   </p>
+
+      
+    </div>
+    <div class="originalArticle">
+      <p>By default the infrastructure picks up every interface extending the persistence technology-specific <code>Repository</code> sub-interface located under the configured base package and creates a bean instance for it. However, you might want more fine-grained control over which interfaces bean instances get created for. To do this you use <code>&lt;include-filter /&gt;</code> and <code>&lt;exclude-filter /&gt;</code> elements inside <code>&lt;repositories /&gt;</code>. The semantics are exactly equivalent to the elements in Spring&#8217;s context namespace. For details, see <a href="{spring-framework-docs}/beans.html#beans-scanning-filters">Spring reference documentation</a> on these elements.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>예를 들자면, 리파지토리에서 인스턴스화되는 특정 인터페이스를 제외하기 위해서 당신은 다음의 설정을 할 수도 있습니다 :  </p>
+    </div>
+    <div class="originalArticle">
+      <p>For example, to exclude certain interfaces from instantiation as repository, you could use the following configuration:</p>
+    </div>  
+
+      
+</div>
+<div class="exampleblock">
+<div class="title">예제 12.  exclude-filter 요소 사용해보기</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;repositories base-package="com.acme.repositories"&gt;
+  &lt;context:exclude-filter type="regex" expression=".*SomeRepository" /&gt;
+&lt;/repositories&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>이 예제는 <code>SomeRepository</code> 로 끝나는 모든 요소들이 인스턴스화되지 않게 합니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>This example excludes all interfaces ending in <code>SomeRepository</code> from being instantiated.</p>
+    </div>  
+
+      
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="repositories.create-instances.java-config"><a class="anchor" href="#repositories.create-instances.java-config"></a>3.5.2. 자바설정</h4>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>리파지토리 인프라스트럭쳐는 자바설정에서 특정 저장소 <code>@Enable${store}Repositories</code> 어노테이션을 사용하여 동작합니다. 스프링콘테이너에서 자바 기반의 설정에 대한 소개를 보기 위해 , 레퍼런스 문서를 보세요.<span class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</span></p>
+    </div>
+    <div class="originalArticle">
+      <p>The repository infrastructure can also be triggered using a store-specific <code>@Enable${store}Repositories</code> annotation on a JavaConfig class. For an introduction into Java-based configuration of the Spring container, see the reference documentation.<span class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</span></p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>스프링 데이터 리파지토리를 활성화시키는 간단한 설정입니다.</p>
+    </div>
+    <div class="originalArticle">
+      <p>A sample configuration to enable Spring Data repositories looks something like this.</p>
+    </div>  
+
+      
+</div>
+<div class="exampleblock">
+<div class="title">예제 13. 간단한 어노테이션 리파지토리 설정 기반의 </div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Configuration
+@EnableJpaRepositories("com.acme.repositories")
+class ApplicationConfiguration {
+
+  @Bean
+  public EntityManagerFactory entityManagerFactory() {
+    // …
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+    <div class="translateArticle">
+    예제에서는 JPA기반의 어노테이션을 사용하였지만 당신이 실제로 사용하는 저장소모듈에 따라 바꿔줄 수 있습니다. <code>EntityManagerFactory</code>빈의 정의에 똑같이 적용이 됩니다. 특정저장소 설정에 대해 다루는 섹션을 참조하세요 
+    </div>
+    <div class="originalArticle">
+      The sample uses the JPA-specific annotation, which you would change according to the store module you actually use. The same applies to the definition of the <code>EntityManagerFactory</code> bean. Consult the sections covering the store-specific configuration.
+    </div>  
+
+      
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="repositories.create-instances.standalone"><a class="anchor" href="#repositories.create-instances.standalone"></a>3.5.3. 독립적 사용 (Standalone usage)</h4>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>당신은 또한 스프링 컨테이너의 바깥에서 repository infrastructure를 사용할 수 있습니다. 예를 들자면 CDI환경도 있습니다. 당신은 여전히 클래스 패스에 스프링 라이브러리가 필요할 것이지만, 일반적으로 계획에 따라서 리파지토리들을 설정할 수 있습니다. 리파지토리 지원을 제공하는 스프링 데이터 모듈은 당신이 사용할 수 있는 특정기술영속저장소 RepositoryFactory를 가지고 있을 수 있습니다 .</p>
+
+    </div>
+    <div class="originalArticle">
+      <p>You can also use the repository infrastructure outside of a Spring container, e.g. in CDI environments. You still need some Spring libraries in your classpath, but generally you can set up repositories programmatically as well. The Spring Data modules that provide repository support ship a persistence technology-specific RepositoryFactory that you can use as follows.</p>
+    </div>  
+
+      
+</div>
+<div class="exampleblock">
+<div class="title">예제 14. 리파지토리 팩토리의 독립적인 사용. Standalone usage of repository factory</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">RepositoryFactorySupport factory = … // Instantiate factory here
+UserRepository repository = factory.getRepository(UserRepository.class);</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="repositories.custom-implementations"><a class="anchor" href="#repositories.custom-implementations"></a>    <div class="translateArticle">
+      3.6. 스프링 데이터 리파지토리의 커스텀 구현
+    </div>
+    <div class="originalArticle">
+      3.6. Custom implementations for Spring Data repositories
+    </div>  
+
+      </h3>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>종종 적은 리파지토리 메소드를 위해 커스텀 구현을 제공해야할 필요가 있습니다. 스프링 데이터 리파지토리는 쉽게 커스텀 리파지토리 코드를 제공하고 , 이것을 일반적인 CRUD추상화와 쿼리 메소드 기능에 통합시키게 해줍니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>Often it is necessary to provide a custom implementation for a few repository methods. Spring Data repositories easily allow you to provide custom repository code and integrate it with generic CRUD abstraction and query method functionality.</p>
+    </div>  
+
+      
+</div>
+<div class="sect3">
+<h4 id="repositories.single-repository-behaviour"><a class="anchor" href="#repositories.single-repository-behaviour"></a>    <div class="translateArticle">
+      3.6.1. 단일 리파지토리에 커스텀 행동 추가해보기
+    </div>
+    <div class="originalArticle">
+      3.6.1. Adding custom behavior to single repositories
+    </div>  
+
+      </h4>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>
+        리파지토리에 커스텀 기능을 좀 더 넣기 위해, 당신은 먼저 인터페이스를 정의하고, 그 커스텀 기능을 위한 구현체를 정의해야 합니다. repository 인터페이스를 사용하여 커스텀 인터페이스를 확장하세요. 
+
+        </p>
+    </div>
+    <div class="originalArticle">
+      <p>To enrich a repository with custom functionality you first define an interface and an implementation for the custom functionality. Use the repository interface you provided to extend the custom interface.</p>
+    </div>  
+
+      
+</div>
+<div class="exampleblock">
+<div class="title">예제 15. 커스텀 리파지토리 기능을 위한 인터페이스</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">interface UserRepositoryCustom {
+  public void someCustomMethod(User user);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock">
+<div class="title">예제 16. 커스텀 리파지토리 기능 구현체</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">class UserRepositoryImpl implements UserRepositoryCustom {
+
+  public void someCustomMethod(User user) {
+    // Your custom implementation
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+    <div class="translateArticle">
+      다른 핵심리파지토리 인터페이스와 비교해봤을 때, 클래스에서 가장 중요하게 발견되는 부분은 이름의 <code>Impl</code> 접미어입니다. (하단 참조 )
+
+    </div>
+    <div class="originalArticle">
+      The most important bit for the class to be found is the <code>Impl</code> postfix of the name on it compared to the core repository interface (see below).
+    </div>  
+
+      
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>그 스스로의 구현은 스프링데이터에 의존하지 않으며, 정식 스프링빈이 될 수 있습니다. 그러므로 당신은 JDBCTemplate 같은 다른 빈처럼, 표준 의존성주입행동을 주입레퍼런스로써 사용할 수 있습니다. 
+            aspects에 참여시키는 것같은 일을 할 수가 있습니다. 
+            </p>
+    </div>
+    <div class="originalArticle">
+      <p>The implementation itself does not depend on Spring Data and can be a regular Spring bean. So you can use standard dependency injection behavior to inject references to other beans like a JdbTemplate, take part in aspects, and so on.</p>
+    </div>  
+
+      
+</div>
+<div class="exampleblock">
+<div class="title">예제 17. 당신의 기본적인 리파지토리 인터페이스 변경 Changes to the your basic repository interface</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">interface UserRepository extends CrudRepository&lt;User, Long&gt;, UserRepositoryCustom {
+
+  // Declare query methods here
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>이제 당신의 표준 리파지토리 인터페이스를 커스텀버젼으로 확장해봅시다. CRUD와 커스텀 기능을 조합하여 클라이언트에게 사용가능하게 해봅시다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>Let your standard repository interface extend the custom one. Doing so combines the CRUD and custom functionality and makes it available to clients.</p>
+    </div>  
+
+      
+</div>
+<div class="sect4">
+<h5 id="_configuration"><a class="anchor" href="#_configuration"></a>설정</h5>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>만약 당신이 네임스페이스 설정을 사용한다면 리파지토리 인프라스트럭쳐는 자동으로 리파지토리를 발견한 곳에 있는 패키지에서 클래스를 스캔하여 커스텀 구현체를 찾을 것입니다. 이러한 클래스들은 네임스페이스 요소 속성 <code>repository-impl-postfix</code>을 따를 필요가 있습니다. 이러한 접미어는 기본적으로 <code>Impl</code>입니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>If you use namespace configuration, the repository infrastructure tries to autodetect custom implementations by scanning for classes below the package we found a repository in. These classes need to follow the naming convention of appending the namespace element&#8217;s attribute <code>repository-impl-postfix</code> to the found repository interface name. This postfix defaults to <code>Impl</code>.</p>
+    </div>  
+
+      
+</div>
+<div class="exampleblock">
+<div class="title">예제 18. 설정 예제Configuration example</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;repositories base-package="com.acme.repository" /&gt;
+
+&lt;repositories base-package="com.acme.repository" repository-impl-postfix="FooBar" /&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>첫번째 설정 예제에서는 <code>com.acme.repository.UserRepositoryImpl</code> 라는 클래스를 찾아 커스텀 리파지토리 구현체로 작동하게 할 것입니다. 반면에 두번째 예제 줄에서는 <code>com.acme.repository.UserRepositoryFooBar</code>를 찾을 것입니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>The first configuration example will try to look up a class <code>com.acme.repository.UserRepositoryImpl</code> to act as custom repository implementation, whereas the second example will try to lookup <code>com.acme.repository.UserRepositoryFooBar</code>.</p>
+    </div>  
+
+      
+</div>
+<div class="sect5">
+<h6 id="_manual_wiring"><a class="anchor" href="#_manual_wiring"></a>수동 와이어링 Manual wiring</h6>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>만약 당신의 커스텀 구현체가 어노테이션 기반의 설정을 사용한다면 이러한 접근은 잘 동작할 것이며, 커스텀 구현체는 다른 스프링 빈으로 잘 다뤄질 것입니다. 만약 커스텀 구현체가 특별한 와이어링을 원한다면 당신은 단순히 빈을 선언하고 앞서 선언한 컨벤션에 따라 이름지으면 됩니다. 인프라스트럭쳐는 수동으로, 새로 빈을 만드는 대신에 이름으로 정의된 빈정의를 참조할 것입니다. 
+    </p>
+    </div>
+    <div class="originalArticle">
+      <p>The approach just shown works well if your custom implementation uses annotation-based configuration and autowiring only, as it will be treated as any other Spring bean. If your custom implementation bean needs special wiring, you simply declare the bean and name it after the conventions just described. The infrastructure will then refer to the manually defined bean definition by name instead of creating one itself.</p>
+    </div>  
+
+      
+</div>
+<div class="exampleblock">
+<div class="title">예제19. 커스텀 구현체의 수동 와이어링 Manual wiring of custom implementations</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;repositories base-package="com.acme.repository" /&gt;
+
+&lt;beans:bean id="userRepositoryImpl" class="…"&gt;
+  &lt;!-- further configuration --&gt;
+&lt;/beans:bean&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="repositories.custom-behaviour-for-all-repositories"><a class="anchor" href="#repositories.custom-behaviour-for-all-repositories"></a>3.6.2. 모든 리파지토리들에 커스텀 행동 추가하기 Adding custom behavior to all repositories</h4>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>만약 당신이 모든 리파지토리 인터페이스에 하나의 메소드를 추가하고 싶을 때 이전의 접근들은 실현가능하지가 않았습니다.  </p>
+    </div>
+    <div class="originalArticle">
+      <p>The preceding approach is not feasible when you want to add a single method to all your repository interfaces.  </p>
+    </div>  
+
+      
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>    <div class="translateArticle">
+        모든 리파지토리에서 커스텀 행동을 추가하기 위해, 먼저 공유행동으로 선언할 중계인터페이스를 추가합니다. 
+    </div>
+    <div class="originalArticle">
+      To add custom behavior to all repositories, you first add an intermediate interface to declare the shared behavior
+    </div>  
+
+      </p>
+<div class="exampleblock">
+<div class="title">예제 20. 커스텀 공유 행동 선언하는 인터페이스An interface declaring custom shared behavior</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@NoRepositoryBean
+public interface MyRepository&lt;T, ID extends Serializable&gt;
+  extends PagingAndSortingRepository&lt;T, ID&gt; {
+
+  void sharedCustomMethod(ID id);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>    <div class="translateArticle">
+      이제 당신의 독립적인 리파지토리 인터페이스는 <code>Repository</code>대신에 이 중계인터페이스를 상속하고, 선언된 기능을 포함할 것입니다. 
+
+     
+    </div>
+    <div class="originalArticle">
+      Now your individual repository interfaces will extend this intermediate interface instead of the <code>Repository</code> interface to include the functionality declared.
+    </div>  
+
+      </p>
+</li>
+<li>
+<p>    <div class="translateArticle">
+      다음으로, 영속기술특징 리파지토리 빈 클래스를 상속하는 중계인터페이스의 구현체를 생성합니다. 
+      이 클래스는 리파지토리 프록시를 위한 커스텀 base 클래스로 동작할 것입니다 .
+    </div>
+    <div class="originalArticle">
+      Next, create an implementation of the intermediate interface that extends the persistence technology-specific repository base class. This class will then act as a custom base class for the repository proxies.
+    </div>  
+
+      </p>
+<div class="exampleblock">
+<div class="title">예제 21. 커스텀 리파지토리 베이스 클래스 Custom repository base class</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public class MyRepositoryImpl&lt;T, ID extends Serializable&gt;
+  extends SimpleJpaRepository&lt;T, ID&gt; implements MyRepository&lt;T, ID&gt; {
+
+  private final EntityManager entityManager;
+
+  public MyRepositoryImpl(Class&lt;T&gt; domainClass, EntityManager entityManager) {
+    super(domainClass, entityManager);
+
+    // Keep the EntityManager around to used from the newly introduced methods.
+    this.entityManager = entityManager;
+  }
+
+  public void sharedCustomMethod(ID id) {
+    // implementation goes here
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      spring의 <code>&lt;repositories /&gt;</code> 네임스페이스의 기본행동은 <code>base-package</code>아래에 있는 모든 인터페이스들에 대한 구현체를 제공하는 것입니다. 이것은 현재 상태로 남아있다면 구현체는 <code>MyRepository</code>의 인스턴스가 스프링에 의해 생성된다는 것을 의미합니다. 물론 이것은 <code>Repository</code>와 실제 엔티티를 위해 정의한 리파지토리 인터페이스간에서 중계자로 행동하기를 바라고 있는 와중에 의도한 것이 아닙니다. <code>Repository</code>를 상속하는 인터페이스를 제외시키기 위해 당신은 그것을 <code>@NoRepositoryBean</code>로 어노테이션하거나, <code>base-package</code>바깥으로 제외시켜줘야할 것입니다. 
+    </div>
+    <div class="originalArticle">
+      The default behavior of the Spring <code>&lt;repositories /&gt;</code> namespace is to provide an implementation for all interfaces that fall under the <code>base-package</code>. This means that if left in its current state, an implementation instance of <code>MyRepository</code> will be created by Spring. This is of course not desired as it is just supposed to act as an intermediary between <code>Repository</code> and the actual repository interfaces you want to define for each entity. To exclude an interface that extends <code>Repository</code> from being instantiated as a repository instance, you can either annotate it with <code>@NoRepositoryBean</code> (as seen above) or move it outside of the configured <code>base-package</code>.
+    </div>  
+
+      </p>
+</div>
+</li>
+<li>
+    <div class="translateArticle">
+      <p>그러고 난 후에 커스텀 리파지토리 팩토리를 만들어 기본 <code>RepositoryFactoryBean</code>를 대체하여 커스텀 <code>RepositoryFactory</code>을 만들어봅시다. 그러면 새로운 리파지토리 팩토리는 당신에게 <code>Repository</code>인터페이스를 상속하는 어떤 인터페이스의 구현체로써 <code>MyRepositoryImpl</code>를 제공할 것이고, 이것은 <code>SimpleJpaRepository</code> 구현체를 대체할 것입니다. 
+      </p>
+
+    </div>
+    <div class="originalArticle">
+      <p>Then create a custom repository factory to replace the default <code>RepositoryFactoryBean</code> that will in turn produce a custom <code>RepositoryFactory</code>. The new repository factory will then provide your <code>MyRepositoryImpl</code> as the implementation of any interfaces that extend the <code>Repository</code> interface, replacing the <code>SimpleJpaRepository</code> implementation you just extended.</p>
+    </div>  
+
+      
+<div class="exampleblock">
+<div class="title">예제 22. 커스텀 리파지토리 팩토리 빈 Custom repository factory bean</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public class MyRepositoryFactoryBean&lt;R extends JpaRepository&lt;T, I&gt;, T,
+  I extends Serializable&gt; extends JpaRepositoryFactoryBean&lt;R, T, I&gt; {
+
+  protected RepositoryFactorySupport createRepositoryFactory(EntityManager em) {
+    return new MyRepositoryFactory(em);
+  }
+
+  private static class MyRepositoryFactory&lt;T, I extends Serializable&gt;
+    extends JpaRepositoryFactory {
+
+    private final EntityManager em;
+
+    public MyRepositoryFactory(EntityManager em) {
+
+      super(em);
+      this.em = em;
+    }
+
+    protected Object getTargetRepository(RepositoryMetadata metadata) {
+      return new MyRepositoryImpl&lt;T, I&gt;((Class&lt;T&gt;) metadata.getDomainClass(), em);
+    }
+
+    protected Class&lt;?&gt; getRepositoryBaseClass(RepositoryMetadata metadata) {
+      return MyRepositoryImpl.class;
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>    <div class="translateArticle">
+      마침내, 커스텀 팩토리를 직접적으로 선언을 하거나, 스프링 네임스페이스의 <code>factory-class</code> 속성을 사용하거나 <code>@Enable…</code>어노테이션으로 repository 인프라스트럭쳐를 설정하여서, (마침내) 당신의 커스텀 팩토리 구현체를 사용하게 됩니다. 
+
+     
+    </div>
+    <div class="originalArticle">
+      Finally, either declare beans of the custom factory directly or use the <code>factory-class</code> attribute of the Spring namespace or <code>@Enable…</code> annotation to instruct the repository infrastructure to use your custom factory implementation.
+    </div>  
+
+      </p>
+<div class="exampleblock">
+<div class="title">예제 23. 커스텀 팩토리와 네임스페이스 사용하기 Using the custom factory with the namespace</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;repositories base-package="com.acme.repository"
+  factory-class="com.acme.MyRepositoryFactoryBean" /&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock">
+<div class="title">예제 24. <code>@Enable…</code> 어노테이션과 함께 커스텀 팩토리 사용하기 </div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@EnableJpaRepositories(factoryClass = "com.acme.MyRepositoryFactoryBean")
+class Config {}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="core.extensions"><a class="anchor" href="#core.extensions"></a>    <div class="translateArticle">
+      3.7. 스프링 데이터 익스텐션
+    </div>
+    <div class="originalArticle">
+      3.7. Spring Data extensions
+    </div>  
+
+      </h3>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      이 섹션문서는 스프링 데이터 익스텐션(확장)문서의 모음으로 스프링 데이터 익스텐션은 스프링 데이터의 사용을 다양한 context로써, 가능케 해줍니다. 현재는 대부분의 통합이 SpringMVC를 대상으로합니다. 
+    </div>
+    <div class="originalArticle">
+      This section documents a set of Spring Data extensions that enable Spring Data usage in a variety of contexts. Currently most of the integration is targeted towards Spring MVC.
+    </div>  
+
+      </p>
+</div>
+<div class="sect3">
+<h4 id="core.web"><a class="anchor" href="#core.web"></a>3.7.1. Web support</h4>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+    <div class="translateArticle">
+      이 섹션은 스프링 데이터 웹서포트를 위한 문서를 포함하며 스프링 데이터 웹서포트는 1.6 범위에서 스프링데이터 Commons로 구현되었습니다. 새롭게 소개된 지원이 꽤 많은 것들을 변화시켜서, 이전의 행동에 관한 문서를 우리는  <a href="#web.legacy">레거시 웹 지원</a>에 가지고 있습니다.  
+    </div>
+    <div class="originalArticle">
+      This section contains the documentation for the Spring Data web support as it is implemented as of Spring Data Commons in the 1.6 range. As it the newly introduced support changes quite a lot of things we kept the documentation of the former behavior in <a href="#web.legacy">Legacy web support</a>.
+    </div>  
+
+      
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>스프링 데이터 모듈은, 리파지토리 프로그래밍 모델을 지원하는 모듈이라면 다양한 방식의 웹지원을 가지고 있습니다. 
+        웹관련 작업은 classpath의 SpringMVC JARs를 필요로 하며, 그들의 일부는 심지어 Spring Hateoas<span class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnote_2" title="View footnote.">2</a>]</span>를 제공하기도 합니다.  일반적으로 통합 지원은 자바설정클래스에서 <code>@EnableSpringDataWebSupport</code> 어노테이션을 사용함으로써 활성화됩니다. 
+       </p>
+     
+    </div>
+    <div class="originalArticle">
+      <p>Spring Data modules ships with a variety of web support if the module supports the repository programming model. The web related stuff requires Spring MVC JARs on the classpath, some of them even provide integration with Spring HATEOAS <span class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnote_2" title="View footnote.">2</a>]</span>. In general, the integration support is enabled by using the <code>@EnableSpringDataWebSupport</code> annotation in your JavaConfig configuration class.</p>
+    </div>  
+
+      
+</div>
+<div class="exampleblock">
+<div class="title">예제25. 스프링 데이터 웹지원 활성화 Enabling Spring Data web support</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Configuration
+@EnableWebMvc
+@EnableSpringDataWebSupport
+class WebConfiguration { }</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p><code>@EnableSpringDataWebSupport</code> 어노테이션은 우리가 뒤에 나올 새로운 컴포넌트를 등록시킵니다. 
+    이것은 클래스패스의 Spring HATEOAS를 감지하여서, hateoas가 있다면 통합 컴포넌트로써 등록을 시킵니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>The <code>@EnableSpringDataWebSupport</code> annotation registers a few components we will discuss in a bit. It will also detect Spring HATEOAS on the classpath and register integration components for it as well if present.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+  아니면 만약 당신이 XML설정을 쓴다면, <code>SpringDataWebSupport</code>나  <code>HateoasAwareSpringDataWebSupport</code>를 스프링 빈으로 등록합니다. 
+    </div>
+    <div class="originalArticle">
+      Alternatively, if you are using XML configuration, register either <code>SpringDataWebSupport</code> or <code>HateoasAwareSpringDataWebSupport</code> as Spring beans:
+    </div>  
+
+      </p>
+</div>
+<div class="exampleblock">
+<div class="title">예제 26. XML에서의 스프링 데이터 웹서포트 활성화 Enabling Spring Data web support in XML</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;bean class="org.springframework.data.web.config.SpringDataWebConfiguration" /&gt;
+
+&lt;!-- If you're using Spring HATEOAS as well register this one *instead* of the former --&gt;
+&lt;bean class="org.springframework.data.web.config.HateoasAwareSpringDataWebConfiguration" /&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="core.web.basic"><a class="anchor" href="#core.web.basic"></a>기본 웹 지원</h5>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      위에 보이는 설정 셋업은 몇가지 기초 컴포넌트들을 등록할 것입니다
+    </div>
+    <div class="originalArticle">
+      The configuration setup shown above will register a few basic components:
+    </div>  
+
+      </p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>    <div class="translateArticle">
+      <code>DomainClassConverter</code> 는 SpringMVC 를 활성화시켜서 요청파라미터나 경로변수로부터 리파지토리 managed도메인클래스를 resolve합니다. 
+    </div>
+    <div class="originalArticle">
+      A <code>DomainClassConverter</code> to enable Spring MVC to resolve instances of repository managed domain classes from request parameters or path variables.
+    </div>  
+
+      </p>
+</li>
+<li>
+<p>    <div class="translateArticle">
+      <code>HandlerMethodArgumentResolver</code> 는 스프링 MVC로 하여금 요청파라미터로부터 Pageable 과 Sort 인스턴스를 resolve하게 해줍니다. 
+    </div>
+    <div class="originalArticle">
+      <code>HandlerMethodArgumentResolver</code> implementations to let Spring MVC resolve Pageable and Sort instances from request parameters.
+    </div>  
+
+      </p>
+</li>
+</ul>
+</div>
+<div class="sect5">
+<h6 id="core.web.basic.domain-class-converter"><a class="anchor" href="#core.web.basic.domain-class-converter"></a>도메인 클래스 콘버터 : DomainClassConverter</h6>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      <code>DomainClassConverter</code>는 SpringMVC 컨트롤러 시그니처에서 직접적으로 도메인 타입을 사용하게 해줍니다. 그래서 당신은 수동적으로 리파지토리를 통해 인스턴스를 찾을 필요가 없습니다. 
+    </div>
+    <div class="originalArticle">
+      The <code>DomainClassConverter</code> allows you to use domain types in your Spring MVC controller method signatures directly, so that you don&#8217;t have to manually lookup the instances via the repository:
+    </div>  
+
+      </p>
+</div>
+<div class="exampleblock">
+<div class="title">예제 27. 메소드 시그니처에서 도메인 타입을 사용하는 스프링 MVC 컨트롤러</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Controller
+@RequestMapping("/users")
+public class UserController {
+
+  @RequestMapping("/{id}")
+  public String showUserForm(@PathVariable("id") User user, Model model) {
+
+    model.addAttribute("user", user);
+    return "userForm";
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      당신이 볼 수 있듯, 메소드가 유저 인스턴스를 직접적으로 받고 더 이상의 검색은 필요하지가 않습니다. 저 인스턴스는 SpringMVC가 경로변수를 도메인 클래스의 id타입으로 전환하게 하여, 결국 도메인 타입에 등록된 리파지토리에서 <code>findOne(…)</code>을 호출하게 합니다. 
+
+      
+    </div>
+    <div class="originalArticle">
+      As you can see the method receives a User instance directly and no further lookup is necessary. The instance can be resolved by letting Spring MVC convert the path variable into the id type of the domain class first and eventually access the instance through calling <code>findOne(…)</code> on the repository instance registered for the domain type.
+    </div>  
+
+      </p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+    <div class="translateArticle">
+      현재 저 리파지토리는 <code>CrudRepository</code> 를 구현을 하여서 전환을 위한 자격을 얻어야 합니다 .
+    </div>
+    <div class="originalArticle">
+      Currently the repository has to implement <code>CrudRepository</code> to be eligible to be discovered for conversion.
+    </div>  
+
+      
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect5">
+<h6 id="core.web.basic.paging-and-sorting"><a class="anchor" href="#core.web.basic.paging-and-sorting"></a>    <div class="translateArticle">
+      페이지화와 정렬을 위한 HandlerMethodArgumentResolvers
+    </div>
+    <div class="originalArticle">
+      HandlerMethodArgumentResolvers for Pageable and Sort
+    </div>  
+
+      </h6>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>위의 소스설정 일부는 또한 <code>PageableHandlerMethodArgumentResolver</code>를 등록하고 <code>SortHandlerMethodArgumentResolver</code>의 인스턴스를 등록합니다. 이 등록은 <code>Pageable</code> 과 <code>Sort</code>가 유효한 컨틀롤러 메소드 아규먼트가 되게 해줍니다 .</p>
+
+
+    </div>
+    <div class="originalArticle">
+      <p>The configuration snippet above also registers a <code>PageableHandlerMethodArgumentResolver</code> as well as an instance of <code>SortHandlerMethodArgumentResolver</code>. The registration enables <code>Pageable</code> and <code>Sort</code> being valid controller method arguments</p>
+    </div>  
+
+      
+</div>
+<div class="exampleblock">
+<div class="title">예제 28. Pageable을 컨트롤러 메소드 아규먼트로 사용하기. Using Pageable as controller method argument</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Controller
+@RequestMapping("/users")
+public class UserController {
+
+  @Autowired UserRepository repository;
+
+  @RequestMapping
+  public String showUsers(Model model, Pageable pageable) {
+
+    model.addAttribute("users", repository.findAll(pageable));
+    return "users";
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+     이 메소드 시그니처는 다음의 설정을 사용하여  스프링 MVC가 요청 파라미터로부터 Pageable 인스턴스를 만들어내게 시도합니다. 
+    </div>
+    <div class="originalArticle">
+      This method signature will cause Spring MVC try to derive a Pageable instance from the request parameters using the following default configuration:
+    </div>  
+
+      </p>
+</div>
+<table class="tableblock frame-all grid-all">
+<caption class="title">표 1. Pageable 인스턴스를 위해 평가된 요청파라미터 Request parameters evaluated for Pageable instances</caption>
+<colgroup>
+<col>
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">얻기 원하는 페이지, 0 indexed and 기본은 0.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">얻기 원하는 페이지 크기, 기본 20.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sort</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">다음의 형식으로 정렬될 형식 <code>property,property(,ASC|DESC)</code>. 기본 정렬 방향은 오름차순(asc). 만약 방향을 바꾸고 싶은 여러개의<code>sort</code> 파라미터가 있다면 다음과 같이.., e.g. <code>?sort=firstname&amp;sort=lastname,asc</code>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>
+        이러한 행동을 커스터마이징 하고 싶다면   <code>@Enable</code>-어노테이션을 사용하는 대신에<code> SpringDataWebConfiguration</code>를 상속하거나 HATEOAS-활성화 같은 것을 하거나, <code>pageableResolver()</code>나<code>sortResolver()</code>메소드를 오버라이드하고 당신의 커스터마이징된 설정파일을 임포트하세요.
+
+      </p>
+    </div>
+    <div class="originalArticle">
+      <p>To customize this behavior extend either <code>SpringDataWebConfiguration</code> or the HATEOAS-enabled equivalent and override the <code>pageableResolver()</code> or <code>sortResolver()</code> methods and import your customized configuration file instead of using the <code>@Enable</code>-annotation.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p> 이러한 경우 당신은 여러개의 테이블을 위해서, 요청으로부터 여러개의 <code>Pageable</code> 나 <code>Sort</code> 인스턴스가 resolved되기를 필요로 할지도 모릅니다.  예를 들자면 당신은 스프링의  <code>@Qualifier</code>어노테이션을 사용하여 다른 것들끼리 구별을 할 수도 있습니다. 요청파라미터는 그러면 <code>${qualifier}_</code>로 prefixed됩니다. 그래서 메소드 시그니처가 다음과 같이 됩니다 : 
+</p>
+    </div>
+    <div class="originalArticle">
+      <p>In case you need multiple <code>Pageable</code> or <code>Sort</code> instances to be resolved from the request (for multiple tables, for example) you can use Spring&#8217;s <code>@Qualifier</code> annotation to distinguish one from another. The request parameters then have to be prefixed with <code>${qualifier}_</code>. So for a method signature like this:</p>
+    </div>  
+
+      
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public String showUsers(Model model,
+      @Qualifier("foo") Pageable first,
+      @Qualifier("bar") Pageable second) { … }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      당신은 <code>foo_page</code> 나 <code>bar_page</code>같은 것을 만들어낼 것입니다 .
+    </div>
+    <div class="originalArticle">
+      you have to populate <code>foo_page</code> and <code>bar_page</code> etc.
+    </div>  
+
+      </p>
+</div>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      메소드에 전해진 기본 <code>Pageable</code>  는  <code>new PageRequest(0, 20)</code>와 같습니다만, <code>Pageable</code>  파라미터에서 <code>@PageableDefaults</code> 어노테이션을 통해서 커스터마이징 될 수 있습니다. 
+    </div>
+    <div class="originalArticle">
+      The default <code>Pageable</code> handed into the method is equivalent to a <code>new PageRequest(0, 20)</code> but can be customized using the <code>@PageableDefaults</code> annotation on the <code>Pageable</code> parameter.
+    </div>  
+
+      </p>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="core.web.pageables"><a class="anchor" href="#core.web.pageables"></a>Hypermedia support for Pageables</h5>
+<div class="paragraph">
+<p>
+      <div class="translateArticle">
+        Spring HATEOAS는 표현 모델 클래스 <code>PagedResources</code>를 가지고 있어서 <code>Page</code>인스턴스를, 필요한 <code>Page</code>메타데이터로 풍부하게 해줄 수 있을 뿐만 아니라, 링크가 클라이언트가 쉽게 페이지를 네비게이트하게 해줍니다. Page에서 <code>PagedResources</code>으로의 전환은 Spring HATEOAS  <code>ResourceAssembler</code> 인터페이스, <code>PagedResourcesAssembler</code>를 구현함으로써 이뤄집니다.
+
+        </code>.
+      </div>
+      <div class="originalArticle">
+        Spring HATEOAS ships with a representation model class <code>PagedResources</code> that allows enrichting the content of a <code>Page</code> instance with the necessary <code>Page</code> metadata as well as links to let the clients easily navigate the pages. The conversion of a Page to a <code>PagedResources</code> is done by an implementation of the Spring HATEOAS <code>ResourceAssembler</code> interface, the <code>PagedResourcesAssembler</code>.
+      </div>  
+  
+        
+
+</p>
+</div>
+<div class="exampleblock">
+<div class="title">예제 29. PagedResourcesAssembler를 컨트롤러 메소드 아규먼트로 사용하기. Using a PagedResourcesAssembler as controller method argument</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Controller
+class PersonController {
+
+  @Autowired PersonRepository repository;
+
+  @RequestMapping(value = "/persons", method = RequestMethod.GET)
+  HttpEntity&lt;PagedResources&lt;Person&gt;&gt; persons(Pageable pageable,
+    PagedResourcesAssembler assembler) {
+
+    Page&lt;Person&gt; persons = repository.findAll(pageable);
+    return new ResponseEntity&lt;&gt;(assembler.toResources(persons), HttpStatus.OK);
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>위 처럼  설정을 활성화하는 것은 <code>PagedResourcesAssembler</code>가 컨트롤러 메소드 아규먼트로 사용되게 해줍니다. 여기서 <code>toResources(…)</code> 를 호출하는 것은 다음과 같은 것을 발생하게 해줍니다 :  </p>
+    </div>
+    <div class="originalArticle">
+      <p>Enabling the configuration as shown above allows the <code>PagedResourcesAssembler</code> to be used as controller method argument. Calling <code>toResources(…)</code> on it will cause the following:</p>
+    </div>  
+
+      
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>    <div class="translateArticle">
+      <code>Page</code>의 내용이  <code>PagedResources</code>인스턴스의 내용(content)이 되게 해줍니다 
+    </div>
+    <div class="originalArticle">
+      The content of the <code>Page</code> will become the content of the <code>PagedResources</code> instance.
+    </div>  
+
+      </p>
+</li>
+
+    <div class="translateArticle">
+      <li>
+
+        <p><code>PagedResources</code>는, 동봉되어 채워진 정보와  함께 <code>PageMetadata</code> 인스턴스를 얻어서  <code>Page</code>와 기본 <code>PageRequest</code>를 형성합니다. </p>
+</li>
+<li>
+<code>PagedResources</code>는 같이 있는 페이지의 상태에 따라 <code>prev</code>와 <code>next</code> 연결을 얻습니다.. 이 링크는 메소드실행이 연결된 URI를 가리키며, 그 메소드에 추가된 페이지네이션 파라미터는 <code>PageableHandlerMethodArgumentResolver</code>의 설정과 매칭이 되어 링크가 나중에 resolved되게 해줍니다. 
+
+
+
+</li>
+
+    </div>
+    <div class="originalArticle">
+      <li>
+<p>The <code>PagedResources</code> will get a <code>PageMetadata</code> instance attached populated with information form the <code>Page</code> and the underlying <code>PageRequest</code>.</p>
+</li>
+<li>
+<p>The <code>PagedResources</code> gets <code>prev</code> and <code>next</code> links attached depending on the page&#8217;s state. The links will point to the URI the method invoked is mapped to. The pagination parameters added to the method will match the setup of the <code>PageableHandlerMethodArgumentResolver</code> to make sure the links can be resolved later on.</p>
+</li>
+
+    </div>  
+
+      
+
+</ul>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>우리가 30명의 인원 인스턴스를 데이터베이스에 가지고 있다고 해봅시다. 당신은 이제 <code>GET <a href="http://localhost:8080/persons" class="bare">http://localhost:8080/persons</a></code>요청을 해볼 것이고, 이러한 결과를 보게 될 것입니다 </p>
+    </div>
+    <div class="originalArticle">
+      <p>Assume we have 30 Person instances in the database. You can now trigger a request <code>GET <a href="http://localhost:8080/persons" class="bare">http://localhost:8080/persons</a></code> and you&#8217;ll see something similar to this:</p>
+    </div>  
+
+      
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-javascript" data-lang="javascript">{ "links" : [ { "rel" : "next",
+                "href" : "http://localhost:8080/persons?page=1&amp;size=20 }
+  ],
+  "content" : [
+     … // 20 Person instances rendered here
+  ],
+  "pageMetadata" : {
+    "size" : 20,
+    "totalElements" : 30,
+    "totalPages" : 2,
+    "number" : 0
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>
+        당신은 정확한 URI를 만들어내고서, 기본 설정이 앞으로 들어오는 요청에 대해 파라미터를  <code>Pageable</code>로 resolve하는 것을 볼 수가 있습니다. 이것이 의미하는 바는 만약 당신이 저 설정을 바꾼다면 이 연결은 자동적으로 바뀔 것입니다. (역주 : 파라미터값이 바뀌면 page metadata도 바뀐다 이말인듯?) 기본적으로 assembler는 실행될 컨트롤러 메소드를 가리킵니다. 하지만 커스텀 <code>Link</code>를 제시하여 커스터마이징할 수 있고, <code>PagedResourcesAssembler.toResource(…)</code>의 메소드를 오버라이딩하여 페이지네이션 링크를 만드는 데 기반이 될 수 있습니다 .
+      </p>
+    </div>
+    <div class="originalArticle">
+      <p>You see that the assembler produced the correct URI and also picks up the default configuration present to resolve the parameters into a <code>Pageable</code> for an upcoming request. This means, if you change that configuration, the links will automatically adhere to the change. By default the assembler points to the controller method it was invoked in but that can be customized by handing in a custom <code>Link</code> to be used as base to build the pagination links to overloads of the <code>PagedResourcesAssembler.toResource(…)</code> method.</p>
+    </div>  
+
+      
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="core.repository-populators"><a class="anchor" href="#core.repository-populators"></a>
+      <div class="translateArticle">
+        3.7.2. 레파지토리 생성자(popluators)
+      </div>
+      <div class="originalArticle">
+        3.7.2. Repository populators
+      </div>  
+  
+        
+</h4>
+<div class="paragraph">
+<p>
+        <div class="translateArticle">
+      만약 당신이 Spring JDBC 모듈과 함께 작업한다면 당신은 아마 SQL 스크립트를 이용하는 <code>DataSource</code>를 생성하는데 익숙할 것입니다. 비슷한 추상화가 리파지토리 레벨에서 가능한데요. 비록 DDL로써 sql을 사용하지는 않습니다. 왜냐하면 sql은 저장소 의존적이기 때문이죠 . 그렇기 때문에 populator는 XML(스프링의 OXM추상화를 통해)과 JSON(Jackson을 통해)으로  repository에 생성할 데이터를 정의합니다. 
+
+        </div>
+        <div class="originalArticle">
+          If you work with the Spring JDBC module, you probably are familiar with the support to populate a <code>DataSource</code> using SQL scripts. A similar abstraction is available on the repositories level, although it does not use SQL as the data definition language because it must be store-independent. Thus the populators support XML (through Spring&#8217;s OXM abstraction) and JSON (through Jackson) to define data with which to populate the repositories.
+        </div>  
+    
+          
+  </p>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>당신이 <code>data.json</code> 파일을 다음과 같이 가지고 있다고 가정해봅시다 :</p>
+    </div>
+    <div class="originalArticle">
+      <p>Assume you have a file <code>data.json</code> with the following content:</p>
+    </div>  
+
+      
+</div>
+<div class="exampleblock">
+<div class="title">예제 30. JSON으로 정의된 데이터</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-javascript" data-lang="javascript">[ { "_class" : "com.acme.Person",
+ "firstname" : "Dave",
+  "lastname" : "Matthews" },
+  { "_class" : "com.acme.Person",
+ "firstname" : "Carter",
+  "lastname" : "Beauford" } ]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      당신은 Spring Data Commons 에서 제공하는 리파지토리 네임스페이스의 populator 요소를 사용하여서 당신의 리파지토리를 쉽게 populate할 수 있습니다. 이전의 data를 당신의 리파지토리에 populate하기 위해 다음과 같이 해보세요 : 
+    </div>
+    <div class="originalArticle">
+      You can easily populate your repositories by using the populator elements of the repository namespace provided in Spring Data Commons. To populate the preceding data to your PersonRepository , do the following:
+    </div>  
+
+      </p>
+</div>
+<div class="exampleblock">
+<div class="title">Example 31. Jackson Repository populator선언하기 Declaring a Jackson repository populator</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:repository="http://www.springframework.org/schema/data/repository"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/data/repository
+    http://www.springframework.org/schema/data/repository/spring-repository.xsd"&gt;
+
+  &lt;repository:jackson-populator locations="classpath:data.json" /&gt;
+
+&lt;/beans&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+        이 선언은 <code>data.json</code>이 읽혀져서 Jackson <code>ObjectMapper</code>를 통해 역직렬화 되게 해줍니다 .
+    </div>
+    <div class="originalArticle">
+       This declaration causes the <code>data.json</code> file to
+      be read and deserialized via a Jackson <code>ObjectMapper</code>.
+    </div>  
+
+      </p>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>JSON객체가 언마샬될 타입은 JSON문서의 <code>_class</code> 속성을 검사하면서 결정됩니다.  인프라스트럭쳐가 결국 적절한 리파지토리를 선택해서 막 역직렬화된 객체를 다룰 것입니다.  </p>
+    </div>
+    <div class="originalArticle">
+      <p>The type to which the JSON object will be unmarshalled to will be determined by inspecting the <code>_class</code> attribute of the JSON document. The infrastructure will eventually select the appropriate repository to handle the object just deserialized.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      XML을 사용하여  리파지토리들을 채울 데이터를 정의하고 싶다면, 당신은 <code>unmarshaller-populator</code>요소를 사용할 수 있습니다. 당신은 SPRING OXM 공급자가 제공하는 XML marshaller 옵션 중의 하나를 사용하여서 설정을 할 수가 있습니다. <a href="{spring-framework-docs}/oxm.html">스프링 레퍼런스 가이드 문서를 </a>살펴보세요 (역주 : 번역문서라 링크가 깨짐.. { }뭐 이런 변수가 되있다보니;; ㅎㅎ )
+
+
+    </div>
+    <div class="originalArticle">
+      To rather use XML to define the data the repositories shall be populated with, you can use the <code>unmarshaller-populator</code> element. You configure it to use one of the XML marshaller options Spring OXM provides you with. See the <a href="{spring-framework-docs}/oxm.html">Spring reference documentation</a> for details.
+    </div>  
+
+      </p>
+</div>
+<div class="exampleblock">
+<div class="title">    <div class="translateArticle">
+      예제 32. 언마샬링 repository populator(JAXB를 사용한)을 선언하기
+    </div>
+    <div class="originalArticle">
+      Example 32. Declaring an unmarshalling repository populator (using JAXB)
+    </div>  
+
+      </div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:repository="http://www.springframework.org/schema/data/repository"
+  xmlns:oxm="http://www.springframework.org/schema/oxm"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/data/repository
+    http://www.springframework.org/schema/data/repository/spring-repository.xsd
+    http://www.springframework.org/schema/oxm
+    http://www.springframework.org/schema/oxm/spring-oxm.xsd"&gt;
+
+  &lt;repository:unmarshaller-populator locations="classpath:data.json"
+    unmarshaller-ref="unmarshaller" /&gt;
+
+  &lt;oxm:jaxb2-marshaller contextPath="com.acme" /&gt;
+
+&lt;/beans&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="web.legacy"><a class="anchor" href="#web.legacy"></a>
+      <div class="translateArticle">
+        3.7.3. 레거시 웹 지원
+      </div>
+      <div class="originalArticle">
+        3.7.3. Legacy web support
+      </div>  
+  
+        
+</h4>
+<div class="sect4">
+<h5 id="web-domain-class-binding"><a class="anchor" href="#web-domain-class-binding"></a>
+    <div class="translateArticle">
+      스프링 MVC를 위한 도메인 클래스 웹 바인딩
+    </div>
+    <div class="originalArticle">
+      Domain class web binding for Spring MVC
+    </div>  
+
+      
+</h5>
+<div class="paragraph">
+<p>  <div class="translateArticle">
+       당신이 SPRING MVC웹 어플리케이션으로 개발중이고 일반적으로 URL에서 도메인 클래스 id를 URL에서 resolve해야할 것입니다. 기본적으로 할일은 그 리퀘스트 파라미터나 URL의 부분을 도메인 클래스로 전달하여 하위 레이어로 전달하고 엔티티들에 대한 직접적인 비즈니스 로직을 수행해야 할 것입니다. 이것은 다음과 같이 보일 것입니다 : 
+    </div>
+    <div class="originalArticle">
+      Given you are developing a Spring MVC web application you typically have to resolve domain class ids from URLs. By default your task is to transform that request parameter or URL part into the domain class to hand it to layers below then or execute business logic on the entities directly. This would look something like this:
+    </div>  
+
+      </p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Controller
+@RequestMapping("/users")
+public class UserController {
+
+  private final UserRepository userRepository;
+
+  @Autowired
+  public UserController(UserRepository userRepository) {
+    Assert.notNull(repository, "Repository must not be null!");
+    this.userRepository = userRepository;
+  }
+
+  @RequestMapping("/{id}")
+  public String showUserForm(@PathVariable("id") Long id, Model model) {
+
+    // Do null check for id
+    User user = userRepository.findOne(id);
+    // Do null check for user
+
+    model.addAttribute("user", user);
+    return "user";
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      먼저 당신은 각각의 컨트롤러에 대한 각각의 의존선을 선언하여 컨트롤러나 repository에서 각자 엔티티들을 찾아야 합니다. 엔티티를 찾는 것은 또한 보일러플레이트한 작업이 될 수가 있으면 이것은 언제나 <code>findOne(…)</code> 을 호출합니다. 다행스럽게도 스프링은 <code>String</code>값을 무작위의 값으로 전환시킬수 있는 커스텀 컴포넌트를 등록하게 해주는 방법을 제공합니다. 
+    </div>
+    <div class="originalArticle">
+      First you declare a repository dependency for each controller to look up the entity managed by the controller or repository respectively. Looking up the entity is boilerplate as well, as it&#8217;s always a <code>findOne(…)</code> call. Fortunately Spring provides means to register custom components that allow conversion between a <code>String</code> value to an arbitrary type.
+    </div>  
+
+      </p>
+</div>
+<div class="sect5">
+<h6 id="web.legacy.property-editors"><a class="anchor" href="#web.legacy.property-editors"></a>PropertyEditors</h6>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      스프링 버젼 3.0 이전의 간단한 자바 <code>PropertyEditors</code> 가 사용되어졌었습니다. 이것과 통합하기 위해, 스프링 데이터는 <code>DomainClassPropertyEditorRegistrar</code>를 제공하며 이것은 <code>ApplicationContext</code> 에 등록된 모든 스프링 데이터 리파지토리들을 찾고, 관리되는 도메인 클래스들을 위해서  커스텀 <code>PropertyEditor</code>를 등록시킵니다. 
+    </div>
+    <div class="originalArticle">
+      For Spring versions before 3.0 simple Java <code>PropertyEditors</code> had to be used. To integrate with that, Spring Data offers a <code>DomainClassPropertyEditorRegistrar</code>, which looks up all Spring Data repositories registered in the <code>ApplicationContext</code> and registers a custom <code>PropertyEditor</code> for the managed domain class.
+    </div>  
+
+      </p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;bean class="….web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"&gt;
+  &lt;property name="webBindingInitializer"&gt;
+    &lt;bean class="….web.bind.support.ConfigurableWebBindingInitializer"&gt;
+      &lt;property name="propertyEditorRegistrars"&gt;
+        &lt;bean class="org.springframework.data.repository.support.DomainClassPropertyEditorRegistrar" /&gt;
+      &lt;/property&gt;
+    &lt;/bean&gt;
+  &lt;/property&gt;
+&lt;/bean&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      만약 당신이 이전의 예제에서 SPRING MVC를 설정했다면, 당신은 당신의 컨트롤러를 다음과 같이 설정할 수 있으며, 많은 어수선한 부분과 보일러플레이트한 부분을 줄일 수가 있을 것입니다.  
+    </div>
+    <div class="originalArticle">
+      If you have configured Spring MVC as in the preceding example, you can configure your controller as follows, which reduces a lot of the clutter and boilerplate.
+    </div>  
+
+      </p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Controller
+@RequestMapping("/users")
+public class UserController {
+
+  @RequestMapping("/{id}")
+  public String showUserForm(@PathVariable("id") User user, Model model) {
+
+    model.addAttribute("user", user);
+    return "userForm";
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<h1 id="reference" class="sect0"><a class="anchor" href="#reference"></a>레퍼런스 문서</h1>
+<div class="sect1">
+<h2 id="elasticsearch.repositories"><a class="anchor" href="#elasticsearch.repositories"></a>4. 엘라스틱 서치 리파지토리 </h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      이 챕터는 엘라스틱 서치 리파지토리 구현체에 관한 세부사항을 포함하고 있습니다 .
+    </div>
+    <div class="originalArticle">
+      This chapter includes details of the Elasticsearch repository implementation.
+    </div>  
+
+      </p>
+</div>
+<div class="sect2">
+<h3 id="elasticsearch.introduction"><a class="anchor" href="#elasticsearch.introduction"></a>
+    <div class="translateArticle">
+      4.1. 세부사항
+    </div>
+    <div class="originalArticle">
+      4.1. Introduction
+    </div>  
+
+      
+</h3>
+<div class="sect3">
+<h4 id="elasticsearch.namespace"><a class="anchor" href="#elasticsearch.namespace"></a>4.1.1. Spring Namespace</h4>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+    스프링 데이터 엘라스틱 서치 모듈은 리파지토리빈과 <code>ElasticsearchServer</code>를 인스턴스화하기 위한 요소를  정의하게 해주는 커스텀 네임스페이스를 가지고 있습니다 .
+     
+    </div>
+    <div class="originalArticle">
+      The Spring Data Elasticsearch module contains a custom namespace allowing definition of repository beans as well as elements for instantiating a <code>ElasticsearchServer</code> .
+    </div>  
+
+      </p>
+</div>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      <code>repositories</code> 요소를 사용하여서, 스프링 데이터 리파지토리들을 찾아보세요 <a href="#repositories.create-instances">리파지토리 인스턴스 생성</a>에 나온대로 말이죠^^; 
+    </div>
+    <div class="originalArticle">
+      Using the <code>repositories</code> element looks up Spring Data repositories as described in <a href="#repositories.create-instances">Creating repository instances</a> .
+    </div>  
+
+      </p>
+</div>
+<div class="exampleblock">
+<div class="title">    <div class="translateArticle">
+      예제 33. 네임스페이스를 사용하여서, 엘라스틱 리파지토리를 설정하기
+    </div>
+    <div class="originalArticle">
+      Example 33. Setting up Elasticsearch repositories using Namespace
+    </div>  
+
+      </div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:elasticsearch="http://www.springframework.org/schema/data/elasticsearch"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.springframework.org/schema/data/elasticsearch
+http://www.springframework.org/schema/data/elasticsearch/spring-elasticsearch-1.0.xsd"&gt;
+
+    &lt;elasticsearch:repositories base-package="com.acme.repositories" /&gt;
+
+&lt;/beans&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<div class="translateArticle">
+      <p><code>Transport Client</code> 나 <code>Node Client</code> 요소를 사용하여 <code>Elasticsearch Server</code>의 인스턴스를 콘텍스트에 등록합니다.  </p>
+    </div>
+    <div class="originalArticle">
+      Using the <code>Transport Client</code> or <code>Node Client</code> element registers an instance of <code>Elasticsearch Server</code> in the context.
+    </div>  
+
+      
+</div>
+<div class="exampleblock">
+<div class="title">    <div class="translateArticle">
+      예제 34. Namespace를 사용하여서 Transport Client
+    </div>
+    <div class="originalArticle">
+      Example 34. Transport Client using Namespace
+    </div>  
+
+      </div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:elasticsearch="http://www.springframework.org/schema/data/elasticsearch"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.springframework.org/schema/data/elasticsearch
+http://www.springframework.org/schema/data/elasticsearch/spring-elasticsearch-1.0.xsd"&gt;
+
+    &lt;elasticsearch:transport-client id="client" cluster-nodes="localhost:9300,someip:9300" /&gt;
+
+&lt;/beans&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock">
+<div class="title">    <div class="translateArticle">
+      예제 35. Namespace를 사용하는 Node Client 
+    </div>
+    <div class="originalArticle">
+      Example 35. Node Client using Namespace
+    </div>  
+
+      </div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:elasticsearch="http://www.springframework.org/schema/data/elasticsearch"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.springframework.org/schema/data/elasticsearch
+http://www.springframework.org/schema/data/elasticsearch/spring-elasticsearch-1.0.xsd"&gt;
+
+    &lt;elasticsearch:node-client id="client" local="true"" /&gt;
+
+&lt;/beans&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="elasticsearch.annotation"><a class="anchor" href="#elasticsearch.annotation"></a>    <div class="translateArticle">
+      4.1.2. 어노테이션 기반 설정
+    </div>
+    <div class="originalArticle">
+      4.1.2. Annotation based configuration
+    </div>  
+
+      </h4>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      스프링 데이터 엘라스틱 서치 리파지토리 지원은 XML 네임스페이스로만이 활성화 되는 것이 아니라 자바설정을 통한 어노테이션을 사용해서도 설정할 수가 있습니다. 
+    </div>
+    <div class="originalArticle">
+      The Spring Data Elasticsearch repositories support cannot only be activated through an XML namespace but also using an annotation through JavaConfig.
+    </div>  
+
+      </p>
+</div>
+<div class="exampleblock">
+<div class="title">    <div class="translateArticle">
+      예제 36. 자바설정을 사용하는 스프링 데이터 엘라스틱 서치 리파지토리
+    </div>
+    <div class="originalArticle">
+      Example 36. Spring Data Elasticsearch repositories using JavaConfig
+    </div>  
+
+      </div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Configuration
+@EnableElasticsearchRepositories(basePackages = "org/springframework/data/elasticsearch/repositories")
+static class Config {
+
+    @Bean
+    public ElasticsearchOperations elasticsearchTemplate() {
+        return new ElasticsearchTemplate(nodeBuilder().local(true).node().client());
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      위의 설정은 <code>Embedded Elasticsearch Server</code> 를 설정하는데, 이것은 <code>ElasticsearchTemplate</code>에 의해 사용됩니다. 스프링 데이터 엘라스틱 서치 리파지토리들은 <code>@EnableElasticsearchRepositories</code>를 사용하여서 활성화될수 있습니다. 이 어노테이션은 본질적으로 XML 네임스페이스가 하는 것과 같은 속성의 일을 합니다. 어떠한 basepackage도 설정되지 않았다면, 이것은 하나의 설정 클래스를 사용할 것입니다. (의역있음)
+    </div>
+    <div class="originalArticle">
+      The configuration above sets up an <code>Embedded Elasticsearch Server</code> which is used by the <code>ElasticsearchTemplate</code> . Spring Data Elasticsearch Repositories are activated using the <code>@EnableElasticsearchRepositories</code> annotation, which essentially carries the same attributes as the XML namespace does. If no base package is configured, it will use the one the configuration class resides in.
+    </div>  
+
+      </p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="elasticsearch.cdi"><a class="anchor" href="#elasticsearch.cdi"></a>    <div class="translateArticle">
+      4.1.3. CDI를 이용하는 엘라스틱 리파지토리들
+    </div>
+    <div class="originalArticle">
+      4.1.3. Elasticsearch Repositores using CDI
+    </div>  
+
+      </h4>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      Spring data 엘라스틱 서치 리파지토리는 CDI기능을 사용해서도 설정될 수가 있습니다. 
+    </div>
+    <div class="originalArticle">
+      The Spring Data Elasticsearch repositories can also be set up using CDI functionality.
+    </div>  
+
+      </p>
+</div>
+<div class="exampleblock">
+<div class="title">    <div class="translateArticle">
+      예제 37. 자바설정을 사용하여서 스프링 데이터 엘라스틱 서치 리파지토리 사용하기 
+    </div>
+    <div class="originalArticle">
+      Example 37. Spring Data Elasticsearch repositories using JavaConfig
+    </div>  
+
+      </div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">class ElasticsearchTemplateProducer {
+
+    @Produces
+    @ApplicationScoped
+    public ElasticsearchOperations createElasticsearchTemplate() {
+        return new ElasticsearchTemplate(nodeBuilder().local(true).node().client());
+    }
+}
+
+class ProductService {
+
+    private ProductRepository repository;
+
+    public Page&lt;Product&gt; findAvailableBookByName(String name, Pageable pageable) {
+        return repository.findByAvailableTrueAndNameStartingWith(name, pageable);
+    }
+
+    @Inject
+    public void setRepository(ProductRepository repository) {
+        this.repository = repository;
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="elasticsearch.query-methods"><a class="anchor" href="#elasticsearch.query-methods"></a>4.2. 쿼리 메소드들</h3>
+<div class="sect3">
+<h4 id="elasticsearch.query-methods.finders"><a class="anchor" href="#elasticsearch.query-methods.finders"></a>4.2.1. 쿼리 탐색 전략</h4>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      엘라스틱 서치 모듈은  문자열, 추상화, 크리테리아나 메소드이름으로 만들어내는 방식으로 만들어지는 모든 기본적인 쿼리를 지원합니다.
+    </div>
+    <div class="originalArticle">
+      The Elasticsearch module supports all basic query building feature as String,Abstract,Criteria or have it being derived from the method name.
+    </div>  
+
+      </p>
+</div>
+<div class="sect4">
+<h5 id="_declared_queries"><a class="anchor" href="#_declared_queries"></a> 쿼리들 선언하기 </h5>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      메소드 이름에서 query를 만들어내는 것은 언제나 충분하지 않거나 읽기 어려운 메소드 이름이 생기기도 합니다. 이러한 경우에 <code>@Query</code> 어노테이션을 사용하는 것이 더 좋을 수가 있습니다. ( <a href="#elasticsearch.query-methods.at-query">@Query 어노테이션 사용하기 </a>를 보세요  ).
+    </div>
+    <div class="originalArticle">
+      Deriving the query from the method name is not always sufficient and/or may result in unreadable method names. In this case one might make either use of <code>@Query</code> annotation (see <a href="#elasticsearch.query-methods.at-query">Using @Query Annotation</a> ).
+    </div>  
+
+      </p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="elasticsearch.query-methods.criterions"><a class="anchor" href="#elasticsearch.query-methods.criterions"></a>4.2.2. Query 생성</h4>
+<div class="paragraph">
+<p> <div class="translateArticle">
+      일반적으로 엘라스틱서치를 위한 쿼리생성 메커니즘은 다음에 설명된 방식으로 동작합니다. <a href="#repositories.query-methods">Query 메소드</a> 여기에 엘라스틱 서치 쿼리 메소드가 변환되는 짧은 예제 가 있습니다 : 
+    </div>
+    <div class="originalArticle">
+      Generally the query creation mechanism for Elasticsearch works as described in <a href="#repositories.query-methods">Query methods</a> . Here&#8217;s a short example of what a Elasticsearch query method translates into:
+    </div>  
+
+      </p>
+</div>
+<div class="exampleblock">
+<div class="title">    <div class="translateArticle">
+      예제 38.메소드 이름으로 쿼리 생성하기
+    </div>
+    <div class="originalArticle">
+      Example 38. Query creation from method names
+    </div>  
+
+      </div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public interface BookRepository extends Repository&lt;Book, String&gt;
+{
+    List&lt;Book&gt; findByNameAndPrice(String name, Integer price);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      위의 이 메소드이름은 다음의 엘라스틱 json query 로 전환될 것입니다. 
+    </div>
+    <div class="originalArticle">
+      The method name above will be translated into the following Elasticsearch json query
+    </div>  
+
+      </p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>{ "bool" :
+    { "must" :
+        [
+            { "field" : {"name" : "?"} },
+            { "field" : {"price" : "?"} }
+        ]
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      엘라스틱 서치를 위해 지원되는 키워드들의 리스트는 다음과 같습니다. 
+    </div>
+    <div class="originalArticle">
+      A list of supported keywords for Elasticsearch is shown below.
+    </div>  
+
+      </p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">    <div class="translateArticle">
+      표2. 메소드 이름 내에 지원되는 키워드들
+    </div>
+    <div class="originalArticle">
+      Table 2. Supported keywords inside method names
+    </div>  
+
+      </caption>
+<colgroup>
+<col style="width: 16%;">
+<col style="width: 33%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Keyword</th>
+<th class="tableblock halign-left valign-top">Sample</th>
+<th class="tableblock halign-left valign-top">Elasticsearch Query String</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>And</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>findByNameAndPrice</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{"bool" : {"must" : [ {"field" : {"name" : "?"}},
+{"field" : {"price" : "?"}} ]}}</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Or</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>findByNameOrPrice</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{"bool" : {"should" : [ {"field" : {"name" : "?"}},
+{"field" : {"price" : "?"}} ]}}</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Is</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>findByName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{"bool" : {"must" : {"field" : {"name" : "?"}}}}</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Not</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>findByNameNot</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{"bool" : {"must_not" : {"field" : {"name" : "?"}}}}</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Between</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>findByPriceBetween</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{"bool" : {"must" : {"range" : {"price" : {"from" :
+?,"to" : ?,"include_lower" : true,"include_upper" : true}}}}}</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LessThanEqual</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>findByPriceLessThan</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{"bool" : {"must" : {"range" : {"price" : {"from" :
+null,"to" : ?,"include_lower" : true,"include_upper" :
+true}}}}}</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GreaterThanEqual</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>findByPriceGreaterThan</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{"bool" : {"must" : {"range" : {"price" : {"from" :
+?,"to" : null,"include_lower" : true,"include_upper" :
+true}}}}}</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Before</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>findByPriceBefore</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{"bool" : {"must" : {"range" : {"price" : {"from" :
+null,"to" : ?,"include_lower" : true,"include_upper" :
+true}}}}}</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>After</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>findByPriceAfter</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{"bool" : {"must" : {"range" : {"price" : {"from" :
+?,"to" : null,"include_lower" : true,"include_upper" :
+true}}}}}</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Like</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>findByNameLike</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{"bool" : {"must" : {"field" : {"name" : {"query" :
+"?*","analyze_wildcard" : true}}}}}</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>StartingWith</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>findByNameStartingWith</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{"bool" : {"must" : {"field" : {"name" : {"query" :
+"?*","analyze_wildcard" : true}}}}}</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EndingWith</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>findByNameEndingWith</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{"bool" : {"must" : {"field" : {"name" : {"query" :
+"*?","analyze_wildcard" : true}}}}}</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Contains/Containing</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>findByNameContaining</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{"bool" : {"must" : {"field" : {"name" : {"query" :
+"<strong>?</strong>","analyze_wildcard" : true}}}}}</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>In</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>findByNameIn(Collection&lt;String&gt;names)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{"bool" : {"must" : {"bool" : {"should" : [ {"field" :
+{"name" : "?"}}, {"field" : {"name" : "?"}} ]}}}}</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NotIn</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>findByNameNotIn(Collection&lt;String&gt;names)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{"bool" : {"must_not" : {"bool" : {"should" : {"field" :
+{"name" : "?"}}}}}}</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Near</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>findByStoreNear</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Not Supported Yet !</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>True</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>findByAvailableTrue</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{"bool" : {"must" : {"field" : {"available" : true}}}}</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>False</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>findByAvailableFalse</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{"bool" : {"must" : {"field" : {"available" : false}}}}</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OrderBy</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>findByAvailableTrueOrderByNameDesc</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{"sort" : [{ "name" : {"order" : "desc"} }],"bool" :
+{"must" : {"field" : {"available" : true}}}}</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="elasticsearch.query-methods.at-query"><a class="anchor" href="#elasticsearch.query-methods.at-query"></a>4.2.3.     <div class="translateArticle">
+      @Query 어노테이션 사용하기 
+    </div>
+    <div class="originalArticle">
+      Using @Query Annotation
+    </div>  
+
+      </h4>
+<div class="exampleblock">
+<div class="title">    <div class="translateArticle">
+      예제 39. <code>@Query</code>어노테이션을 사용하여서 메소드에서 쿼리를 선언하기 
+    </div>
+    <div class="originalArticle">
+      Example 39. Declare query at the method using the <code>@Query</code> annotation.
+    </div>  
+
+      </div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public interface BookRepository extends ElasticsearchRepository&lt;Book, String&gt; {
+    @Query("{"bool" : {"must" : {"field" : {"name" : "?0"}}}}")
+    Page&lt;Book&gt; findByName(String name,Pageable pageable);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="elasticsearch.misc"><a class="anchor" href="#elasticsearch.misc"></a>    <div class="translateArticle">
+      5. 엘라스틱서치 작업(Operation) 지원의 오해들
+    </div>
+    <div class="originalArticle">
+      5. Miscellaneous Elasticsearch Operation Support
+    </div>  
+
+      </h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      이 챕터에서는 직접적으로 리파지토리인터페이스를 통하지 못하는 엘라스틱 작업에 대한 추가적인 지원을 다룰 것입니다. 
+       <a href="#repositories.custom-implementations">스프링 데이터 리파지토리들에 대한 커스텀 구현체들</a> 에 설명된 대로 그러한 작업들을 커스텀 구현으로 추가하기를 권장합니다. 
+    </div>
+    <div class="originalArticle">
+      This chapter covers additional support for Elasticsearch operations that cannot be directly accessed via the repository interface. It is recommended to add those operations as custom implementation as described in <a href="#repositories.custom-implementations">Custom implementations for Spring Data repositories</a> .
+    </div>  
+
+      </p>
+</div>
+<div class="sect2">
+<h3 id="elasticsearch.misc.filter"><a class="anchor" href="#elasticsearch.misc.filter"></a>    <div class="translateArticle">
+      5.1. 필터 빌더
+    </div>
+    <div class="originalArticle">
+      5.1. Filter Builder
+    </div>  
+
+      </h3>
+<div class="paragraph">
+<p>필터 빌더는 쿼리 스피드를 향상시킵니다. </p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">private ElasticsearchTemplate elasticsearchTemplate;
+
+SearchQuery searchQuery = new NativeSearchQueryBuilder()
+    .withQuery(matchAllQuery())
+    .withFilter(boolFilter().must(termFilter("id", documentId)))
+    .build();
+
+Page&lt;SampleEntity&gt; sampleEntities =
+    elasticsearchTemplate.queryForPage(searchQuery,SampleEntity.class);</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="elasticsearch.scan.and.scroll"><a class="anchor" href="#elasticsearch.scan.and.scroll"></a>    <div class="translateArticle">
+      5.2 큰 결과값을 위해 Scan과 Scroll 를 사용하기 
+    </div>
+    <div class="originalArticle">
+      5.2. Using Scan And Scroll For Big Result Set
+    </div>  
+
+      </h3>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      큰 result set을 위해 엘라스틱 서치는 scan과 scroll 특징이 있습니다. <code>ElasticsearchTemplate</code>는 scan과 scroll 메소드를 가지고서 다음과 같이 사용할 수가 있습니다. 
+    </div>
+    <div class="originalArticle">
+      Elasticsearch has scan and scroll feature for getting big result set in chunks. <code>ElasticsearchTemplate</code> has scan and scroll methods that can be used as below.
+    </div>  
+
+      </p>
+</div>
+<div class="exampleblock">
+<div class="title">    <div class="translateArticle">
+      예제 40. 스캔과 스크롤 사용해보기
+    </div>
+    <div class="originalArticle">
+      Example 40. Using Scan and Scroll
+    </div>  
+
+      </div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">SearchQuery searchQuery = new NativeSearchQueryBuilder()
+    .withQuery(matchAllQuery())
+    .withIndices("test-index")
+    .withTypes("test-type")
+    .withPageable(new PageRequest(0,1))
+    .build();
+String scrollId = elasticsearchTemplate.scan(searchQuery,1000,false);
+List&lt;SampleEntity&gt; sampleEntities = new ArrayList&lt;SampleEntity&gt;();
+boolean hasRecords = true;
+while (hasRecords){
+    Page&lt;SampleEntity&gt; page = elasticsearchTemplate.scroll(scrollId, 5000L , new ResultsMapper&lt;SampleEntity&gt;()
+    {
+        @Override
+        public Page&lt;SampleEntity&gt; mapResults(SearchResponse response) {
+            List&lt;SampleEntity&gt; chunk = new ArrayList&lt;SampleEntity&gt;();
+            for(SearchHit searchHit : response.getHits()){
+                if(response.getHits().getHits().length &lt;= 0) {
+                    return null;
+                }
+                SampleEntity user = new SampleEntity();
+                user.setId(searchHit.getId());
+                user.setMessage((String)searchHit.getSource().get("message"));
+                chunk.add(user);
+            }
+            return new PageImpl&lt;SampleEntity&gt;(chunk);
+        }
+    });
+    if(page != null) {
+        sampleEntities.addAll(page.getContent());
+        hasRecords = page.hasNextPage();
+    }
+    else{
+        hasRecords = false;
+    }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<h1 id="appendix" class="sect0"><a class="anchor" href="#appendix"></a>Appendix</h1>
+<div class="sect1">
+<h2 id="repositories.namespace-reference"><a class="anchor" href="#repositories.namespace-reference"></a>    <div class="translateArticle">
+      부록 A : 네임 스페이스 레퍼런스 
+    </div>
+    <div class="originalArticle">
+      Appendix A: Namespace reference
+    </div>  
+
+      </h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="populator.namespace-dao-config"><a class="anchor" href="#populator.namespace-dao-config"></a>The &lt;repositories /&gt; element</h3>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      <code>&lt;repositories /&gt;</code> 요소는 스프링 데이터 리파지토리 인프라스트럭쳐의 설정을 동작시킵니다. 
+      가장 중요한 속성은 <code>base-package</code> 로 이것은 스프링 데이터 리파지토리 인터페이스<span class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnote_3" title="View footnote.">3</a>]</span>를 찾을 패키지를 스캔하게 해줍니다. 
+    </div>
+    <div class="originalArticle">
+      The <code>&lt;repositories /&gt;</code> element triggers the setup of the Spring Data repository infrastructure. The most important attribute is <code>base-package</code> which defines the package to scan for Spring Data repository interfaces.<span class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnote_3" title="View footnote.">3</a>]</span>
+    </div>  
+
+      </p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">    <div class="translateArticle">
+      표 3. 속성들
+    </div>
+    <div class="originalArticle">
+      Table 3. Attributes
+    </div>  
+
+      </caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>base-package</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">    <div class="translateArticle">
+      *Repository를 상속하는 리파지토리 인터페이스를 자동 감지 모드 아래 스캔하기 위해 사용됨. (실제 인터페이스는 스프링 데이터 모듈에 따라 결정된다.) 설정된 패키지의 아래 있는 모든 패키지는 스캔되며 와일드 카드 또한 가능하다. </p>
+    </div>
+    <div class="originalArticle">
+      Defines the package to be used to be scanned for repository interfaces extending *Repository (actual interface is determined by specific Spring Data module) in auto detection mode. All packages below the configured package will be scanned, too. Wildcards are allowed.</p>
+    </div>  
+
+      </p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>repository-impl-postfix</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><div class="translateArticle">커스텀 리파지토리 구현체를 자동감지하기 위한 접미사를 설정한다. 설정된 접미사를 가진 클래스들은 그 후보로 고려되며 기본값은 <code>Impl</code>이다. 
+    </div>
+    <div class="originalArticle">
+      transDefines the postfix to autodetect custom repository implementations. Classes whose names end with the configured postfix will be considered as candidates. Defaults to <code>Impl</code>.
+    </div>  
+
+      </p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>query-lookup-strategy</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">    <div class="translateArticle">쿼리 검색자를 만드는데 사용되는 전략을 결정하기 위함. <a href="#repositories.query-methods.query-lookup-strategies">쿼리 탐색 전략</a>을 보시고 기본값은 <code>create-if-not-found</code>이다. 
+    </div>
+    <div class="originalArticle">
+      Determines the strategy to be used to create finder queries. See <a href="#repositories.query-methods.query-lookup-strategies">Query lookup strategies</a> for details. Defaults to <code>create-if-not-found</code>.
+    </div>  
+
+      </p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>named-queries-location</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">    <div class="translateArticle">
+      외부적으로 정의된 쿼리들을 포함하는 설정파일을 찾기 위한 위치를 정의함
+    </div>
+    <div class="originalArticle">
+      Defines the location to look for a Properties file containing externally defined queries.
+    </div>  
+
+      </p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>consider-nested-repositories</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">    <div class="translateArticle">
+      중첩(nested) 리파지토리 인터페이스 정의를 조정할지 고려함. 기본값은  <code>false</code>.
+    </div>
+    <div class="originalArticle">
+      Controls whether nested repository interface definitions should be considered. Defaults to <code>false</code>.
+    </div>  
+
+      </p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="populator.namespace-reference"><a class="anchor" href="#populator.namespace-reference"></a>    <div class="translateArticle">
+      부록 B : Populators 네임스페이스 레퍼런스
+    </div>
+    <div class="originalArticle">
+      Appendix B: Populators namespace reference
+    </div>  
+
+      </h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="namespace-dao-config"><a class="anchor" href="#namespace-dao-config"></a>The &lt;populator /&gt; element</h3>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+       <code>&lt;populator /&gt;</code> 요소는 저장소를 Spring data 리파지토리 인프라스트럭쳐<span class="footnote">[<a id="_footnoteref_4" class="footnote" href="#_footnote_4" title="View footnote.">4</a>]를 통해 채울 있게 해준다. 
+    </div>
+    <div class="originalArticle">
+      The <code>&lt;populator /&gt;</code> element allows to populate the a data store via the Spring Data repository infrastructure.<span class="footnote">[<a id="_footnoteref_4" class="footnote" href="#_footnote_4" title="View footnote.">4</a>]</span>
+    </div>  
+
+      </p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">    <div class="translateArticle">
+      Table 4. 속성
+    </div>
+    <div class="originalArticle">
+      Table 4. Attributes
+    </div>  
+
+      </caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>locations</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">    <div class="translateArticle">
+      어디서 저장소를 채울 객체를 읽어들일 파일들을 발견할지 정함.
+    </div>
+    <div class="originalArticle">
+      Where to find the files to read the objects from the repository shall be populated with.
+    </div>  
+
+      </p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="repository-query-keywords"><a class="anchor" href="#repository-query-keywords"></a>    <div class="translateArticle">
+      부록 C : 리파지토리 쿼리 키워드들
+    </div>
+    <div class="originalArticle">
+      Appendix C: Repository query keywords
+    </div>  
+
+      </h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_supported_query_keywords"><a class="anchor" href="#_supported_query_keywords"></a>    <div class="translateArticle">
+      지원되는 쿼리 키워드들
+    </div>
+    <div class="originalArticle">
+      Supported query keywords
+    </div>  
+
+      </h3>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      다음의 테이블은 일반적으로 스프링데이터리파지토리 쿼리 추론 메커니즘에서 지원되는 키워드들을 나타낸다  그러나 특정-정확히 지원되는 키워드를 위해 저장소 문서를 참조하기를 바란다. 왜냐하면 몇몇 리스트는 특정 데이터 저장소에서 지원이 되지 않기 때문이다. 
+    </div>
+    <div class="originalArticle">
+      The following table lists the keywords generally supported by the Spring Data repository query derivation mechanism. However, consult the store-specific documentation for the exact list of supported keywords, because some listed here might not be supported in a particular store.
+    </div>  
+
+      </p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">    <div class="translateArticle">
+      표 5. 쿼리 키워드들
+    </div>
+    <div class="originalArticle">
+      Table 5. Query keywords
+    </div>  
+
+      </caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Logical keyword</th>
+<th class="tableblock halign-left valign-top">Keyword expressions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AND</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>And</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OR</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Or</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AFTER</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>After</code>, <code>IsAfter</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BEFORE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Before</code>, <code>IsBefore</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CONTAINING</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Containing</code>, <code>IsContaining</code>, <code>Contains</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BETWEEN</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Between</code>, <code>IsBetween</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ENDING_WITH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EndingWith</code>, <code>IsEndingWith</code>, <code>EndsWith</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EXISTS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Exists</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FALSE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>False</code>, <code>IsFalse</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GREATER_THAN</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GreaterThan</code>, <code>IsGreaterThan</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GREATER_THAN_EQUALS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GreaterThanEqual</code>, <code>IsGreaterThanEqual</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IN</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>In</code>, <code>IsIn</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Is</code>, <code>Equals</code>, (or no keyword)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IS_NOT_NULL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NotNull</code>, <code>IsNotNull</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IS_NULL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code>, <code>IsNull</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LESS_THAN</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LessThan</code>, <code>IsLessThan</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LESS_THAN_EQUAL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LessThanEqual</code>, <code>IsLessThanEqual</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LIKE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Like</code>, <code>IsLike</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NEAR</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Near</code>, <code>IsNear</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NOT</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Not</code>, <code>IsNot</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NOT_IN</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NotIn</code>, <code>IsNotIn</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NOT_LIKE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NotLike</code>, <code>IsNotLike</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>REGEX</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Regex</code>, <code>MatchesRegex</code>, <code>Matches</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>STARTING_WITH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>StartingWith</code>, <code>IsStartingWith</code>, <code>StartsWith</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TRUE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>True</code>, <code>IsTrue</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>WITHIN</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Within</code>, <code>IsWithin</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="repository-query-return-types"><a class="anchor" href="#repository-query-return-types"></a>    <div class="translateArticle">
+      부록 D : 리파지토리 쿼리 리턴 타입
+    </div>
+    <div class="originalArticle">
+      Appendix D: Repository query return types
+    </div>  
+
+      </h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_supported_query_return_types"><a class="anchor" href="#_supported_query_return_types"></a>    <div class="translateArticle">
+      지원되는 쿼리 리턴 타입
+    </div>
+    <div class="originalArticle">
+      Supported query return types
+    </div>  
+
+      </h3>
+<div class="paragraph">
+<p>    <div class="translateArticle">
+      다음의 테이블은 일반적으로 스프링 데이터 리파지토리에서 지원되는 리턴 타입들을 나타냅니다. 그러나 앞서 말씀드린 대로 데이터 저장소 문서를 참조하세요. 
+    </div>
+    <div class="originalArticle">
+      The following table lists the return types generally supported by Spring Data repositories. However, consult the store-specific documentation for the exact list of supported return types, because some listed here might not be supported in a particular store.
+    </div>  
+
+      </p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+    <div class="translateArticle">
+      <code>GeoResult</code>, <code>GeoResults</code>, <code>GeoPage</code>와 같은 지역기반 타입 은 오직 지역기반 쿼리를 지원하는 데이터저장소에서만 사용가능합니다. 
+    </div>
+    <div class="originalArticle">
+      Geospatial types like (<code>GeoResult</code>, <code>GeoResults</code>, <code>GeoPage</code>) are only available for data stores that support geospatial queries.
+    </div>  
+
+      
+</td>
+</tr>
+</table>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">    <div class="translateArticle">
+      표 6. 쿼리 리턴 타입
+    </div>
+    <div class="originalArticle">
+      Table 6. Query return types
+    </div>  
+
+      </caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Return type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>void</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">    <div class="translateArticle">
+      아무런 리턴 타입 없다.
+    </div>
+    <div class="originalArticle">
+      Denotes no return value.
+    </div>  
+
+      </p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Primitives</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">    <div class="translateArticle">
+      자바 주요요소
+    </div>
+    <div class="originalArticle">
+      Java primitives.
+    </div>  
+
+      </p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Wrapper types</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">    <div class="translateArticle">
+      자바 래퍼 타입
+    </div>
+    <div class="originalArticle">
+      Java wrapper types.
+    </div>  
+
+      </p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>T</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">    <div class="translateArticle">
+      유니크 엔티티. 대부분 쿼리 메소드가 하나의 결과를 돌려주기를 예상합니다. 어떠한 결과도 발견되지 않은 경우 <code>null</code>이 반환될 것입니다.  하나 이상의 결과가 나오게 되면  <code>IncorrectResultSizeDataAccessException</code>가 나올 것입니다. 
+    </div>
+    <div class="originalArticle">
+      An unique entity. Expects the query method to return one result at most. In case no result is found <code>null</code> is returned. More than one result will trigger an <code>IncorrectResultSizeDataAccessException</code>.
+    </div>  
+
+      </p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Iterator&lt;T&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">    <div class="translateArticle">
+      <code>반복자</code>.
+    </div>
+    <div class="originalArticle">
+      An <code>Iterator</code>.
+    </div>  
+
+      </p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Collection&lt;T&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A <code>Collection</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>List&lt;T&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A <code>List</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Optional&lt;T&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">    <div class="translateArticle">
+      자바8 이나 Guava <code>Optional</code>입니다. 쿼리메소드가 대부분 하나의 결과값을 리턴하기를 기대하며 어떠한 결과도 없으면 <code>Optional.empty()</code>/<code>Optional.absent()</code>가 반환됩니다. 하나 이상의 결과에는 <code>IncorrectResultSizeDataAccessException</code>가 동작할 것입니다. 
+    </div>
+    <div class="originalArticle">
+      A Java 8 or Guava <code>Optional</code>. Expects the query method to return one result at most. In case no result is found <code>Optional.empty()</code>/<code>Optional.absent()</code> is returned. More than one result will trigger an <code>IncorrectResultSizeDataAccessException</code>.
+    </div>  
+
+      </p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream&lt;T&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A Java 8 <code>Stream</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Slice</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">    <div class="translateArticle">
+      더 이상의 데이터가 가능한지에 대한 정보가 같이 있는 데이터의 덩어리입니다. <code>Pageable</code>를 메소드 파라미터로 필요로 합니다 .
+    </div>
+    <div class="originalArticle">
+      A sized chunk of data with information whether there is more data available. Requires a <code>Pageable</code> method parameter.
+    </div>  
+
+      </p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Page&lt;T&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">    <div class="translateArticle">
+       <code>Slice</code> 와 추가적인 정보가 있는 (예를 들자면 결과의 총 개수) 타입입니다. <code>Pageable</code> 를 메소드 파라미터로 필요로 합니다. 
+    </div>
+    <div class="originalArticle">
+      A <code>Slice</code> with additional information, e.g. the total number of results. Requires a <code>Pageable</code> method parameter.
+    </div>  
+
+      </p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GeoResult&lt;T&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">    <div class="translateArticle">
+      추가적인 정보(참조 위치에 대한 거리)와 함께 있는 결과 엔트리 
+    </div>
+    <div class="originalArticle">
+      A result entry with additional information, e.g. distance to a reference location.
+    </div>  
+
+      </p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GeoResults&lt;T&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">    <div class="translateArticle">
+      추가적인 정보(참조 위치에 대한 평균 거리 )와 함께 있는 <code>GeoResult&lt;T&gt;</code>의 리스트 
+    </div>
+    <div class="originalArticle">
+      A list of <code>GeoResult&lt;T&gt;</code> with additional information, e.g. average distance to a reference location.
+    </div>  
+
+      </p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GeoPage&lt;T&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">    <div class="translateArticle">
+      <code>Page</code> 와  <code>GeoResult&lt;T&gt;</code>,예를 들면 참조 위치와 평균 거리
+    </div>
+    <div class="originalArticle">
+      A <code>Page</code> with <code>GeoResult&lt;T&gt;</code>, e.g. average distance to a reference location.
+    </div>  
+
+      </p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnote_1">
+<a href="#_footnoteref_1">1</a>. <a href="{spring-framework-docs}/beans.html#beans-java">JavaConfig in the Spring reference documentation</a>
+</div>
+<div class="footnote" id="_footnote_2">
+<a href="#_footnoteref_2">2</a>. Spring HATEOAS - <a href="https://github.com/SpringSource/spring-hateoas"><a href="https://github.com/SpringSource/spring-hateoas" class="bare">https://github.com/SpringSource/spring-hateoas</a></a>
+</div>
+<div class="footnote" id="_footnote_3">
+<a href="#_footnoteref_3">3</a>. see <a href="#repositories.create-instances.spring">XML configuration</a>
+</div>
+<div class="footnote" id="_footnote_4">
+<a href="#_footnoteref_4">4</a>. see <a href="#repositories.create-instances.spring">XML configuration</a>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 1.2.1.RELEASE<br>
+Last updated 2015-06-30 13:17:05 MESZ <br>
+번역자 : 아라한사 (fb.com/me.adunhansa) 오역 제보 감사합니다 :) 
+</div>
+</div>
+ 
+<script type="text/javascript">
+        var _gaq = _gaq || [];
+        var pluginUrl = '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+        _gaq.push(
+            ['_require', 'inpage_linkid', pluginUrl],
+            ['_setAccount', 'UA-2728886-23'],
+            ['_trackPageview'],
+            ['b._require', 'inpage_linkid', pluginUrl],
+            ['b._setAccount', 'UA-2728886-19'],
+            ['b._trackPageview']
+        );
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+ 
+<script type="text/javascript">
+
+function detectLastFrame() {
+   var thisF = this.window;
+   var allF = parent.top.frames;
+   return allF[allF.length - 1] == thisF; }
+
+// Only inject the following code if this is a normal page or the last // frame of a frameset.
+if (parent.top.frames.length == 0 || detectLastFrame()) {
+    // Inject the SpringSource search widget too.
+    document.write(unescape("%3Cscript src='http://search.springsource.org/widget/searchtool.js' type='text/javascript'%3E%3C/script%3E"));
+    // Inject the Eloqua code
+    //document.write(unescape("%3Cscript src='/elqNow/elqCfg.js' type='text/javascript'%3E%3C/script%3E"));
+    //document.write(unescape("%3Cscript src='/elqNow/elqImg.js' type='text/javascript'%3E%3C/script%3E"));
+
+}
+</script>
+</body>
+</html>
