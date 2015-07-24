@@ -6,7 +6,7 @@ var reload      = browserSync.reload;
 gulp.task('browser-sync', function() {
     browserSync.init({
         server: { baseDir: "./"},
-        port: 8000
+        port: 8080
     });
     //  gulp.watch("css/*.scss", ['sassForbs']);
     gulp.watch("./*.html").on('change', reload);

@@ -1,0 +1,30 @@
+@import url(http://fonts.googleapis.com/earlyaccess/kopubbatang.css);
+
+.originalArticle {
+  display: none;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.translateArticle {
+  font-family: 'KoPub Batang', serif; position : relative;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.btnTr {
+  position: absolute;
+  right: 0px;
+  top: 10px;
+  width: 45px;
+  height: 30px;
+  cursor: pointer;
+  z-index: 999;
+  font-size: 10px;
+}
+
+.content{
+  line-height: 20px;
+}
