@@ -1,0 +1,2967 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.0">
+<meta name="author" content="번역자 아라한사 fb.com/me.adunhansa. 원저자 : Costin Leau, Jennifer Hickey, Christoph Strobl, Thomas Darimont">
+
+<title>스프링 데이터 레디스 번역</title>
+<link rel="stylesheet" href="./spring.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
+<script>document.addEventListener('DOMContentLoaded', prettyPrint)</script>
+<!-- My Custom Configuration -->
+<script src="js/jquery-1.11.1.min.js"></script>
+<script src="js/translate.js"></script>
+<link rel="stylesheet" href="css/mystyle.css">
+<!-- //My Custom Configuration -->
+
+
+
+<!-- SEO -->
+<meta content="summary" name="twitter:card"/>
+<meta content="@arahansa" name="twitter:site"/>
+<meta name="twitter:title" content="스프링 데이터 레디스 레퍼런스 번역 문서입니다."/>
+<meta name="twitter:description" content="스프링 데이터 레디스 프로젝트는 스프링 개념을 키밸류 스타일의 데이터 저장소를 사용하는 개발솔루션에 적용한 것입니다. 우리는 메시지를 송수신하는 데 있어 "template"을 높은레벨 추상화로 제공을 합니다. 당신은 스프링 프레임워크에서의 JDBC 지원과 유사함을 눈치챌 것입니다 "/>
+<meta name="twitter:creator" content="@arahansa"/>
+<meta name="twitter:image:src" content="images/redis2.jpg"/>
+
+
+<meta property="og:title" content="스프링 데이터 레디스 레퍼런스 번역 문서입니다."/>
+<meta property="og:image" content="images/redis2.jpg"/>
+<meta property="og:description" content="스프링 데이터 레디스 프로젝트는 스프링 개념을 키밸류 스타일의 데이터 저장소를 사용하는 개발솔루션에 적용한 것입니다. 우리는 메시지를 송수신하는 데 있어 "template"을 높은레벨 추상화로 제공을 합니다. 당신은 스프링 프레임워크에서의 JDBC 지원과 유사함을 눈치챌 것입니다 "/>
+<meta content="article" property="og:type"/>
+
+<!-- //SEO -->
+
+</head>
+<body id="spring-data-keyvalue-reference" class="book">
+<div id="header">
+<h1>스프링 데이터 레디스</h1>
+<div class="details">
+<span id="author" class="author">번역자: 아라한사, 저자 : Costin Leau, Jennifer Hickey, Christoph Strobl, Thomas Darimont</span><br>
+<span id="revnumber">version 1.5.1.RELEASE,</span>
+<span id="revdate">15-06-30. 번역일 7월 23일 경
+해당 문구 위로 마우스를 올리시면 - 번역 버튼이 나옵니다. 문맥에 안 맞는 번역이 나올 시에는 버튼을 클릭하셔서 원문을 확인해주시면 되겠습니다^^; (역자 아라한사 올림. 수정요구사항 fb.com/me.adunhansa). 제 블로그 말고 깃헙에다가 올려두겠습니다. 한 타임 기모아서 마음먹고 쭈욱 번역하면서, 정독을 하는 번역이 아닌지라..^^; 아...게다가 제가 기술을 잘 아는 상태에서 번역을 하는 게 금상첨화겠지만, 선번역 후공부를 위한 작업인지라. 오역이 있을 수 있습니다. 안 좋은 번역이 있다면 풀리퀘 주시면 감사하겠습니다 :) <br> <br> ...  </span>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>&#169; 2011-2014 The original authors.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+이 문서의 복사본은 당신 자신을 위해서나, 다른 사람들에게 배포를 위해 만들어질 수 있습니다. 복사에 대해 어떤 비용을 청구하지 않아야 하며, 프린트되거나 전자적으로 배포될 때에도 Copyright 문구를 포함해야 합니다.
+</td>
+</tr>
+</table>
+</div>
+<div id="toc" class="toc">
+<div id="toctitle" class="title">목차</div>
+<ul class="sectlevel0">
+<li><a href="#_preface">서문</a></li>
+<li><a href="#new-features">새로운 특징</a>
+<ul class="sectlevel1">
+<li><a href="#new-in-1-5-0">스프링 데이터 레디스 1.5 에서 새로운 것들</a></li>
+</ul>
+</li>
+<li><a href="#introduction">소개</a>
+<ul class="sectlevel1">
+<li><a href="#why-spring-redis">2. 왜 스프링 데이터 레디스 인가?</a></li>
+<li><a href="#requirements">3. 요구사항 </a></li>
+<li><a href="#get-started">4. 시작하기</a>
+<ul class="sectlevel2">
+<li><a href="#get-started:first-steps">4.1. 첫 단계</a>
+<ul class="sectlevel3">
+<li><a href="#get-started:first-steps:spring">4.1.1. 스프링 알기</a></li>
+<li><a href="#get-started:first-steps:nosql">4.1.2. NoSQL과 키/값 저장소 알기</a></li>
+<li><a href="#get-started:first-steps:samples">4.1.3. 샘플 해보기 </a></li>
+</ul>
+</li>
+<li><a href="#get-started:help">4.2. 도움이 필요한가 ?</a>
+<ul class="sectlevel3">
+<li><a href="#get-started:help:community">4.2.1. 커뮤니티 지원</a></li>
+<li><a href="#get-started:help:professional">4.2.2. 전문가 지원 </a></li>
+</ul>
+</li>
+<li><a href="#get-started:up-to-date">4.3. 개발 따라가기</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#reference">레퍼런스 문서 </a>
+<ul class="sectlevel1">
+<li><a href="#redis">5. 레디스 지원 </a>
+<ul class="sectlevel2">
+<li><a href="#redis:requirements">5.1. 레디스 요구사항 </a></li>
+<li><a href="#redis:architecture">5.2. 높은 레벨 뷰에서 레디스 지원 </a></li>
+<li><a href="#redis:connectors">5.3. 레디스에 접속하기</a>
+<ul class="sectlevel3">
+<li><a href="#redis:connectors:connection">5.3.1. 레디스 코넥션과 레디스 코넥션 팩토리</a></li>
+<li><a href="#redis:connectors:jedis">5.3.2. Jedis 코넥터 설정 </a></li>
+<li><a href="#redis:connectors:jredis">5.3.3. JRedis 코넥터 설정 </a></li>
+<li><a href="#redis:connectors:srp">5.3.4. SRP 코넥터 설정 </a></li>
+<li><a href="#redis:connectors:lettuce">5.3.5. Lettuce코넥터 설정 </a></li>
+</ul>
+</li>
+<li><a href="#redis:sentinel">5.4. Redis Sentinel 지원</a></li>
+<li><a href="#redis:template">5.5.RedisTemplate에 통하는 객체와 작업해보기</a></li>
+<li><a href="#redis:string">5.6. 문자열 중심 편의 클래스(String-focused convenience classes)</a></li>
+<li><a href="#redis:serializer">5.7. 직렬화 - Serializers</a></li>
+<li><a href="#pubsub">5.8. 레디스 메시징/PubSub</a>
+<ul class="sectlevel3">
+<li><a href="#redis:pubsub:publish">5.8.1. 송신/출판 메시지들</a></li>
+<li><a href="#redis:pubsub:subscribe">5.8.2. 메시지들 수신/구독</a></li>
+</ul>
+</li>
+<li><a href="#tx">5.9. 레디스 트랜잭션</a>
+<ul class="sectlevel3">
+<li><a href="#tx.spring">5.9.1. @Transactional 지원 </a></li>
+</ul>
+</li>
+<li><a href="#pipeline">5.10. 파이프라이닝</a></li>
+<li><a href="#scripting">5.11. 레디스 스크립팅</a></li>
+<li><a href="#redis:support">5.12. 클래스들 지원 </a>
+<ul class="sectlevel3">
+<li><a href="#redis:support:cache-abstraction">5.12.1. 스프링 캐쉬 추상화 지원 </a></li>
+</ul>
+</li>
+<li><a href="#redis:future">5.13. 로드맵 추진 - Roadmap ahead</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#appendixes">부록 </a>
+<ul class="sectlevel1">
+<li><a href="#appendix:schema">부록 A: 스키마 </a>
+<ul class="sectlevel2">
+<li><a href="#_core_schema">핵심 스키마 </a></li>
+</ul>
+</li>
+<li><a href="#appendix:command-reference">부록 B: 명령 레퍼런스 - Command Reference</a>
+<ul class="sectlevel2">
+<li><a href="#_supported_commands">지원되는 명령어 </a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<h1 id="_preface" class="sect0"><a class="anchor" href="#_preface"></a>서문</h1>
+<div class="openblock partintro">
+<div class="content">
+    <div class="translateArticle">
+      스프링 데이터 레디스 프로젝트는 스프링 개념을 키밸류 스타일의 데이터 저장소를 사용하는 개발솔루션에 적용한 것입니다. 우리는 메시지를 송수신하는 데 있어 "template"을 높은레벨 추상화로 제공을 합니다. 당신은 스프링 프레임워크에서의 JDBC 지원과 유사함을 눈치챌 것입니다 
+    </div>
+    <div class="originalArticle">
+      The Spring Data Redis project applies core Spring concepts to the development of solutions using a key-value style data store. We provide a "template" as a high-level abstraction for sending and receiving messages. You will notice similarities to the JDBC support in the Spring Framework.
+    </div>  
+
+      
+</div>
+</div>
+<h1 id="new-features" class="sect0"><a class="anchor" href="#new-features"></a>새로운 특징</h1>
+<div class="sect1">
+<h2 id="new-in-1-5-0"><a class="anchor" href="#new-in-1-5-0"></a>1. 스프링 데이터 레디스 1.5 에서의 새로운 점 </h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+
+    <div class="translateArticle">
+      <li>
+<p>Redis HyperLogLog 명령어 <code>PFADD</code>, <code>PFCOUNT</code> and <code>PFMERGE</code>에 대한 지원 추가</p>
+</li>
+<li>
+<p><code>RedisSerializers</code>에 기반한 Jackson 을 찾는 설정가능한 <code>JavaType</code> (역주: 이상하게 쪼금 까다롭군?;; 흠흠; ) </p>
+</li>
+<li>
+<p>레디스 센티널에 접속하기 위한 <code>PropertySource</code> 기반 설정 (보기 : <a href="#redis:sentinel">Redis Sentinel Support</a>).</p>
+</li>
+    </div>
+    <div class="originalArticle">
+      <li>
+<p>Add support for Redis HyperLogLog commands <code>PFADD</code>, <code>PFCOUNT</code> and <code>PFMERGE</code>.</p>
+</li>
+<li>
+<p>Configurable <code>JavaType</code> lookup for Jackson based <code>RedisSerializers</code>.</p>
+</li>
+<li>
+<p><code>PropertySource</code> based configuration for connecting to Redis Sentinel (see: <a href="#redis:sentinel">Redis Sentinel Support</a>).</p>
+</li>
+    </div>  
+
+      
+
+</ul>
+</div>
+</div>
+</div>
+<h1 id="introduction" class="sect0"><a class="anchor" href="#introduction"></a>소개</h1>
+<div class="openblock partintro">
+<div class="content">
+
+    <div class="translateArticle">
+      <div class="paragraph">
+<p>이 문서는 스프링 데이터 레디스 (SDR)지원을 위한 레퍼런스 가이드 입니다. 키밸류 모듈 개념과 용어, 다양한 저장소 네임스페이스를 위한 문법을 설명합니다. </p>
+</div>
+<div class="paragraph">
+<p>
+  키밸류 저장소나 스프링, 스프링데이터 예제를 위한 소개를 위해서는 <a href="#get-started">시작해보기</a>를 참고해주세요 - 이 문서는 오직 스프링 데이터 레디스 지원을 참조하며, 사용자가 이미 키밸류 저장소와 스프링의 개념에 익숙하다고 가정합니다. </p>
+</div>
+
+    </div>
+    <div class="originalArticle">
+      <div class="paragraph">
+<p>This document is the reference guide for Spring Data Redis (SDR) Support. It explains Key Value module concepts and semantics and the syntax for various stores namespaces.</p>
+</div>
+<div class="paragraph">
+<p>For an introduction to key value stores or Spring, or Spring Data examples, please refer to <a href="#get-started">Getting Started</a> - this documentation refers only to Spring Data Redis Support and assumes the user is familiar with the key value storages and Spring concepts.</p>
+</div>
+
+    </div>  
+
+      
+
+
+</div>
+</div>
+<div class="sect1">
+<h2 id="why-spring-redis"><a class="anchor" href="#why-spring-redis"></a>2. 왜 스프링 데이터 레디스 인가 ? </h2>
+<div class="sectionbody">
+
+    <div class="translateArticle">
+      <div class="paragraph">
+<p>
+  스프링 프레임워크는 선도적인 풀스택 Java/JEE 어플리케이션 프레임워크 입니다. 이것은 경량화 콘테이너를 제공하며,  AOP, DI와 간편한 서비스 추상화의 사용으로, 비침투적인 프로그래밍 모델을 제공합니다. 
+ </p>
+</div>
+<div class="paragraph">
+<p><a href="http://en.wikipedia.org/wiki/NoSQL">NoSQL</a> 저장소는 수평적 scalability 와 속도를 위해 고전적인 RDBMS의 대안을 제공하고 있습니다. 구현체에 관해서라면 키밸류 저장소는 NOSQL 영역에서 하나의 커다란 (그리고 오래된) 부분을 차지합니다 .</p>
+</div>
+<div class="paragraph">
+<p>
+  스프링 데이터 레디스(SDR) 프레임워크는 불필요한 작업과 저장소와 상호작용하는 보일러플레이트한 코드를 제거함으로써 ,레디스 키밸류 저장소를 사용하는 스프링 애플리케이션을 쉽게 만들게 해줍니다. 
+ </p>
+</div>
+    </div>
+    <div class="originalArticle">
+      <div class="paragraph">
+<p>The Spring Framework is the leading full-stack Java/JEE application framework. It provides a lightweight container and a non-invasive programming model enabled by the use of dependency injection, AOP, and portable service abstractions.</p>
+</div>
+<div class="paragraph">
+<p><a href="http://en.wikipedia.org/wiki/NoSQL">NoSQL</a> storages provide an alternative to classical RDBMS for horizontal scalability and speed. In terms of implementation, Key Value stores represent one of the largest (and oldest) members in the NoSQL space.</p>
+</div>
+<div class="paragraph">
+<p>The Spring Data Redis (or SDR) framework makes it easy to write Spring applications that use the Redis key value store by eliminating the redundant tasks and boiler plate code required for interacting with the store through Spring&#8217;s excellent infrastructure support.</p>
+</div>
+    </div>  
+
+      
+
+
+</div>
+</div>
+<div class="sect1">
+<h2 id="requirements"><a class="anchor" href="#requirements"></a>3. 요구사항 </h2>
+<div class="sectionbody">
+
+
+    <div class="translateArticle">
+      <div class="paragraph">
+<p>
+  스프링 데이서 레디스 1.2.x 바이너리는 JDK 6.0 이상을 필요로 하며 스프링 프레임워크 3.2.8 이상을 필요로 합니다 .</p>
+</div>
+<div class="paragraph">
+<p>
+  키밸류 저장소의 면에서  <a href="http://redis.io">Redis</a> 2.6.x 나 그 이상이 필요하며 스프링 데이터 레디스는 현재 2.6과 2.8 버젼에 대하여 테스트 되었습니다. </p>
+</div>
+    </div>
+    <div class="originalArticle">
+      <div class="paragraph">
+<p>Spring Data Redis 1.2.x binaries requires JDK level 6.0 and above, and <a href="http://projects.spring.io/spring-framework/">Spring Framework</a> 3.2.8 and above.</p>
+</div>
+<div class="paragraph">
+<p>In terms of key value stores, <a href="http://redis.io">Redis</a> 2.6.x or higher is required. Spring Data Redis is currently tested against the latest 2.6 and 2.8 releases.</p>
+</div>
+    </div>  
+
+      
+
+
+</div>
+</div>
+<div class="sect1">
+<h2 id="get-started"><a class="anchor" href="#get-started"></a>4. 시작해보기</h2>
+<div class="sectionbody">
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>새로운 프레임워크를 배우는 것은 언제나 간단하진 않습니다. 이 섹션에서 우리 (스프링데이터팀)는 (우리가 생각하기에 따라가기에) 쉬운 스프링 레디스 모듈을 시작하는 가이드를 제공하고자 합니다. 물론 가능하다면, 당신에게 맞는 당신의 학습 경로를 따라가는 데는 자유롭게 생각하셔도 됩니다. 다른 사람들 도울 수 있는 어떤 더 나은 이 문서에 대한 더 나은 방법이 있다면 알려주세요 :)  </p>
+    </div>
+    <div class="originalArticle">
+      <p>Learning a new framework is not always straight forward. In this section, we (the Spring Data team) tried to provide, what we think is, an easy to follow guide for starting with the Spring Data Redis module. Of course, feel free to create your own learning 'path' as you see fit and, if possible, please report back any improvements to the documentation that can help others.</p>
+    </div>  
+
+      
+</div>
+<div class="sect2">
+<h3 id="get-started:first-steps"><a class="anchor" href="#get-started:first-steps"></a>4.1. 첫번째 단계 </h3>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>우리가  <a href="#why-spring-redis">왜 스프링데이터레디스 인가?</a>,에서 설명한 대로 스프링데이터레디스 (SDR) 는 스프링 프레임워크와 레디스 키/값 저장소 간의 통합을 제공합니다. 그러므로 양쪽 프레임워크를 알고 있는 일은 매우 중요하다고 할 수 있습니다. 이 SDR 문서를 도처에는,  각각의 섹션들이 관련된 링크를 제공하지만 미리 이런 주제들에 대해 익숙한 것이 제일 최선일 것입니다.</p>
+    </div>
+    <div class="originalArticle">
+      <p>As explained in <a href="#why-spring-redis">Why Spring Data Redis?</a>, Spring Data Redis (SDR) provides integration between Spring framework and the Redis key value store. Thus, it is important to become acquainted with both of these frameworks (storages or environments depending on how you want to name them). Throughout the SDR documentation, each section provides links to resources relevant however, it is best to become familiar with these topics beforehand.</p>
+    </div>  
+
+      
+</div>
+<div class="sect3">
+<h4 id="get-started:first-steps:spring"><a class="anchor" href="#get-started:first-steps:spring"></a>4.1.1. 스프링 알기 </h4>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>스프링 데이터는 스프링프레임워크의 핵심<a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/spring-core.html">core</a> 기능들을 톡톡히 사용합니다(^^;). <a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html">IoC</a> 컨테이너, 자원<a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/resources.html">resource</a> 추상화나 <a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/aop.html">AOP</a> 인프라구조같은 것들 말이죠..  말 나온 김에, 스프링 데이터 레디스얘기를 해보도록 해보도록 하겠습니다.(의역). 이외에도 스프링 프레임워크를 매우 이해하기 쉬운 (때때로 멋진) 문서도 많고 많은 블로그 글들에 책도 도처에 있지요. 스프링 가이드 <a href="http://spring.io/guides">home page</a> 를 보시면 더 많은 정보가 있구요 일반적으로 여기서는 SDR(스프링 데이터 레디스)를 시도해보고 싶은 개발자들을 위한 시작 지점이 되겠습니다.   </p>
+    </div>
+    <div class="originalArticle">
+      <p>Spring Data uses heavily Spring framework&#8217;s <a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/spring-core.html">core</a> functionality, such as the <a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html">IoC</a> container, <a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/resources.html">resource</a> abstract or <a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/aop.html">AOP</a> infrastructure. While it is not important to know the Spring APIs, understanding the concepts behind them is. At a minimum, the idea behind IoC should be familiar. That being said, the more knowledge one has about the Spring, the faster she will pick up Spring Data Redis. Besides the very comprehensive (and sometimes disarming) documentation that explains in detail the Spring Framework, there are a lot of articles, blog entries and books on the matter - take a look at the Spring Guides <a href="http://spring.io/guides">home page</a> for more information. In general, this should be the starting point for developers wanting to try Spring DR.</p>
+    </div>  
+
+      
+</div>
+</div>
+<div class="sect3">
+<h4 id="get-started:first-steps:nosql"><a class="anchor" href="#get-started:first-steps:nosql"></a>    <div class="translateArticle">
+      4.1.2. NOSQL과 키밸류 저장소 알기
+    </div>
+    <div class="originalArticle">
+      4.1.2. Knowing NoSQL and Key Value stores
+    </div>  
+
+      </h4>
+<div class="paragraph">
+   <div class="translateArticle">
+    <p> 
+      NOSQL 저장소는 저장소 세계를 점령했습니다. 어마어마한 영역에 솔루션, 용어와 패턴과 의미(더 상황을 악화시키는 것은 여러 의미를 가진 <a href="http://www.google.com/search?q=nosoql+acronym">의미</a>)의 과잉이 일어나고 있습니다. 
+      반면 몇몇 원칙들은 공통적입니다. 사용자가 어느 정도의 SDR에 의해 제공되는 저장소에 대해 친숙해야 한다는 것은 중요합니다. 이러한 솔루션들에 친숙해지는 가장 최고의 방법은 그것들의 문서를 읽고 예제를 따라해보는 것입니다. 보통 5-10분 이상이 걸리지 않고, 당신이 RDMBS에만 친숙하다면 이러한 일들을 몇번 더 해서 친숙해져야 할 것입니다. 
+</p>
+    </div>
+    <div class="originalArticle"><p> 
+      NoSQL stores have taken the storage world by storm. It is a vast domain with a plethora of solutions, terms and patterns (to make things worse even the term itself has multiple <a href="http://www.google.com/search?q=nosoql+acronym">meanings</a>). While some of the principles are common, it is crucial that the user is familiar to some degree with the stores supported by SDR. The best way to get acquainted with these solutions is to read their documentation and follow their examples - it usually doesn&#8217;t take more then 5-10 minutes to go through them and if you are coming from an RDMBS-only background many times these exercises can be an eye opener.
+    </div>  
+
+      </p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="get-started:first-steps:samples"><a class="anchor" href="#get-started:first-steps:samples"></a>4.1.3. 예제 시도해보기 </h4>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p> 제공된 예제소스 같은 곳(<a href="https://github.com/spring-projects/spring-data-keyvalue-examples">http://github.com/spring-projects/spring-data-keyvalue-examples</a>)에서 키밸류 저장소를 위한 다양한 예제들을 발견할 수 있을 것입니다.  SDR을 위해서 흥미로운 것은 <code>retwisj</code> 예제입니다. 이것은 로컬이나 클라우드로 디플로이되면서, 레디스에서 빌드되는 트위터 클론입니다. 이 <a href="http://static.springsource.org/spring-data/data-keyvalue/examples/retwisj/current/">문서</a>를 보시고 다음 블로그 <a href="http://blog.springsource.com/2011/04/27/getting-started-redis-spring-cloud-foundry/">아티클</a>이나 <a href="http://retwisj.cloudfoundry.com/">live instance</a>에서 더 많은 정보를 읽어보세요 ^^ </p>
+
+     
+    </div>
+    <div class="originalArticle">
+      <p>One can find various samples for key value stores in the dedicated example repo, at <a href="https://github.com/spring-projects/spring-data-keyvalue-examples">http://github.com/spring-projects/spring-data-keyvalue-examples</a>. For Spring Data Redis, of interest is the <code>retwisj</code> sample, a Twitter-clone built on top of Redis which can be run locally or be deployed into the cloud. See its <a href="http://static.springsource.org/spring-data/data-keyvalue/examples/retwisj/current/">documentation</a>, the following blog <a href="http://blog.springsource.com/2011/04/27/getting-started-redis-spring-cloud-foundry/">entry</a> or the <a href="http://retwisj.cloudfoundry.com/">live instance</a> for more information.</p>
+    </div>  
+
+      
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="get-started:help"><a class="anchor" href="#get-started:help"></a>4.2.도움이 필요한가요?</h3>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>만약 당신이 문제에 직면하거나, 조언을 필요로 한다면 다음 링크를 마음껏 사용해보세요 : </p>
+    </div>
+    <div class="originalArticle">
+      <p>If you encounter issues or you are just looking for advice, feel free to use one of the links below:</p>
+    </div>  
+
+      
+</div>
+<div class="sect3">
+<h4 id="get-started:help:community"><a class="anchor" href="#get-started:help:community"></a>4.2.1. 커뮤니티 지원</h4>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p><a href="http://stackoverflow.com/questions/tagged/spring-data">Stackoverflow</a>에서 스프링 데이터 태그 메시지 보드를 보시고 (레디스에 관한 것은 아닙니다 ) 스프링 데이터 유저들과 정보를 공유하고 서로 도움을 받아보세요. 글쓰기를 위해서는 회원등록이 필요로 할 것입니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>The Spring Data tag on <a href="http://stackoverflow.com/questions/tagged/spring-data">Stackoverflow</a> is a message board for all Spring Data (not just Redis) users to share information and help each other. Note that registration is needed <strong>only</strong> for posting.</p>
+    </div>  
+
+      
+</div>
+</div>
+<div class="sect3">
+<h4 id="get-started:help:professional"><a class="anchor" href="#get-started:help:professional"></a>4.2.2. 전문가 지원</h4>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>전문적으로는 책임 기간을 가지고 <a href="http://www.gopivotal.com/">Pivotal Software, Inc.</a>에서 소스 지원부터 가능합니다. 이 회사는 스프링 데이터와 스프링를 지원하는 회사입니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>Professional, from-the-source support, with guaranteed response time, is available from <a href="http://www.gopivotal.com/">Pivotal Software, Inc.</a>, the company behind Spring Data and Spring.</p>
+    </div>  
+
+      
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="get-started:up-to-date"><a class="anchor" href="#get-started:up-to-date"></a>4.3. 개발 따라가기(역주: 소스 코드 버그나 그런 얘기이므로 생략 ) </h3>
+<div class="paragraph">
+<p>For information on the Spring Data source code repository, nightly builds and snapshot artifacts please see the Spring Data home <a href="http://spring.io/spring-data">page</a>.</p>
+</div>
+<div class="paragraph">
+<p>You can help make Spring Data best serve the needs of the Spring community by interacting with developers on Stackoverflow at either
+<a href="http://stackoverflow.com/questions/tagged/spring-data">spring-data</a> or <a href="http://stackoverflow.com/questions/tagged/spring-data-redis">spring-data-redis</a>.</p>
+</div>
+<div class="paragraph">
+<p>If you encounter a bug or want to suggest an improvement, please create a ticket on the Spring Data issue <a href="https://jira.springsource.org/browse/DATAREDIS">tracker</a>.</p>
+</div>
+<div class="paragraph">
+<p>To stay up to date with the latest news and announcements in the Spring eco system, subscribe to the Spring Community <a href="http://spring.io/">Portal</a>.</p>
+</div>
+<div class="paragraph">
+<p>Lastly, you can follow the Spring <a href="http://spring.io/blog/">blog</a> or the project team (<a href="http://twitter.com/thomasdarimont">Thomas</a> and <a href="http://twitter.com/stroblchristoph">Christoph</a>) on Twitter.</p>
+</div>
+</div>
+</div>
+</div>
+<h1 id="reference" class="sect0"><a class="anchor" href="#reference"></a>레퍼런스 문서</h1>
+<div class="openblock partintro">
+<div class="content">
+<h2 id="_document_structure" class="float">문서 구조</h2>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>이 부분은 레퍼런스 문서로써, SDR에서제공하는 핵심 기능을 설명합니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>This part of the reference documentation explains the core functionality offered by Spring Data Redis.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p><a href="#redis">Redis 지원은</a> 레디스 모듈 특징 셋을 소개합니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p><a href="#redis">Redis support</a> introduces the Redis module feature set.</p>
+    </div>  
+
+      
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="redis"><a class="anchor" href="#redis"></a>5. 레디스 지원</h2>
+<div class="sectionbody">
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>스프링 데이터에서 지원되는 키밸류 저장소중의 하나는 <a href="http://redis.io">Redis</a>입니다. 프로젝트 홈페이지를 인용하자면 : </p>
+    </div>
+    <div class="originalArticle">
+      <p>One of the key value stores supported by Spring Data is <a href="http://redis.io">Redis</a>. To quote the project home page:</p>
+    </div>  
+
+      
+</div>
+<div class="quoteblock">
+<blockquote>
+    <div class="translateArticle">
+      레디스는 고급 키밸류 저장소입니다. 이것은 memcached 와 비슷하지만, 데이터셋은 변덕스럽지(volatile) 않습니다. 그리고 값은 정확히 문자열(멤캐쉬처럼)이 될 수 있지만, 이것은 또한 리스트, 셋, 그리고 정렬된 셋을 지원합니다. 모든 이러한 데이터 타입은 원자적 연산으로 생성될 수 있으며 요소를 push/pop, add/remove 할 수 있고 서버사이드 결합, 상호작용, 셋들간의 차이(difference between sets), 등등을 할 수가 있습니다. 레디스는 여러 종류를 정렬 기능을 지원합니다. 
+    </div>
+    <div class="originalArticle">
+      Redis is an advanced key-value store. It is similar to memcached but the dataset is not volatile, and values can be strings, exactly like in memcached, but also lists, sets, and ordered sets. All this data types can be manipulated with atomic operations to push/pop elements, add/remove elements, perform server side union, intersection, difference between sets, and so forth. Redis supports different kind of sorting abilities.
+    </div>  
+
+      
+</blockquote>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>스프링 데이터 레디스는 스프링 어플리케이션으로부터 레디스로의 간편한 접근과 설정을 제공합니다. 저장소와 상호작용하는 데 로우레벨과 하이레벨 추상화를 제공하며, 유저를 인프라스트럭쳐적 걱정에서 편하게 해줍니다 .</p>
+    </div>
+    <div class="originalArticle">
+      <p>Spring Data Redis provides easy configuration and access to Redis from Spring applications. It offers both low-level and high-level abstractions for interacting with the store, freeing the user from infrastructural concerns.</p>
+    </div>  
+
+      
+</div>
+<div class="sect2">
+<h3 id="redis:requirements"><a class="anchor" href="#redis:requirements"></a>5.1. 레디스 요구사항</h3>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>스프링 레디스는 REDIS 2.6 이나 그 이상의 버젼을 필요로 하면 JAVA SE 6.0 이상의 버젼을 필요로 합니다. 언어바인딩(아니면 코넥터)에 관해서 스프링 레디스는 레디스를 위한 인기있는 오픈소스 자바 라이브러리인, <a href="http://github.com/xetorthio/jedis">Jedis</a>, <a href="http://github.com/alphazero/jredis">JRedis</a>, <a href="http://github.com/spullara/redis-protocol">SRP</a>과 <a href="http://github.com/wg/lettuce">Lettuce</a>에 통합되어 있습니다. 만약 당신이 다른 코넥터를 원한다면 저희 팀에 피드백을 주시길 바랍니다.  </p>
+    </div>
+    <div class="originalArticle">
+      <p>Spring Redis requires Redis 2.6 or above and Java SE 6.0 or above . In terms of language bindings (or connectors), Spring Redis integrates with <a href="http://github.com/xetorthio/jedis">Jedis</a>, <a href="http://github.com/alphazero/jredis">JRedis</a>, <a href="http://github.com/spullara/redis-protocol">SRP</a> and <a href="http://github.com/wg/lettuce">Lettuce</a>, four popular open source Java libraries for Redis. If you are aware of any other connector that we should be integrating with please send us feedback.</p>
+    </div>  
+
+      
+</div>
+</div>
+<div class="sect2">
+<h3 id="redis:architecture"><a class="anchor" href="#redis:architecture"></a>5.2. 하이레벨 뷰를 위한 레디스 지원</h3>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>레디스 지원은 몇가지 컴포넌트를 제공합니다 (의존성 순서대로):  </p>
+    </div>
+    <div class="originalArticle">
+      <p>The Redis support provides several components (in order of dependencies):</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>많은 작업에서 하이레벨 추상화와 지원서비스는 훌륭한 선택입니다. 어떤 지점에서 레이어간에 이동이 있을 수 있습니다. 예를 들자면, 레디스와 직접적으로 통신하기 위해 로우레벨 코넥션을 가지고 있는 것은 매우 쉬울 수 있습니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>For most tasks, the high-level abstractions and support services are the best choice. Note that at any point, one can move between layers - for example, it&#8217;s very easy to get a hold of the low level connection (or even the native library) to communicate directly with Redis.</p>
+    </div>  
+
+      
+</div>
+</div>
+<div class="sect2">
+<h3 id="redis:connectors"><a class="anchor" href="#redis:connectors"></a>5.3. 레디스에 접속하기</h3>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>레디스와 스프링을 사용할 때 첫번째 일은 IOC 컨테이너를 이용해 저장소에 접속하는 것입니다. 이것을 하기 위해 자바 코넥터(나 바인딩)이 필요합니다. 당신이 고르는 라이브러리가 무엇이든, 지속적으로 모든 코넥터에서 행동을 하려고 할 때,  스프링데이터레디스 API에는 하나의 세트가 필요로 합니다. <code>org.springframework.data.redis.connection</code>패키지와 그 안의 <code>RedisConnection</code>와 레디스에서 active된 <code>connections</code>을 받고 작업하기 위한 <code>RedisConnectionFactory</code>인터페이스입니다. </p> 
+    </div>
+    <div class="originalArticle">
+      <p>One of the first tasks when using Redis and Spring is to connect to the store through the IoC container. To do that, a Java connector (or binding) is required. No matter the library one chooses, there is only one set of Spring Data Redis API that one needs to use that behaves consistently across all connectors, namely the <code>org.springframework.data.redis.connection</code> package and its <code>RedisConnection</code> and <code>RedisConnectionFactory</code> interfaces for working with and retrieving active <code>connections</code> to Redis.</p>
+    </div>  
+
+      
+</div>
+<div class="sect3">
+<h4 id="redis:connectors:connection"><a class="anchor" href="#redis:connectors:connection"></a>5.3.1. RedisConnection 과 RedisConnectionFactory</h4>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p><code>RedisConnection</code> 은 레디스 통신에 있어서 building block 을 제공하여 레디스 백엔드에서의 통신을 다루게 됩니다. 또한 자동적으로 코넥팅 라이브러리 예외를 스프링 일관성(consistency) DAO 예외<a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/dao.html#dao-exceptions">hierarchy</a> 로 전환해주기도 합니다. 그래서 어떤 코드의 변화도 없이 작업문법은 일관적으로 남아있게 됩니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p><code>RedisConnection</code> provides the building block for Redis communication as it handles the communication with the Redis back-end. It also automatically translates the underlying connecting library exceptions to Spring&#8217;s consistent DAO exception <a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/dao.html#dao-exceptions">hierarchy</a> so one can switch the connectors without any code changes as the operation semantics remain the same.</p>
+    </div>  
+
+      
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+    <div class="translateArticle">
+      네이티브 라이브러리 API 가 필요로 하는 경우를 위해  <code>RedisConnection</code> 은 <code>getNativeConnection</code>라는 메소드를 제공하는데, 이것은 통신을 위해 사용되는 raw한 객체를 리턴합니다. 
+    </div>
+    <div class="originalArticle">
+      For the corner cases where the native library API is required, <code>RedisConnection</code> provides a dedicated method <code>getNativeConnection</code> which returns the raw, underlying object used for communication.
+    </div>  
+
+      
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p> 활성화된 <code>RedisConnection</code>들은 <code>RedisConnectionFactory</code>을 통해서 생성됩니다. 추가적으로 팩토리는 <code>PersistenceExceptionTranslator</code>로 활동을 하며, 한번 선언되면 투명한 예외 전환을 한다는 것을 의미합니다. 예를 들자면 <code>@Repository</code>와 AOP의 사용을 통한 예외 전환을 말합니다. 더 많은 정보는 스프링 프레임워크 문서에서의 이 <a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/orm.html#orm-exception-translation">section</a> 에서 보실 수가 있습니다. 
+      </p>
+    </div>
+    <div class="originalArticle">
+      <p>Active <code>RedisConnection</code> s are created through <code>RedisConnectionFactory</code>. In addition, the factories act as <code>PersistenceExceptionTranslator</code> s, meaning once declared, they allow one to do transparent exception translation. For example, exception translation through the use of the <code>@Repository</code> annotation and AOP. For more information see the dedicated <a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/orm.html#orm-exception-translation">section</a> in Spring Framework documentation.</p>
+    </div>  
+
+      
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+    <div class="translateArticle">
+      설정해둔 것에 따라서, 팩토리는 새로운 코넥션이나 (코넥션풀이나 공유 네이티브 코넥션이 사용되는 경우) 존재하는 코넥션을 리턴할 수가 있습니다. 
+    </div>
+    <div class="originalArticle">
+      Depending on the underlying configuration, the factory can return a new connection or an existing connection (in case a pool or shared native connection is used).
+    </div>  
+
+      
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p><code>RedisConnectionFactory</code> 와 작업을 하는 가장 쉬운 방법은 적절한 코넥터를 IOC코넥터를 이용해 설정하고 그것을 사용하는 클래스에 주입하는 것입니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>The easiest way to work with a <code>RedisConnectionFactory</code> is to configure the appropriate connector through the IoC container and inject it into the using class.</p>
+    </div>  
+
+      
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+    <div class="translateArticle">
+      불행히도 현재는 모든 코넥터가 레디스의 특징을 지원하는 것은 아닙니다. 라이브러리가 지원하지 않는 코넥션 API에 있는 메소드를 실행시킬 때, UnsupportedOperationException 이 던져집니다. 이러한 상황은 나중에 다양한 코넥터들이 좀 더 성숙하면서 고쳐질 것같습니다. 
+    </div>
+    <div class="originalArticle">
+      Unfortunately, currently, not all connectors support all Redis features. When invoking a method on the Connection` API that is unsupported by the underlying library, an `UnsupportedOperationException is thrown.
+      This situation is likely to be fixed in the future, as the various connectors mature.
+    </div>  
+
+      
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="redis:connectors:jedis"><a class="anchor" href="#redis:connectors:jedis"></a>5.3.2. JEDIS 접속기 설정</h4>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p><a href="http://github.com/xetorthio/jedis">Jedis</a> 는 <code>org.springframework.data.redis.connection.jedis</code> package에서의 스프링 데이터 레디스 모듈에서 지원되는 코넥터 중의 하나로 간단한 설정은 다음과 같습니다 : </p>
+    </div>
+    <div class="originalArticle">
+      <p><a href="http://github.com/xetorthio/jedis">Jedis</a> is one of the connectors supported by the Spring Data Redis module through the <code>org.springframework.data.redis.connection.jedis</code> package. In its simplest form, the Jedis configuration looks as follow:</p>
+    </div>  
+
+      
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"&gt;
+
+  &lt;!-- Jedis ConnectionFactory --&gt;
+  &lt;bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"/&gt;
+
+&lt;/beans&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>그러나 프로덕션 사용을 위해서라면, host와 password설정을 조금 다르게 해야 할 것입니다. : </p>
+    </div>
+    <div class="originalArticle">
+      <p>For production use however, one might want to tweak the settings such as the host or password:</p>
+    </div>  
+
+      
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"&gt;
+
+  &lt;bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" p:host-name="server" p:port="6379" /&gt;
+
+&lt;/beans&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="redis:connectors:jredis"><a class="anchor" href="#redis:connectors:jredis"></a>5.3.3. JRedis 코넥터 설정 </h4>
+<div class="paragraph">
+<p><a href="http://github.com/alphazero/jredis">JRedis</a> 는 또 다른 유명한 오픈소스 코텍터로 <code>org.springframework.data.redis.connection.jredis</code>패키지를 통해서 지원이 되고 있습니다. </p>
+</div>
+<div class="paragraph">
+<p>일반적인 JRedis 설정은 다음과 같습니다. :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"&gt;
+
+  &lt;bean id="jredisConnectionFactory" class="org.springframework.data.redis.connection.jredis.JredisConnectionFactory" p:host-name="server" p:port="6379"/&gt;
+
+&lt;/beans&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>설정이 상당히 Jedis와 비슷합니다. 한가지 주목할 만한 다른 점은 기본적으로 <code>JredisConnectionFactory</code> 풀 코넥션 입니다. JRedis에서 코넥션 풀을 사용하기 위해서는 <code>JredisConnectionFactory</code>를 <code>JredisPool</code>인스턴스와 함께 설정해야 합니다. 예를 들면 다음과 같습니다 : </p>
+    </div>
+    <div class="originalArticle">
+      <p>The configuration is quite similar to Jedis, with one notable exception. By default, the <code>JredisConnectionFactory</code> pools connections. In order to use a connection pool with JRedis, configure the <code>JredisConnectionFactory</code> with an instance of <code>JredisPool</code>. For example:</p>
+    </div>  
+
+      
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"&gt;
+
+  &lt;bean id="jredisConnectionFactory" class="org.springframework.data.redis.connection.jredis.JredisConnectionFactory"&gt;
+    &lt;constructor-arg&gt;
+      &lt;bean class="org.springframework.data.redis.connection.jredis.DefaultJredisPool"&gt;
+        &lt;constructor-arg value="localhost" /&gt;
+        &lt;constructor-arg value="6379" /&gt;
+      &lt;/bean&gt;
+    &lt;/constructor-arg&gt;
+  &lt;/bean&gt;
+
+&lt;/beans&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="redis:connectors:srp"><a class="anchor" href="#redis:connectors:srp"></a>5.3.4. SRP 코넥터 설정해보기</h4>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p><a href="https://github.com/spullara/redis-protocol">SRP</a> (Sam's 레디스 프로토콜의 합성어) 은 SDR의 세번째 오픈소스 커넥터로 <code>org.springframework.data.redis.connection.srp</code> 패키지에서 제공합니다 .</p>
+    </div>
+    <div class="originalArticle">
+      <p><a href="https://github.com/spullara/redis-protocol">SRP</a> (an acronym for Sam&#8217;s Redis Protocol) is the third open-source connector supported by Spring Data Redis through the <code>org.springframework.data.redis.connection.srp</code> package.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+<p>지금까지로 봐서 설정이 추측하기 쉬우실 겁니다. </p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="
+  http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"&gt;
+
+  &lt;bean id="srpConnectionFactory" class="org.springframework.data.redis.connection.srp.SrpConnectionFactory" p:host-name="server" p:port="6379"/&gt;
+
+&lt;/beans&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>말할 것없이 설정이 다른 설정과 비슷합니다. </p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="redis:connectors:lettuce"><a class="anchor" href="#redis:connectors:lettuce"></a>5.3.5. Lettuce 커넥터 설정</h4>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p><a href="https://github.com/wg/lettuce">Lettuce</a> 는 네번째 SDR 어쩌고<code>org.springframework.data.redis.connection.lettuce</code> 패키지는 여기. (발번역ㄱㄱ ;; ) </p>
+    </div>
+    <div class="originalArticle">
+      <p><a href="https://github.com/wg/lettuce">Lettuce</a> is the fourth open-source connector supported by Spring Data Redis through the <code>org.springframework.data.redis.connection.lettuce</code> package.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+<p>설정 매우 쉬움 쉬움 </p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"&gt;
+
+  &lt;bean id="lettuceConnectionFactory" class="org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory" p:host-name="server" p:port="6379"/&gt;
+
+&lt;/beans&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p> 또한 Lettuce특정으로 몇가지 달라질 수 있는 코넥션 파라미터가 있습니다.  기본적으로 <code>LettuceConnectionFactory</code>로 생성되는 모든 <code>LettuceConnections</code>은, 모든 논블로킹-논트랜잭션 작업을 위해  같은 쓰레드세이프한 네이티브 코넥션을 공유합니다. <code>shareNativeConnection</code> 를 false로 사용하여 제공된 코넥션을 매시간 사용합니다. <code>LettuceConnectionFactory</code>는 또한 <code>LettucePool</code>과 함께 사용되어 pooling blocking 하고 transactional 한 코넥션을 사용하기도하고,  <code>shareNativeConnection</code>이 false로  되어있다면 모든 코넥션을 사용하기도 합니다. 
+
+        </p>
+    </div>
+    <div class="originalArticle">
+      <p>There are also a few Lettuce-specific connection parameters that can be tweaked. By default, all <code>LettuceConnections</code> created by the <code>LettuceConnectionFactory</code> share the same thread-safe native connection for all non-blocking and non-transactional operations. Set <code>shareNativeConnection</code> to false to use a dedicated connection each time. <code>LettuceConnectionFactory</code> can also be configured with a <code>LettucePool</code> to use for pooling blocking and transactional connections, or all connections if <code>shareNativeConnection</code> is set to false.</p>
+    </div>  
+
+      
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="redis:sentinel"><a class="anchor" href="#redis:sentinel"></a>5.4. 레디스 센티널 지원</h3>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p> 높은 가용성(available) Redis를 다루기 위해 <code>RedisSentinelConfiguration</code>를 사용하여 <a href="http://redis.io/topics/sentinel">Redis Sentinel</a>에 대한 지원이 있습니다. 
+
+        For dealing with high available Redis there is support for <a href="http://redis.io/topics/sentinel">Redis Sentinel</a> using <code>RedisSentinelConfiguration</code>.</p>
+    </div>
+    <div class="originalArticle">
+      <p>For dealing with high available Redis there is support for <a href="http://redis.io/topics/sentinel">Redis Sentinel</a> using <code>RedisSentinelConfiguration</code>.</p>
+    </div>  
+
+      
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+    <div class="translateArticle">
+      <a href="http://github.com/xetorthio/jedis">Jedis</a> 가 지금은 오직 레디스 센티널을 지원한다는 것을 알아둡시다. 
+    </div>
+    <div class="originalArticle">
+      Please note that currently only <a href="http://github.com/xetorthio/jedis">Jedis</a> supports Redis Sentinel.
+    </div>  
+
+      
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Bean
+public RedisConnectionFactory jedisConnectionFactory() {
+  RedisSentinelConfiguration sentinelConfig = new RedisSentinelConfiguration() .master("mymaster")
+  .sentinel("127.0.0.1", 26379) .sentinel("127.0.0.1", 26380);
+  return new JedisConnectionFactory(sentinelConfig);
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+    <div class="translateArticle">
+      <p><code>RedisSentinelConfiguration</code> 은 또한  <code>PropertySource</code>를 통해 정의될 수 있습니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p><code>RedisSentinelConfiguration</code> can also be defined via <code>PropertySource</code>.</p>
+    </div>  
+
+      
+</div>
+<div class="ulist">
+<div class="title">설정 프로퍼티들</div>
+<ul>
+<li>
+<p><code>spring.redis.sentinel.master</code>: 마스터 노드 이름.</p>
+</li>
+<li>
+<p><code>spring.redis.sentinel.nodes</code>: 콤마로 분리된 호스트:포트 쌍의 리스트.</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>때떄로 센티널의 일부와 직접적인 상호작용이 필요로 합니다.. <code>RedisConnectionFactory.getSentinelConnection()</code> 이나 <code>RedisConnection.getSentinelCommands()</code>를 사용하는 것은 당신에게 첫번째로 활성화 설정된 센티널에 대한 접근을 제공해줄 것입니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>Sometimes direct interaction with the one of the Sentinels is required. Using <code>RedisConnectionFactory.getSentinelConnection()</code> or <code>RedisConnection.getSentinelCommands()</code> gives you access to the first active Sentinel configured.</p>
+    </div>  
+
+      
+</div>
+</div>
+<div class="sect2">
+<h3 id="redis:template"><a class="anchor" href="#redis:template"></a>    <div class="translateArticle">
+      5.5. RedisTemplate을 통해 객체와 작업하기 
+    </div>
+    <div class="originalArticle">
+      5.5. Working with Objects through RedisTemplate
+    </div>  
+
+      </h3>
+    <div class="translateArticle">
+      <div class="paragraph">
+<p>대부분의 사용자들은 <code>RedisTemplate</code>을 사용하고 이에 맞는 패키지 <code>org.springframework.data.redis.core</code>를 사용할 것입니다.  - template은 사실 그것의 풍부한 특징들에 의해 레디스 모듈의 중심 클래스입니다. 
+
+템플릿은 레디스 상호작용을 위해 높은 레벨 추상화를 제공합니다. <code>RedisConnection</code>가 바이너리값(<code>byte</code> arrays)을 받고 리턴하는 로우레벨 메소드를 제공하는 반면 template은 직렬화와 코넥션 관리를 해주며 유저가 그러한 세부사항을 다루는 것에서 자유롭게 해줍니다. </p>
+</div>
+<div class="paragraph">
+<p>
+  게다가 template 은 특정 타입이나 특정 키를 위해 풍부하고, 고상한(generified:사전없는 단어로 다른 단어로 바꿔서 번역) 인터페이스를 제공하는 작업 뷰 (다음 레디스 명령어 모음<a href="http://redis.io/commands">reference</a>)를 <code>KeyBound</code>를 통해 밑에 설명한 것처럼 주게 됩니다. 
+  </p>
+</div>
+    </div>
+
+    <div class="originalArticle">
+      <div class="paragraph">
+<p>Most users are likely to use <code>RedisTemplate</code> and its coresponding package <code>org.springframework.data.redis.core</code> - the template is in fact the central class of the Redis module due to its rich feature set. The template offers a high-level abstraction for Redis interactions. While <code>RedisConnection</code> offers low level methods that accept and return binary values (<code>byte</code> arrays), the template takes care of serialization and connection management, freeing the user from dealing with such details.</p>
+</div>
+<div class="paragraph">
+<p>Moreover, the template provides operations views (following the grouping from Redis command <a href="http://redis.io/commands">reference</a>) that offer rich, generified interfaces for working against a certain type or certain key (through the <code>KeyBound</code> interfaces) as described below:</p>
+</div>
+    </div>  
+
+      
+
+
+
+<table class="tableblock frame-all grid-all" style="width: 80%;">
+<caption class="title">Table 1. 작업 뷰들 Operational views(여기는 원문용어를 그대로 살리는 게 나을 것같다 ) </caption>
+<colgroup>
+<col style="width: 33%;">
+<col style="width: 66%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Interface</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="2"><p class="tableblock"><em>Key Type Operations</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ValueOperations</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Redis string (or value) operations</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ListOperations</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Redis list operations</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SetOperations</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Redis set operations</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ZSetOperations</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Redis zset (or sorted set) operations</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HashOperations</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Redis hash operations</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HyperLogLogOperations</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Redis HyperLogLog operations like (pfadd, pfcount,&#8230;&#8203;)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="2"><p class="tableblock"><em>Key Bound Operations</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BoundValueOperations</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Redis string (or value) key bound operations</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BoundListOperations</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Redis list key bound operations</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BoundSetOperations</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Redis set key bound operations</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BoundZSetOperations</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Redis zset (or sorted set) key bound operations</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BoundHashOperations</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Redis hash key bound operations</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>한번 설정되면, 템플릿은 스레드세이프하며 여러개의 인스턴스에서 재사용될수 있습니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>Once configured, the template is thread-safe and can be reused across multiple instances.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>특별히, <code>RedisTemplate</code> 은 대부분의 작업을 위해 자바기반의 직렬화를 사용합니다. 이것은 template에 읽혀지거나 쓰여지는 어떤 객체는 자바를 통해 직렬화/역직렬화 된다는 것을 의미합니다. 직렬화 메커니즘은 tempalte에 의해 쉽게 변경될 수 있으며, Redis 모듈은 <code>org.springframework.data.redis.serializer</code>에서 몇몇 사용가능한 구현체를 제공합니다. 더 많은 정보를 원한다면 <a href="#redis:serializer">Serializers</a>를 보세요. 당신은 또한 어떤 직렬화를 null로 설정하고, <code>enableDefaultSerializer</code> 를 false로 해서 RedisTemplate을 raw <code>byte</code> 배열과 함께 사용할 수 있습니다. serializer가 그것들을 받아들이는 한, 모든 키를 null이 아닌 값으로 설정하는 것을 필요로 하는 template이 null이 될 수 있습니다 (역주: 번역이 애매하다. 원문을 보자!). 더 많은 정보를 위해 각각의 serializer의 자바doc을 보세요~</p>
+    </div>
+    <div class="originalArticle">
+      <p>Out of the box, <code>RedisTemplate</code> uses a Java-based serializer for most of its operations. This means that any object written or read by the template will be serializer/deserialized through Java. The serialization mechanism can be easily changed on the template, and the Redis module offers several implementations available in the <code>org.springframework.data.redis.serializer</code> package - see <a href="#redis:serializer">Serializers</a> for more information. You can also set any of the serializers to null and use RedisTemplate with raw <code>byte</code> arrays by setting the <code>enableDefaultSerializer</code> property to false. Note that the template requires all keys to be non-null - values can be null as long as the underlying serializer accepts them; read the javadoc of each serializer for more information.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>
+        특정 template <strong>view</strong> 가 필요한 경우를 위해, view를 의존성으로 등록하고서 주입합니다 : 콘테이너가 자동적으로  <code>opsFor[X]</code>호출을 제거하는 전환을 수행할 것입니다 </p>
+    </div>
+    <div class="originalArticle">
+      <p>For cases where a certain template <strong>view</strong> is needed, declare the view as a dependency and inject the template: the container will automatically perform the conversion eliminating the <code>opsFor[X]</code> calls:</p>
+    </div>  
+
+      
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"&gt;
+
+  &lt;bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" p:use-pool="true"/&gt;
+  &lt;!-- redis template definition --&gt;
+  &lt;bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate" p:connection-factory-ref="jedisConnectionFactory"/&gt;
+  ...
+
+&lt;/beans&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public class Example {
+
+  // inject the actual template
+  @Autowired
+  private RedisTemplate&lt;String, String&gt; template; // inject the template as ListOperations
+
+  @Resource(name="redisTemplate")
+  private ListOperations&lt;String, String&gt; listOps;
+
+  public void addLink(String userId, URL url) {
+    listOps.leftPush(userId, url.toExternalForm());
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="redis:string"><a class="anchor" href="#redis:string"></a>    <div class="translateArticle">
+      5.6. 문자열 중점 편의 클래스
+    </div>
+    <div class="originalArticle">
+      5.6. String-focused convenience classes
+    </div>  
+
+      </h3>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>레디스에 저장되는 키와 밸류 값이 <code>java.lang.String</code>이 되는 것이 흔하기 때문에 레디스 모듈은 두 가지 확장(extension)을 <code>RedisConnection</code>과 <code>RedisTemplate</code>을, 
+        <code>StringRedisConnection</code> (그리고 <code>DefaultStringRedisConnection</code> 구현체) 와 <code>StringRedisTemplate</code>을 각자 집중적인 문자열 중점 작업으로 제공합니다. 게다가 <code>String</code> 키에 연결되면, template과 커넥션은 <code>StringRedisSerializer</code> 를 사용하여 저장된 키와 값을 사람이 읽기 쉽게 합니다 (의역함) (같은 인코딩이 레디스와 당신의 코드에서 일어났다고 가정합니다) 예를 들어 : </p>
+    </div>
+    <div class="originalArticle">
+      <p>Since it&#8217;s quite common for the keys and values stored in Redis to be <code>java.lang.String</code>, the Redis modules provides two extensions to <code>RedisConnection</code> and <code>RedisTemplate</code>, respectively the <code>StringRedisConnection</code> (and its <code>DefaultStringRedisConnection</code> implementation) and <code>StringRedisTemplate</code> as a convenient one-stop solution for intensive String operations. In addition to being bound to <code>String</code> keys, the template and the connection use the <code>StringRedisSerializer</code> underneath which means the stored keys and values are human readable (assuming the same encoding is used both in Redis and your code). For example:</p>
+    </div>  
+
+      
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"&gt;
+
+  &lt;bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" p:use-pool="true"/&gt;
+
+  &lt;bean id="stringRedisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate" p:connection-factory-ref="jedisConnectionFactory"/&gt;
+  ...
+&lt;/beans&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public class Example {
+
+  @Autowired
+  private StringRedisTemplate redisTemplate;
+
+  public void addLink(String userId, URL url) {
+    redisTemplate.opsForList().leftPush(userId, url.toExternalForm());
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>우리의 다른 스프링 템플릿과 마찬가지로, <code>RedisTemplate</code> 과 <code>StringRedisTemplate</code>는 <code>RedisCallback</code> interface를 통하여서, 개발자가 레디스에게 직접적으로 이야기하는 것을 허용합니다.  </p>
+    </div>
+    <div class="originalArticle">
+      <p>As with the other Spring templates, <code>RedisTemplate</code> and <code>StringRedisTemplate</code> allow the developer to talk directly to Redis through the <code>RedisCallback</code> interface. This gives complete control to the developer as it talks directly to the <code>RedisConnection</code>. Note that the callback receives an instance of <code>StringRedisConnection</code> when a <code>StringRedisTemplate</code> is used.</p>
+    </div>  
+
+      
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public void useCallback() {
+
+  redisTemplate.execute(new RedisCallback&lt;Object&gt;() {
+    public Object doInRedis(RedisConnection connection) throws DataAccessException {
+      Long size = connection.dbSize();
+      // Can cast to StringRedisConnection if using a StringRedisTemplate
+      ((StringRedisConnection)connection).set("key", "value");
+    }
+   });
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="redis:serializer"><a class="anchor" href="#redis:serializer"></a>    <div class="translateArticle">
+      5.7. 직렬화- Serializers
+    </div>
+    <div class="originalArticle">
+      5.7. Serializers
+    </div>  
+
+      </h3>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>프레임워크의 관점에서, 레디스에 저장된 데이터는 단지 bytes입니다. 레디스 자신이 다양한 타입을 지원하는 반면에 이것들은 대개 데이터가 표현되는 방법보다, 저장되는 방법을 참조합니다. 이것은 정보가 문자열이나 다른 객체로 변환될지 사용자의 결정에 달렸습니다. 유저 (커스텀) 타입과 로우 데이터(혹은 거꾸로)간의 전환은  <code>RedisSerializer</code> 인터페이스(패키지 <code>org.springframework.data.redis.serializer</code>)를 통하여 스프링데이터 레디스를 통해 다루어집니다. (<code>RedisSerializer</code>는 이름이 암시하는 데로 직렬화 프로세스를 관리합니다.) 멋진 여러개의 구현체가 사용가능하며, 이 문서에서 두개가 이미 언급되었습니다(<code>StringRedisSerializer</code> 와 <code>JdkSerializationRedisSerializer</code>) 입니다. 그러나 객체/XML 매핑을 위해서 스프링3부터의<a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/oxm.html">OXM</a> 지원을 하는,  <code>OxmSerializer</code>도 사용할 수 있고, JSON 형식저장을 위해서라면 <code>JacksonJsonRedisSerializer</code> 이나 <code>Jackson2JsonRedisSerializer</code> 도 사용할 수 있습니다. 저장형식은 값에만 제한된 것이 아니고, 키, 값 , 해위에 어떠한 제약 없이 사용될 수 있습니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>From the framework perspective, the data stored in Redis is just bytes. While Redis itself supports various types, for the most part these refer to the way the data is stored rather then what it represents. It is up to the user to decide whether the information gets translated into Strings or any other objects. The conversion between the user (custom) types and raw data (and vice-versa) is handled in Spring Data Redis through the <code>RedisSerializer</code> interface (package <code>org.springframework.data.redis.serializer</code>) which as the name implies, takes care of the serialization process. Multiple implementations are available out of the box, two of which have been already mentioned before in this documentation: the <code>StringRedisSerializer</code> and the <code>JdkSerializationRedisSerializer</code>. However one can use <code>OxmSerializer</code> for Object/XML mapping through Spring 3 <a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/oxm.html">OXM</a> support or either <code>JacksonJsonRedisSerializer</code> or <code>Jackson2JsonRedisSerializer</code> for storing data in <a href="http://en.wikipedia.org/wiki/JSON">JSON</a> format. Do note that the storage format is not limited only to values - it can be used for keys, values or hashes without any restrictions.</p>
+    </div>  
+
+      
+</div>
+</div>
+<div class="sect2">
+<h3 id="pubsub"><a class="anchor" href="#pubsub"></a>5.8. 레디스 메시징/PubSub</h3>
+<div class="paragraph">
+    <div class="translateArticle">
+        <p>스프링 데이터는 레디스를 위한 메시징 통합을 제공합니다. 스프링 프레임워크의 JMS통합과 기능과 작명에서 매우 비슷하며, JMS지원에 익숙한 사용자들은 아주 편안함을 느끼게 될 것입니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>Spring Data provides dedicated messaging integration for Redis, very similar in functionality and naming to the JMS integration in Spring Framework; in fact, users familiar with the JMS support in Spring should feel right at home.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>레디스 메시징은 대략적으로 두 기능의 영역으로 나눠집니다. 말하자면 메시지의 생산(production)이나 출판(publication) 그리고 소비(consumption)와 구독(subscription)이라는 영역입니다. 그러므로 간단히는 pubsub(Publish/Subscribe)이라고도 부릅니다. <code>RedisTemplate</code>클래스는 메시지 생산을 위해 사용됩니다. JavaEE의 메시지 드리븐 빈 스타일과 비슷한 비동기(async)접수를 위해 스프링 데이터는 메시지 드리븐 POJO(MDPs)를 생산하는 메시지 리스너 콘테이너를 제공하며, 동기적(synchronous) 접수에는 <code>RedisConnection</code> 계약(contract)를 사용합니다.</p> 
+    </div>
+    <div class="originalArticle">
+      <p>Redis messaging can be roughly divided into two areas of functionality, namely the production or publication and consumption or subscription of messages, hence the shortcut pubsub (Publish/Subscribe). The <code>RedisTemplate</code> class is used for message production. For asynchronous reception similar to Java EE&#8217;s message-driven bean style, Spring Data provides a dedicated message listener container that is used to create Message-Driven POJOs (MDPs) and for synchronous reception, the <code>RedisConnection</code> contract.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p><code>org.springframework.data.redis.connection</code>과 <code>org.springframework.data.redis.listener</code>는 레디스 메시징을 사용하는 핵심 기능을 제공합니다.  </p>
+    </div>
+    <div class="originalArticle">
+      <p>The package <code>org.springframework.data.redis.connection</code> and <code>org.springframework.data.redis.listener</code> provide the core functionality for using Redis messaging.</p>
+    </div>  
+
+      
+</div>
+<div class="sect3">
+<h4 id="redis:pubsub:publish"><a class="anchor" href="#redis:pubsub:publish"></a>    <div class="translateArticle">
+      5.8.1. 메시지  송신/발행 
+    </div>
+    <div class="originalArticle">
+      5.8.1. Sending/Publishing messages
+    </div>  
+
+      </h4>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>다른 작업과 함께 메시지를 발행하기 위해, 로우레벨의 <code>RedisConnection</code>이나 하이레벨의 <code>RedisTemplate</code>를 사용할 수 있습니다. 양쪽의 엔티티들은 <code>publish</code> 메소드를 제공하며 이 메소드는 아규먼트로 보낼 메시지와 목적지 채널을 받습니다. <code>RedisConnection</code>가 로우데이터(바이트배열)을 받는 반면에 <code>RedisTemplate</code>는 무작위의 객체가 메시지로 보내지는 것을 허용합니다. :</p>
+    </div>
+    <div class="originalArticle">
+      <p>To publish a message, one can use, as with the other operations, either the low-level <code>RedisConnection</code> or the high-level <code>RedisTemplate</code>. Both entities offer the <code>publish</code> method that accepts as argument the message that needs to be sent as well as the destination channel. While <code>RedisConnection</code> requires raw-data (array of bytes), the <code>RedisTemplate</code> allow arbitrary objects to be passed in as messages:</p>
+    </div>  
+
+      
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">// send message through connection RedisConnection con = ...
+byte[] msg = ...
+byte[] channel = ...
+con.publish(msg, channel); // send message through RedisTemplate
+RedisTemplate template = ...
+template.convertAndSend("hello!", "world");</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="redis:pubsub:subscribe"><a class="anchor" href="#redis:pubsub:subscribe"></a>5.8.2.     <div class="translateArticle">
+      메시지 수신/구독
+    </div>
+    <div class="originalArticle">
+      Receiving/Subscribing for messages
+    </div>  
+
+      </h4>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>받는쪽에서는, 하나 혹은 여러개의 채널에서 직접적으로 네이밍하거나 패턴매칭을 통해서 구독을 할 수가 있습니다. 패턴매칭의 접근은 꽤 유용합니다. 여러개의 구독이 하나의 명령어로 생성되는 것뿐만 아니라 아직 구독시간에 생성되지 않은 채널에도 (패턴이 매칭되는 한 ) listen을 한다는데 꽤 유용합니다 </p>
+    </div>
+    <div class="originalArticle">
+      <p>On the receiving side, one can subscribe to one or multiple channels either by naming them directly or by using pattern matching. The latter approach is quite useful as it not only allows multiple subscriptions to be created with one command but to also listen on channels not yet created at subscription time (as long as they match the pattern).</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>로우레벨에서 <code>RedisConnection</code>는 <code>subscribe</code> 와 <code>pSubscribe</code> 메소드를 제공하며 이 메소드는 각각의 패널에 의해 골라진 채널에 의한 구독을 위한 레디스 명령어를 매핑?(map)합니다. 여러개의 채널이나 패턴들은 아규먼트로 사용될 수 있다는 것을 알고갑시다. 리스닝을 하건 안하건..코넥션의 구독이나 단순하게 쿼리를 바꾸기 위해 <code>RedisConnection</code>는 <code>getSubscription</code>과 <code>isSubscribed</code>메소드를 제공합니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>At the low-level, <code>RedisConnection</code> offers <code>subscribe</code> and <code>pSubscribe</code> methods that map the Redis commands for subscribing by channel respectively by pattern. Note that multiple channels or patterns can be used as arguments. To change the subscription of a connection or simply query whether it is listening or not, <code>RedisConnection</code> provides <code>getSubscription</code> and <code>isSubscribed</code> method.</p>
+    </div>  
+
+      
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+    <div class="translateArticle">
+      스프링데이터에서의 구독 명령어 는 블로킹입니다. 즉, 코넥션에서 구독을 호출하는 것은 현재 쓰레드가 메시지를 기다리면서 블록되게 합니다. 이 쓰레드는 구독이 해제되거나 추가적인 쓰레드가  <code>unsubscribe</code> or <code>pUnsubscribe</code>를 같은 코넥션에서 실행시킬 때 이 블록킹은 해제됩니다. 이 문제에 대한 해결책은 밑의 See <a href="#null">메시지 리스너 콘테이너</a>를 보세요~ (역주 : 링크가 null로 되어있다. 원래 링크가 없는 듯하다. )
+    </div>
+    <div class="originalArticle">
+      Subscription commands in Spring Data Redis are blocking. That is, calling subscribe on a connection will cause the current thread to block as it will start waiting for messages - the thread will be released only if the subscription is canceled, that is an additional thread invokes <code>unsubscribe</code> or <code>pUnsubscribe</code> on the <strong>same</strong> connection. See <a href="#null">message listener container</a> below for a solution to this problem.
+    </div>  
+
+      
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>위에서 언급한대로, 구독이 되면, 코넥션은 메시지를 위해서 대기를 시작합니다. 새로운 구독을 추가하거나 현재의 구독을 수정/취소하는 것 외에는, 어떠한 명령어도 실행될 수는 없습니다. 이 말은 다른 것을 실행하는 것 즉 <code>subscribe</code>, <code>pSubscribe</code>, <code>unsubscribe</code>, 나 <code>pUnsubscribe</code>은 맞지 않고, 예외를 던진다는 것을 말합니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>As mentioned above, once subscribed a connection starts waiting for messages. No other commands can be invoked on it except for adding new subscriptions or modifying/canceling the existing ones. That is, invoking anything other then <code>subscribe</code>, <code>pSubscribe</code>, <code>unsubscribe</code>, or <code>pUnsubscribe</code> is illegal and will throw an exception.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>
+        메시지를 구독하기 위해 <code>MessageListener</code> 콜백을 구현할 필요가 있습니다.  콜백에서-각각의 시간에 새로운 메시지가 도착하고 콜백은 실행되고 사용자의 코드가 <code>onMessage</code>메소드를 통해서 실행됩니다. 저 인터페이스는 실제 메시지에 대한 접근을 제공할 뿐만 아니라, 받은 채널과 (채널매칭하는데 사용된)패턴에 대해서도 접근을 제공합니다. (약간 번역이 애매했으므로 원문 체크 필요). 이 정보는 피호출자가 다양한 메시지들을 내용(content)뿐만 아니라 데이터(data) 를 통해서도 구별하게 해줍니다. 
+      
+      </p>
+    </div>
+    <div class="originalArticle">
+      <p>In order to subscribe for messages, one needs to implement the <code>MessageListener</code> callback: each time a new message arrives, the callback gets invoked and the user code executed through <code>onMessage</code> method. The interface gives access not only to the actual message but to the channel it has been received through and the pattern (if any) used by the subscription to match the channel. This information allows the callee to differentiate between various messages not just by content but also through data.</p>
+    </div>  
+
+      
+</div>
+<div class="sect4">
+<h5 id="redis:pubsub:subscribe:containers"><a class="anchor" href="#redis:pubsub:subscribe:containers"></a>    <div class="translateArticle">
+      메시지 리스너 콘테이너
+    </div>
+    <div class="originalArticle">
+      Message Listener Containers
+    </div>  
+
+      </h5>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>블록킹 특징때문에, 로우레벨 구독은 매력적이지가 않습니다. 이것은 모든 단일 리스너를 위해 코넥션과 쓰레드 관리를 필요로 합니다. 이러한 문제를 경감시키기 위해, 스프링데이터는 <code>RedisMessageListenerContainer</code>를 제공하는 데 이것은 사용자를 대신하여 복잡한 일들을 해줍니다. EJB나 JMS와 친숙한 사용자들은 스프링 프레임워크에서 지원하는 개념과 메시지드리븐 POJO(MDPs)에서의 유사한 컨셉을 발견할 수 있을 것입니다.(역주: 별로 안 중요한 내용이니, 뭐 비슷하다 그런 뜻으로 넘어가자. =3=3)   </p>
+    </div>
+    <div class="originalArticle">
+      <p>Due to its blocking nature, low-level subscription is not attractive as it requires connection and thread management for every single listener. To alleviate this problem, Spring Data offers <code>RedisMessageListenerContainer</code> which does all the heavy lifting on behalf of the user - users familiar with EJB and JMS should find the concepts familiar as it is designed as close as possible to the support in Spring Framework and its message-driven POJOs (MDPs)</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p><code>RedisMessageListenerContainer</code> 는 메시지 리스너 콘테이너로 동작합니다. 이것은 레디스 채널로 부터 메시지를 받는데 사용되며 이것에 주입받은 메시지 리스너를 조정합니다. 리스너 콘테이너는 모든 메시지 접수 스레딩과 처리를 위한 리스너들에게 dispatch하는 책임이 있습니다. 메시지 리스너 콘테이너는 MDP와 메시지 공급자의 중개인이며, 수신된 메시지를 등록하고 자원습득과 해제 예외전환같은 것을 관리합니다. 이것(콘테이너)는 어플리케이션 개발자로써 당신이 메시지를 수신하는데 관련한 비즈니스 로직(아마 복잡한)을 쓰게 해주며, 보일러플레이트한 레디스 인프라스트럭쳐 걱정을 프레임워크로 위임합니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p><code>RedisMessageListenerContainer</code> acts as a message listener container; it is used to receive messages from a Redis channel and drive the MessageListeners that are injected into it. The listener container is responsible for all threading of message reception and dispatches into the listener for processing. A message listener container is the intermediary between an MDP and a messaging provider, and takes care of registering to receive messages, resource acquisition and release, exception conversion and the like. This allows you as an application developer to write the (possibly complex) business logic associated with receiving a message (and reacting to it), and delegates boilerplate Redis infrastructure concerns to the framework.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>더군다나, 어플리케이션 발자국?(footprint)를 최소화하기 위해 <code>RedisMessageListenerContainer</code>는 하나의 코넥션과 하나의 스레드가 다양한 리스너로부터 공유되는 것을 허용합니다. 비록 그들이 구독을 공유하지 않더라도 말입니다. 그러므로 얼마나 많은 채널과 리스너가 있던지간에 어플리케이션 tracks과 런타임 비용은 그것의 수명(lifetim)동안 같을 것입니다. 게다가 콘테이너는 런타임 설정변화를 허용해서 재시작의 필요없이 어플리케이션이 운영중인 동안에 리스너를 추가하거나 삭제할 수 있게 합니다. 추가적으로 콘테이너는 지연구독접근을 사용하여, 필요할 때 <code>RedisConnection</code>를 사용하고 - 만약 모든 리스너가 구독중이지않으면 자동적으로 수행된 것을 정리하고(clean up) 사용한 스레드를 해제합니다.    </p>
+    </div>
+    <div class="originalArticle">
+      <p>Furthermore, to minimize the application footprint, <code>RedisMessageListenerContainer</code> allows one connection and one thread to be shared by multiple listeners even though they do not share a subscription. Thus no matter how many listeners or channels an application tracks, the runtime cost will remain the same through out its lifetime. Moreover, the container allows runtime configuration changes so one can add or remove listeners while an application is running without the need for restart. Additionally, the container uses a lazy subscription approach, using a <code>RedisConnection</code> only when needed - if all the listeners are unsubscribed, cleanup is automatically performed and the used thread released.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>메시지의 동기적인(asynch) 방법을 돕기 위해, 콘테이너는 메시지를 dispatching하는 데, <code>java.util.concurrent.Executor</code>를 필요로 합니다. (아니면 스프링의 <code>TaskExecutor</code>). 적재량(load)에 따라, 리스너나 런타임 환경에 따라 더 나은 serve 를 위해 실행자(executor)가 변경되거나 다르게 될 수 있습니다. (특별히 app servers같이 관리되는 환경에서 말입니다.) 적절한 <code>TaskExecutor</code>를 골라서 런타임의 장점을 누리길 강력히 권합니다.  </p>
+    </div>
+    <div class="originalArticle">
+      <p>To help with the asynch manner of messages, the container requires a <code>java.util.concurrent.Executor</code> ( or Spring&#8217;s <code>TaskExecutor</code>) for dispatching the messages. Depending on the load, the number of listeners or the runtime environment, one should change or tweak the executor to better serve her needs - in particular in managed environments (such as app servers), it is highly recommended to pick a a proper <code>TaskExecutor</code> to take advantage of its runtime.</p>
+    </div>  
+
+      
+</div>
+</div>
+<div class="sect4">
+<h5 id="redis:pubsub:subscribe:adapter"><a class="anchor" href="#redis:pubsub:subscribe:adapter"></a>    <div class="translateArticle">
+      메시지 리스너 어댑터
+    </div>
+    <div class="originalArticle">
+      The MessageListenerAdapter
+    </div>  
+
+      </h5>
+
+    <div class="translateArticle">
+      <div class="paragraph">
+<p><code>MessageListenerAdapter</code>클래스는 스프링 비동기 메시지 지원의 마지막 컴포넌트입니다. 한마디로, 이것은 당신이 <strong>어떤</strong> 클래스든간에 MDP로 노출시키는 것을 허용합니다.(물론 거기엔 몇가지 제약이 있겠지만요)</p>
+</div>
+<div class="paragraph">
+<p>다음의 인터페이스 정의를 생각해봅시다. 비록 인터페이스가 <code>MessageListener</code>인터페이스를 상속할지라도 이것은 여전히 <code>MessageListenerAdapter</code>클래스의 사용을 통해서 MDP로써 사용될 수 있습니다. 또한 얼마나 많은 메시지 핸들링 메소드가 다양한 수신하고 핸들할 수 있는, <code>Message</code>타입의  <strong>contents</strong>에 따라  강력히 입력되었는지(typed) 봐보세요. 추가적으로 메시지가 보내지는 채널이나 패턴이 메소드의 두번째 문자열 타입 아규먼트로 전해지는 것을 봐봅시다.  </p>
+</div>
+    </div>
+
+
+    <div class="originalArticle">
+      <div class="paragraph">
+<p>The <code>MessageListenerAdapter</code> class is the final component in Spring&#8217;s asynchronous messaging support: in a nutshell, it allows you to expose almost <strong>any</strong> class as a MDP (there are of course some constraints).</p>
+</div>
+<div class="paragraph">
+<p>Consider the following interface definition. Notice that although the interface extends the <code>MessageListener</code> interface, it can still be used as a MDP via the use of the <code>MessageListenerAdapter</code> class. Notice also how the various message handling methods are strongly typed according to the <strong>contents</strong> of the various <code>Message</code> types that they can receive and handle. In addition, the channel or pattern to which a message is sent can be passed in to the method as the second argument of type String:</p>
+</div>
+    </div>  
+
+      
+
+
+
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public interface MessageDelegate {
+  void handleMessage(String message);
+  void handleMessage(Map message); void handleMessage(byte[] message);
+  void handleMessage(Serializable message);
+  // pass the channel/pattern as well
+  void handleMessage(Serializable message, String channel);
+ }</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public class DefaultMessageDelegate implements MessageDelegate {
+  // implementation elided for clarity...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>특별히 얼마나 많은 위의 <code>MessageDelegate</code>인터페이스(<code>DefaultMessageDelegate</code> 클래스 위의) 구현체가 레디스 의존성을 <strong>전혀</strong> 가지고 있지 않음을 알아둡시다. 이것은 정말로 다음의 설정을 통해 MDP로 만들 수가 있는 POJO입니다.     </p>
+    </div>
+    <div class="originalArticle">
+      <p>In particular, note how the above implementation of the <code>MessageDelegate</code> interface (the above <code>DefaultMessageDelegate</code> class) has <strong>no</strong> Redis dependencies at all. It truly is a POJO that we will make into an MDP via the following configuration.</p>
+    </div>  
+
+      
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+ &lt;beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:redis="http://www.springframework.org/schema/redis"
+   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+   http://www.springframework.org/schema/redis http://www.springframework.org/schema/redis/spring-redis.xsd"&gt;
+
+&lt;!-- the default ConnectionFactory --&gt;
+&lt;redis:listener-container&gt;
+  &lt;!-- the method attribute can be skipped as the default method name is "handleMessage" --&gt;
+  &lt;redis:listener ref="listener" method="handleMessage" topic="chatroom" /&gt;
+&lt;/redis:listener-container&gt;
+
+&lt;bean id="listener" class="redisexample.DefaultMessageDelegate"/&gt;
+ ...
+&lt;beans&gt;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+    <div class="translateArticle">
+      리스너 토픽은 채널이 될 수 도 있고(e.g. <code>topic="chatroom"</code>) 패턴(e.g. <code>topic="*room"</code>)이 될 수도 있습니다 
+    </div>
+    <div class="originalArticle">
+      The listener topic can be either a channel (e.g. <code>topic="chatroom"</code>) or a pattern (e.g. <code>topic="*room"</code>)
+    </div>  
+
+      
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>위의 예제는 Redis 네임 스페이스를 사용하여 메시지 리스너 콘테이너를 선언하고 자동적으로 리스너로 POJO를 등록합니다. 이렇게 만들어진 <strong>beans</strong> 정의는 아래와 같습니다. : </p>
+    </div>
+    <div class="originalArticle">
+      <p>The example above uses the Redis namespace to declare the message listener container and automatically register the POJOs as listeners. The full blown, <strong>beans</strong> definition is displayed below:</p>
+    </div>  
+
+      
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;bean id="messageListener" class="org.springframework.data.redis.listener.adapter.MessageListenerAdapter"&gt;
+  &lt;constructor-arg&gt;
+    &lt;bean class="redisexample.DefaultMessageDelegate"/&gt;
+  &lt;/constructor-arg&gt;
+&lt;/bean&gt;
+
+&lt;bean id="redisContainer" class="org.springframework.data.redis.listener.RedisMessageListenerContainer"&gt;
+  &lt;property name="connectionFactory" ref="connectionFactory"/&gt;
+  &lt;property name="messageListeners"&gt;
+    &lt;map&gt;
+      &lt;entry key-ref="messageListener"&gt;
+        &lt;bean class="org.springframework.data.redis.listener.ChannelTopic"&gt;
+          &lt;constructor-arg value="chatroom"&gt;
+        &lt;/bean&gt;
+      &lt;/entry&gt;
+    &lt;/map&gt;
+  &lt;/property&gt;
+&lt;/bean&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>각각의 메시지가 수신되면 어답터는 자동적으로 설정된 <code>RedisSerializer</code>를 사용하여 로우레벨 포맷과 필요로 하는 오브젝트 타입간에 투명한 전환을 수행합니다. 메메소드 실행으로 인해 발생되는 어떠한 예외도 콘테이너에 의해 잡히고 다뤄집니다. (기본적으로, 로깅됩니다) </p>
+    </div>
+    <div class="originalArticle">
+      <p>Each time a message is received, the adapter automatically performs translation (using the configured <code>RedisSerializer</code>) between the low-level format and the required object type transparently. Any exception caused by the method invocation is caught and handled by the container (by default, being logged).</p>
+    </div>  
+
+      
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="tx"><a class="anchor" href="#tx"></a>5.9.     <div class="translateArticle">
+      레디스 트랜잭션
+    </div>
+    <div class="originalArticle">
+      Redis Transactions
+    </div>  
+
+      </h3>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>레디스는 <a href="http://redis.io/topics/transactions">transactions</a>을 <code>multi</code>, <code>exec</code>, 와  <code>discard</code>  커맨트를 통하여 지원합니다. 이러한 작업은 <code>RedisTemplate</code>를 통하여 사용가능합니다만, <code>RedisTemplate</code>는 같은 코넥션을 사용하는 트랜잭션에서 모든 작업이 실행됨을 보장하지는 않습니다. 
+    </div>
+    <div class="originalArticle">
+      <p>Redis provides support for <a href="http://redis.io/topics/transactions">transactions</a> through the <code>multi</code>, <code>exec</code>, and <code>discard</code> commands. These operations are available on <code>RedisTemplate</code>, however <code>RedisTemplate</code> is not guaranteed to execute all operations in the transaction using the same connection.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>스프링 데이터 레디스는 여러 작업이 같은 <code>connection</code>에서 레디스 트랜잭션을 필요로 할 때 사용하기 위한 <code>SessionCallback</code> 인터페이스를 제공합니다. 예를 들자면 :</p>
+    </div>
+    <div class="originalArticle">
+      <p>Spring Data Redis provides the <code>SessionCallback</code> interface for use when multiple operations need to be performed with the same <code>connection</code>, as when using Redis transactions. For example:</p>
+    </div>  
+
+      
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">//execute a transaction
+List&lt;Object&gt; txResults = redisTemplate.execute(new SessionCallback&lt;List&lt;Object&gt;&gt;() {
+  public List&lt;Object&gt; execute(RedisOperations operations) throws DataAccessException {
+    operations.multi();
+    operations.opsForSet().add("key", "value1");
+
+    // This will contain the results of all ops in the transaction
+    return operations.exec();
+  }
+});
+System.out.println("Number of items added to set: " + txResults.get(0));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p> <code>RedisTemplate</code>은 이것의 값과 해쉬키와 <code>exec</code>의 모든 결과를 역직렬화시켜주는 해쉬 밸류 serializer를 리턴하기 전에 사용합니다.  트랜잭션 결과를 위해 당신에게 커스텀 직렬화를 허용하게 해주는 추가적인 <code>exec</code> 메소드가 있습니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p><code>RedisTemplate</code> will use its value, hash key, and hash value serializers to deserialize all results of <code>exec</code> before returning. There is an additional <code>exec</code> method that allows you to pass a custom serializer for transaction results.</p>
+    </div>  
+
+      
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+    <div class="translateArticle">
+      버젼 1.1 에서 <code>RedisConnection</code> 와 <code>RedisTemplate</code>의 <code>exec</code>메소드에 중대한 변화가 일어났었습니다. 이전에는 이 메소드들이 코넥터들의 트랜잭션 결과를 직접적으로 리턴했었습니다. 이것은 데이터 타입이 <code>RedisConnection</code>의 메소드들로부터 반환되는 것과 종종 다를 수도 있다는 것을 의미하는 데요. 예를 들자면 <code>zAdd</code>는 요소가 정렬셋에 추가되었다는 것을 가리키는 boolean 값을 리턴합니다. 대부분의 코넥터는 이 값을 long으로 리턴하고 스프링 데이터 레디스는 전환을 수행합니다. 
+
+      또 다른 흔한 차이는 대부분의 코넥터들이 <code>set</code>같은 작업을 위하여 응답상태(보통 문자열 "OK")를 리턴한다는 것입니다. 이러한 응답들은 일반적으로 스프링 데이터 레디스에 의해 버려집니다. 1.1 버젼 이전에는 이러한 전환이 <code>exec</code>의 결과로 수행되지 않았습니다. 또한 결과가 <code>RedisTemplate</code>에서 직렬화되지 않았습니다. 그래서 이것들은 종종 로우 바이트 배열을 포함했었습니다. 만약 이러한 변화가 당신의 어플리케이션에 의도치 않은 영향을 끼친다면, <code>convertPipelineAndTxResults</code>를 false로 설정해서 <code>RedisConnectionFactory</code>가 이런 행동을 하지 않게 하세요. 
+    </div>
+    <div class="originalArticle">
+      An important change has been made to the <code>exec</code> methods of <code>RedisConnection</code> and <code>RedisTemplate</code> in version 1.1. Previously these methods returned the results of transactions directly from the connectors. This means that the data types often differed from those returned from the methods of <code>RedisConnection</code>. For example, <code>zAdd</code> returns a boolean indicating that the element has been added to the sorted set. 
+      Most connectors return this value as a long and Spring Data Redis performs the conversion. 
+
+      Another common difference is that most connectors return a status reply (usually the String "OK") for operations like <code>set</code>. These replies are typically discarded by Spring Data Redis. Prior to 1.1, these conversions were not performed on the results of <code>exec</code>. Also, results were not deserialized in <code>RedisTemplate</code>, so they often included raw byte arrays. If this change breaks your application, you can set <code>convertPipelineAndTxResults</code> to false on your <code>RedisConnectionFactory</code> to disable this behavior.
+    </div>  
+
+      
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="tx.spring"><a class="anchor" href="#tx.spring"></a>5.9.1. @Transactional 지원</h4>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p> 트랜잭션 지원은 기본으로 가능하지 않게되어있고 명시적으로 각각의 <code>RedisTemplate</code>에서 <code>setEnableTransactionSupport(true)</code>설정을 해줌으로써 활성화하게 되어있습니다. 이것은 쓰이고 있는 <code>RedisConnection</code>이 <code>MULTI</code>를 발동시키는 현재 <code>Thread</code> 에 바인딩 되게 해줍니다. 
+      
+      만약 트랜잭션이 에러없이 끝나게 되면 <code>EXEC</code>가 호출되고 그렇지 않으면 <code>DISCARD</code>가 호출됩니다. 
+      한번 <code>MULTI</code>되면 <code>RedisConnection</code>는 쓰기작업을 queue해놓고, <code>KEYS</code>같은 모든 <code>readonly</code> 작업은 (non thread bound)인 신선한 <code>RedisConnection</code>로 들어가게 됩니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>Transaction Support is disabled by default and has explicitly to be enabled for each <code>RedisTemplate</code> in use by setting <code>setEnableTransactionSupport(true)</code>. This will force binding the <code>RedisConnection</code> in use to the current <code>Thread</code> triggering <code>MULTI</code>. If the transaction finishes without errors, <code>EXEC</code> is called, otherwise <code>DISCARD</code>. Once in <code>MULTI</code>, <code>RedisConnection</code> would queue write operations, all <code>readonly</code> operations, such as <code>KEYS</code> are piped to a fresh (non thread bound) <code>RedisConnection</code>.</p>
+    </div>  
+
+      
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">/** Sample Configuration **/
+@Configuration
+public class RedisTxContextConfiguration {
+  @Bean
+  public StringRedisTemplate redisTemplate() {
+    StringRedisTemplate template = new StringRedisTemplate(redisConnectionFactory());
+    // explicitly enable transaction support
+    template.setEnableTransactionSupport(true);
+    return template;
+  }
+
+  @Bean
+  public PlatformTransactionManager transactionManager() throws SQLException {
+    return new DataSourceTransactionManager(dataSource());
+  }
+
+  @Bean
+  public RedisConnectionFactory redisConnectionFactory( // jedis, lettuce, srp,... );
+
+  @Bean
+  public DataSource dataSource() throws SQLException { // ... }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">/** Usage Constrainsts **/
+
+// executed on thread bound connection
+template.opsForValue().set("foo", "bar");
+
+// read operation executed on a free (not tx-aware)
+connection template.keys("*");
+
+// returns null as values set within transaction are not visible
+template.opsForValue().get("foo");</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="pipeline"><a class="anchor" href="#pipeline"></a>5.10. 파이프라이닝</h3>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>레디스는 <a href="http://redis.io/topics/pipelining">pipelining</a>를 위한 지원을 제공합니다. 이것은 여러개의 커맨드를 응답의 대기없이 서버로 전송하는 것과 관련이 있습니다. 그리고 응답을 개별단계로 읽어들입니다. 
+      파이프라이닝은 많은 요소들을 같은 리스트에 추가하는 것 같이, 당신이 한 줄로 몇몇개의 명령들을 전송할 필요가 있을 때 성능을 향상 시킬 수 있습니다. 
+        </p>
+    </div>
+    <div class="originalArticle">
+      <p>Redis provides support for <a href="http://redis.io/topics/pipelining">pipelining</a>, which involves sending multiple commands to the server without waiting for the replies and then reading the replies in a single step. Pipelining can improve performance when you need to send several commands in a row, such as adding many elements to the same List.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>스프링 데이터 레디스는 파이프라인으로 명령어들을 실행하기 위해 몇몇<code>RedisTemplate</code>메소드를 제공합니다. 만약 당신이 파이프라인된 작업에 대한 결과를 신경쓰지 않는 다면 당신은 표준 <code>execute</code> 메소드를 사용할 수 있고  <code>pipeline</code> 아규먼트에 <code>true</code>를 전달할 수 있습니다.  <code>executePipelined</code> 메소드는 제공된 <code>RedisCallback</code>이나 <code>SessionCallback</code>를 파이프라인에서 실행하고 결과를 리턴합니다. 예를 들자면 :  </p>
+    </div>
+    <div class="originalArticle">
+      <p>Spring Data Redis provides several <code>RedisTemplate</code> methods for executing commands in a pipeline. If you don&#8217;t care about the results of the pipelined operations, you can use the standard <code>execute</code> method, passing <code>true</code> for the <code>pipeline</code> argument. The <code>executePipelined</code> methods will execute the provided <code>RedisCallback</code> or <code>SessionCallback</code> in a pipeline and return the results. For example:</p>
+    </div>  
+
+      
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">//pop a specified number of items from a queue
+List&lt;Object&gt; results = stringRedisTemplate.executePipelined(
+  new RedisCallback&lt;Object&gt;() {
+    public Object doInRedis(RedisConnection connection) throws DataAccessException {
+      StringRedisConnection stringRedisConn = (StringRedisConnection)connection;
+      for(int i=0; i&lt; batchSize; i++) {
+        stringRedisConn.rPop("myqueue");
+      }
+    return null;
+  }
+});</code></pre>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>위의 예제는 파이프라인에서 큐에 있는 아이템들의 bulk right pop 을 수행합니다. <code>results</code> 리스트는 모든 popped된 아이템들을 가지고 있습니다.  <code>RedisTemplate</code>는 그것의 값, 해쉬 키, 그리고 리턴전에 모든 결과를 deserialize하는 해쉬값 serializer을 이용하고, 그래서 위의 예제에서 리턴된 아이템은 문자열이 될 것입니다.    
+      추가적인 <code>executePipelined</code> 메소드들이 파이프라인된 결과를 위해 커스텀 serializer를 전달하는 것을 허용하게 해줄 것입니다. 
+      </p>
+    </div>
+    <div class="originalArticle">
+      <p>The example above executes a bulk right pop of items from a queue in a pipeline. The <code>results</code> List contains all of the popped items. <code>RedisTemplate</code> uses its value, hash key, and hash value serializers to deserialize all results before returning, so the returned items in the above example will be Strings. There are additional <code>executePipelined</code> methods that allow you to pass a custom serializer for pipelined results.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p><code>RedisCallback</code>으로 부터 리턴되는 값이 null 이 될 필요가 있다는 것을 알아둡시다. 이 값은 파이프라인된 명령어들의 결과를 리턴하면서 버려지기 때문입니다 (의역. 언문 보실 필요..! 소스를 보니.. results변수에는 값이 들어가고 Callback은 null을 리턴하는 것같군? ) </p>
+    </div>
+    <div class="originalArticle">
+      <p>Note that the value returned from the <code>RedisCallback</code> is required to be null, as this value is discarded in favor of returning the results of the pipelined commands.</p>
+    </div>  
+
+      
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+    <div class="translateArticle">
+     <code>RedisConnection</code>의 <code>closePipeline</code>메소드에서 중요한 변화가 1.1 버젼에서 만들어졌습니다. 이전에는 이 메소드는 코넥터로부터의 pipelined작업의 결과를 직접적으로 리턴했습니다. 이것은 데이터 타입이 <code>RedisConnection</code>의 메소드들로부터 반환되는 것과 종종 다를 수도 있다는 것을 의미하는 데요. 예를 들자면 <code>zAdd</code>는 요소가 정렬셋에 추가되었다는 것을 가리키는 boolean 값을 리턴합니다. 대부분의 코넥터는 이 값을 long으로 리턴하고 스프링 데이터 레디스는 전환을 수행합니다. 
+
+      또 다른 흔한 차이는 대부분의 코넥터들이 <code>set</code>같은 작업을 위하여 응답상태(보통 문자열 "OK")를 리턴한다는 것입니다. 이러한 응답들은 일반적으로 스프링 데이터 레디스에 의해 버려집니다. 1.1 버젼 이전에는 이러한 전환이 <code>exec</code>의 결과로 수행되지 않았습니다. 또한 결과가 <code>RedisTemplate</code>에서 직렬화되지 않았습니다. 그래서 이것들은 종종 로우 바이트 배열을 포함했었습니다. 만약 이러한 변화가 당신의 어플리케이션에 의도치 않은 영향을 끼친다면, <code>convertPipelineAndTxResults</code>를 false로 설정해서 <code>RedisConnectionFactory</code>가 이런 행동을 하지 않게 하세요.  
+    </div>
+    <div class="originalArticle">
+      An important change has been made to the <code>closePipeline</code> method of <code>RedisConnection</code> in version 1.1. Previously this method returned the results of pipelined operations directly from the connectors. This means that the data types often differed from those returned by the methods of <code>RedisConnection</code>. For example, <code>zAdd</code> returns a boolean indicating that the element has been added to the sorted set. Most connectors return this value as a long and Spring Data Redis performs the conversion. Another common difference is that most connectors return a status reply (usually the String "OK") for operations like <code>set</code>. These replies are typically discarded by Spring Data Redis. Prior to 1.1, these conversions were not performed on the results of <code>closePipeline</code>. If this change breaks your application, you can set <code>convertPipelineAndTxResults</code> to false on your <code>RedisConnectionFactory</code> to disable this behavior.
+    </div>  
+
+      
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="scripting"><a class="anchor" href="#scripting"></a>    <div class="translateArticle">
+      5.11. 레디스 스크립팅
+    </div>
+    <div class="originalArticle">
+      5.11. Redis Scripting
+    </div>  
+
+      </h3>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>레디스 버젼 2.6 이상의 버젼은 <a href="http://redis.io/commands/eval">eval</a>과 <a href="http://redis.io/commands/evalsha">evalsha</a>명령어를 통한 Lua 스크립트의 실행지원을 제공합니다. 스프링 데이터 레디스는 직렬화를 다루고 자동적으로 레디스 스크립트 캐시를 사용하는 스크립트 실행을 위한 높은 레벨 추상화를 제공합니다.  </p>
+    </div>
+    <div class="originalArticle">
+      <p>Redis versions 2.6 and higher provide support for execution of Lua scripts through the <a href="http://redis.io/commands/eval">eval</a> and <a href="http://redis.io/commands/evalsha">evalsha</a> commands. Spring Data Redis provides a high-level abstraction for script execution that handles serialization and automatically makes use of the Redis script cache.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>스크립트는 <code>RedisTemplate</code>의<code>execute</code>메소드를 통해서 실행될 수 있습니다. RedisTemplate은 제공된 스크립트를 실행하기 위해 설정가능한 <code>ScriptExecutor</code> 를 사용합니다. 기본적으로는 <code>ScriptExecutor</code>가 제공된 키와 아규먼트의 직렬화와 스크립트 결과의 역직렬화를 관리합니다. 이것은 <code>RedisTemplate</code> 키 값 serializer들과 함께 이루어집니다. 스크립트 아규먼트들이나 결과를 위해서 추가적인 <code>execute</code>메소드가 있어서 이것을 통해서 커스텀 serializers를  전달할 수 있습니다. 
+
+      </p>
+    </div>
+    <div class="originalArticle">
+      <p>Scripts can be run through the <code>execute</code> methods of <code>RedisTemplate</code>. RedisTemplate uses a configurable <code>ScriptExecutor</code> to execute the provided script. By default, the <code>ScriptExecutor</code> takes care of serializing the provided keys and arguments and deserializing the script result. This is done with the <code>RedisTemplate</code> key and value serializers. There is an additional <code>execute</code> method that allows you to pass custom serializers for the script arguments and result.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+
+    <div class="translateArticle">
+      <p>기본적으로 <code>ScriptExecutor</code>는 스크립트의 SHA1를 얻음(retrieve)함으로써 성능을 최적화하고, 처음으로 <code>evalsha</code>하는 것을 시도합니다. 아직 스크립트가 레디스 스크립트 캐쉬에 나타나지 않으면 <code>eval</code> 로 물러납니다(? eval로 fall back합니다.)</p>
+    </div>
+    <div class="originalArticle">
+      <p>The default <code>ScriptExecutor</code> optimizes performance by retrieving the SHA1 of the script and attempting first to run <code>evalsha</code>, falling back to <code>eval</code> if the script is not yet present in the Redis script cache.</p>
+    </div>  
+
+      
+
+
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>여기에 보통의 "check-and-set" 시나리오를 Lua script를 이용해서 실행하는 예제가 있습니다. 이것은 레디스 스크립트를 위해, 이상적인 유스케이스입니다. 이것은 우리가 명령어들의 집합을 원자적으로(atomically)실행하며, 하나의 명령어의 행동이 다른 것의 결과에 의해 영향을 받는 다는 것을 필요로 합니다. </p>
+    </div>
+    <div class="originalArticle">
+      <p>Here&#8217;s an example that executes a common "check-and-set" scenario using a Lua script. This is an ideal use case for a Redis script, as it requires that we execute a set of commands atomically and the behavior of one command is influenced by the result of another.</p>
+    </div>  
+
+      
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Bean
+public RedisScript&lt;Boolean&gt; script() {
+  DefaultRedisScript&lt;Boolean&gt; redisScript = new DefaultRedisScript&lt;Boolean&gt;();
+  redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("META-INF/scripts/checkandset.lua")));
+  redisScript.setResultType(Boolean.class);
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public class Example {
+  @Autowired
+  RedisScript&lt;Boolean&gt; script;
+  public boolean checkAndSet(String expectedValue, String newValue) {
+    return redisTemplate.execute(script, Collections.singletonList("key"), expectedValue, newValue);
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-lua" data-lang="lua"> -- checkandset.lua local
+ current = redis.call('GET', KEYS[1])
+ if current == ARGV[1]
+   then redis.call('SET', KEYS[1], ARGV[2])
+   return true
+ end
+ return false</code></pre>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>위의 XML은 <code>DefaultRedisScript</code>를 설정하는데 이것은 <code>checkandset.lua</code>라 불리는 파일을 가리키며 boolean값을 반환하기를 기대합니다. <code>resultType</code>는 Long, Boolean, List 나 역직렬화된 값 타입이 되야 합니다. 또한 script가  throw-away status (i.e "OK")를 반환하면 null이 될 수도 있습니다. 당신의 어플리케이션 콘텍스트에  매번 스크립트를 실행할 때마다 SHA1의 재계산을 피하기 위해 <code>DefaultRedisScript</code>의 싱글 인스턴스를 설정하는 것이 이상적입니다.</p>
+    </div>
+    <div class="originalArticle">
+      <p>The XML above configures a <code>DefaultRedisScript</code> pointing to a file called <code>checkandset.lua</code>, which is expected to return a boolean value. The script <code>resultType</code> should be one of Long, Boolean, List, or deserialized value type. It can also be null if the script returns a throw-away status (i.e "OK"). It is ideal to configure a single instance of <code>DefaultRedisScript</code> in your application context to avoid re-calculation of the script&#8217;s SHA1 on every script execution.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>위의 checkAndSet 메소드는 그러면 th Scripts를 실행하고(th? 레퍼런스 문서 오타인가?) 스크립트는 <code>SessionCallback</code> 의 안에서 트랜잭션이나 파이프라인의 일부로 실행될 수 있습니다. 더 많은 정보를 위해 <a href="#tx">레디스 트랜잭션</a> 이나 <a href="#pipeline">파이프라이닝</a>를 좀 더 보세요~ </p>
+    </div>
+    <div class="originalArticle">
+      <p>The checkAndSet method above then executes th
+      Scripts can be executed within a <code>SessionCallback</code> as part of a transaction or pipeline. See <a href="#tx">Redis Transactions</a> and <a href="#pipeline">Pipelining</a> for more information.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>SDR에 의해 지원되ㅏ는 스크립팅 지원은 스프링 Task 와 스케쥴러 추상화를 이용하여서, 레디스 스크립트의 주기적인 실행을 하게 해줄수도 있습니다. <code>Spring Framework</code> 문서를 좀 더 살펴보세요 </p>
+    </div>
+    <div class="originalArticle">
+      <p>The scripting support provided by Spring Data Redis also allows you to schedule Redis scripts for periodic execution using the Spring Task and Scheduler abstractions. See the <code>Spring Framework</code> documentation for more details.</p>
+    </div>  
+
+      
+</div>
+</div>
+<div class="sect2">
+<h3 id="redis:support"><a class="anchor" href="#redis:support"></a>    <div class="translateArticle">
+      5.12 . 지원 클래스들
+    </div>
+    <div class="originalArticle">
+      5.12. Support Classes
+    </div>  
+
+      </h3>
+<div class="paragraph">
+    <div class="translateArticle">
+      
+<p> <code>org.springframework.data.redis.support</code>패키지는 backing store로 레디스를 의존하는 다양한 재사용가능한 컴포넌트를 제공합니다. 현재 저 패키지는 <a href="http://download.oracle.com/javase/6/docs/api/java/util/concurrent/atomic/package-summary.html">atomic</a>카운터, JDK
+<a href="http://download.oracle.com/javase/6/docs/api/java/util/Collection.html">Collections</a>같은 다양한 JDK기반의 인터페이스 구현체를 레디스 위에서 구현합니다. 
+
+</p>
+    </div>
+    <div class="originalArticle">
+      
+<p>Package <code>org.springframework.data.redis.support</code> offers various reusable components that rely on Redis as a backing store. Currently the package contains various JDK-based
+interface implementations on top of Redis such as <a href="http://download.oracle.com/javase/6/docs/api/java/util/concurrent/atomic/package-summary.html">atomic</a> counters and JDK
+<a href="http://download.oracle.com/javase/6/docs/api/java/util/Collection.html">Collections</a>.</p>
+    </div>  
+
+      
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>아토믹 카운터는 Redis 키 증가를 쉽게 wrap하게 해줍니다. 반면에 콜렉션은 저장소나 API의 최소한의 노출시키며, 레디스 키를 쉽게 관리하게 해줍니다. 특별히 <code>RedisSet</code> 와 <code>RedisZSet</code>인터페이스는  <code>intersection</code> 나 <code>union</code>같이 레디스에 의해 지원되는 <strong>set</strong> 작업에 대한 쉬운 접근을 제공합니다. 반면에 <code>RedisList</code> 는 <code>List</code>, <code>Queue</code> 와 <code>Deque</code> 계약(contract) (그리고 그것과 맞먹는 블로킹 silbings)을 레디스 위에서 구현하며, 저장소를 최소한의 설정으로 <em>FIFO (First-In-First-Out)</em>, <em>LIFO (Last-In-First-Out)</em> 나 <em>capped collection</em>로 노출시킵니다.   </p>
+    </div>
+
+    <div class="originalArticle">
+      <p>The atomic counters make it easy to wrap Redis key incrementation while the collections allow easy management of Redis keys with minimal storage exposure or API
+leakage: in particular the <code>RedisSet</code> and <code>RedisZSet</code> interfaces offer easy access to the <strong>set</strong> operations supported by Redis such as <code>intersection</code> and <code>union</code>
+while <code>RedisList</code> implements the <code>List</code>, <code>Queue</code> and <code>Deque</code> contracts (and their equivalent blocking siblings) on top of Redis, exposing the storage as a
+<em>FIFO (First-In-First-Out)</em>, <em>LIFO (Last-In-First-Out)</em> or <em>capped collection</em> with minimal configuration:</p>
+    </div>  
+
+      
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="
+  http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"&gt;
+
+  &lt;bean id="queue" class="org.springframework.data.redis.support.collections.DefaultRedisList"&gt;
+    &lt;constructor-arg ref="redisTemplate"/&gt;
+    &lt;constructor-arg value="queue-key"/&gt;
+  &lt;/bean&gt;
+
+&lt;/beans&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public class AnotherExample {
+
+  // injected
+  private Deque&lt;String&gt; queue;
+
+  public void addTag(String tag) {
+    queue.push(tag);
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      위의 예제에서 나타난 대로, 소비하는 코드는 실제 저장소 구현에서 decoupled 됩니다. 사실 레디스가 밑에서 사용된다는 가리킨다는 어떠한 가리킴도 없습니다. 이것은 development 에서 투명한 production 환경 으로의 이동을 만들며 높은 테스트 가능함을 만들어냅니다. ( Redis 구현은 단지 인메모리one으로 대체 될수 있습니다. (음 조금 발번역? ㅋ 레디스도 그냥 인메모리로, 대체테스트 한다는 것인가?! ) )
+    </div>
+    <div class="originalArticle">
+      <p>As shown in the example above, the consuming code is decoupled from the actual storage implementation - in fact there is no indication that Redis is used underneath. This makes moving from development to production environments transparent and highly increases testability (the Redis implementation can just as well be replaced with an in-memory one).</p>
+    </div>  
+
+      </div>
+<div class="sect3">
+<h4 id="redis:support:cache-abstraction"><a class="anchor" href="#redis:support:cache-abstraction"></a>    <div class="translateArticle">
+      5.12.1. 스프링 캐쉬 추상화 지원
+    </div>
+    <div class="originalArticle">
+      5.12.1. Support for Spring Cache Abstraction
+    </div>  
+
+      </h4>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>스프링 레디스는 <code>org.springframework.data.redis.cache</code>패키지를 통해서 <a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/cache.html">스프링 캐쉬 추상화</a>에 대한 구현을 제공합니다.
+        레디스를 지원 구현으로 사용하기 위해서는 단순히 <code>RedisCacheManager</code> 를 설정에 추가하세요 : </p>
+    </div>
+    <div class="originalArticle">
+      <p>Spring Redis provides an implementation for Spring <a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/cache.html">cache abstraction</a> through the <code>org.springframework.data.redis.cache</code> package. To use Redis as a backing implementation, simply add <code>RedisCacheManager</code> to your configuration:</p>
+    </div>  
+
+      
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:cache="http://www.springframework.org/schema/cache"
+  xmlns:c="http://www.springframework.org/schema/c"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd"&gt;
+
+  &lt;!-- turn on declarative caching --&gt;
+  &lt;cache:annotation-driven /&gt;
+
+  &lt;!-- declare Redis Cache Manager --&gt;
+  &lt;bean id="cacheManager" class="org.springframework.data.redis.cache.RedisCacheManager" c:template-ref="redisTemplate"/&gt;
+&lt;/beans&gt;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+    <div class="translateArticle">
+      기본적으로 <code>RedisCacheManager</code>가 <code>Cache</code>가 요청될 때마다, 지연적으로 <code>RedisCache</code>를 초기화할 것입니다. 이것은 캐쉬 이름의 <code>Set</code> 을 미리 정의함으로써 바뀔 수 있습니다. 
+    </div>
+    <div class="originalArticle">
+      By default <code>RedisCacheManager</code> will lazily initialize <code>RedisCache</code> whenever a <code>Cache</code> is requested. This can be changed by predefining a <code>Set</code> of cache names.
+    </div>  
+
+      
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+    <div class="translateArticle">
+      기본적으로는 <code>RedisCacheManager</code>가 어떤 진행중인 트랜잭션에 참여하지 않을 것입니다. <code>setTransactionAware</code> 를 설정해서 트랜잭션 지원을 활성화하세요
+    </div>
+    <div class="originalArticle">
+      By default <code>RedisCacheManager</code> will not participate in any ongoing transaction. Use <code>setTransactionAware</code> to enable transaction support.
+    </div>  
+
+      
+
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+By default <code>RedisCacheManager</code> does not prefix keys for cache regions, which can lead to an unexpected growth of a <code>ZSET</code> used to maintain known keys. It&#8217;s highly recommended to enable the usage of prefixes in order to avoid this unexpected growth and potential key clashes using more than one cache region.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="redis:future"><a class="anchor" href="#redis:future"></a>5.13. Roadmap ahead</h3>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p>SDR프로젝트는 아직 초기단계입니다. 우리는 피드백과 유즈케이스, 당신이 마주칠 패턴들을 아는 데 관심이 많습니다. 
+      그래서 레디스 모듈이 당신의 요구를 좀 더 충족하기를 원합니다. 이전에 언급한 채널(역주 : 링크 null로 깨짐...) 을 이용해서 우리에게 연락주세요. 당신의 연락을 기다립니다. 
+      </p>
+    </div>
+    <div class="originalArticle">
+      <p>Spring Data Redis project is in its early stages. We are interested in feedback, knowing what your use cases are, what are the common patters you encounter so that the Redis module better serves your needs. Do contact us using the channels <a href="#null">mentioned</a> above, we are interested in hearing from you!</p>
+    </div>  
+
+      
+</div>
+</div>
+</div>
+</div>
+<h1 id="appendixes" class="sect0"><a class="anchor" href="#appendixes"></a>부록</h1>
+<div class="openblock partintro">
+<div class="content">
+<h2 id="_appendix_document_structure" class="float">부록 문서 구조</h2>
+<div class="paragraph">
+<p>레퍼런스 문서 바깥에의 다양한 부록 문서 </p>
+</div>
+<div class="paragraph">
+    <div class="translateArticle">
+      <p><a href="#appendix:schema">Schema</a>는 SDR에 의해 제공되는 스키마를 정의합니다.</p>
+    </div>
+    <div class="originalArticle">
+      <p><a href="#appendix:schema">Schema</a> defines the schemas provided by Spring Data Redis.</p>
+    </div>  
+
+      
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="appendix:schema"><a class="anchor" href="#appendix:schema"></a>Appendix A: Schema</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_core_schema"><a class="anchor" href="#_core_schema"></a>Core schema</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;xsd:schema xmlns="http://www.springframework.org/schema/redis"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tool="http://www.springframework.org/schema/tool"
+    targetNamespace="http://www.springframework.org/schema/redis"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"&gt;
+
+  &lt;xsd:import namespace="http://www.springframework.org/schema/tool" schemaLocation="http://www.springframework.org/schema/tool/spring-tool.xsd"/&gt;
+
+  &lt;xsd:annotation&gt;
+    &lt;xsd:documentation&gt;&lt;![CDATA[
+Defines the configuration elements for the Spring Data Redis support.
+Allows for configuring Redis listener containers in XML 'shortcut' style.
+    ]]&gt;&lt;/xsd:documentation&gt;
+  &lt;/xsd:annotation&gt;
+
+  &lt;xsd:element name="listener-container"&gt;
+    &lt;xsd:annotation&gt;
+      &lt;xsd:documentation&gt;&lt;![CDATA[
+Container of Redis listeners. All listeners will be hosted by the same container.
+      ]]&gt;&lt;/xsd:documentation&gt;
+      &lt;xsd:appinfo&gt;
+        &lt;tool:annotation&gt;
+          &lt;tool:exports type="org.springframework.data.redis.listener.RedisMessageListenerContainer"/&gt;
+        &lt;/tool:annotation&gt;
+      &lt;/xsd:appinfo&gt;
+    &lt;/xsd:annotation&gt;
+    &lt;xsd:complexType&gt;
+      &lt;xsd:sequence&gt;
+        &lt;xsd:element name="listener" type="listenerType" minOccurs="0" maxOccurs="unbounded"/&gt;
+      &lt;/xsd:sequence&gt;
+      &lt;xsd:attribute name="connection-factory" type="xsd:string" default="redisConnectionFactory"&gt;
+        &lt;xsd:annotation&gt;
+          &lt;xsd:documentation&gt;&lt;![CDATA[
+A reference to the Redis ConnectionFactory bean.
+Default is "redisConnectionFactory".
+          ]]&gt;&lt;/xsd:documentation&gt;
+          &lt;xsd:appinfo&gt;
+            &lt;tool:annotation kind="ref"&gt;
+              &lt;tool:expected-type type="org.springframework.data.redis.connection.ConnectionFactory"/&gt;
+            &lt;/tool:annotation&gt;
+          &lt;/xsd:appinfo&gt;
+        &lt;/xsd:annotation&gt;
+      &lt;/xsd:attribute&gt;
+      &lt;xsd:attribute name="task-executor" type="xsd:string"&gt;
+        &lt;xsd:annotation&gt;
+          &lt;xsd:documentation&gt;&lt;![CDATA[
+A reference to a Spring TaskExecutor (or standard JDK 1.5 Executor) for executing
+Redis listener invokers. Default is a SimpleAsyncTaskExecutor.
+          ]]&gt;&lt;/xsd:documentation&gt;
+          &lt;xsd:appinfo&gt;
+            &lt;tool:annotation kind="ref"&gt;
+              &lt;tool:expected-type type="java.util.concurrent.Executor"/&gt;
+            &lt;/tool:annotation&gt;
+          &lt;/xsd:appinfo&gt;
+        &lt;/xsd:annotation&gt;
+      &lt;/xsd:attribute&gt;
+      &lt;xsd:attribute name="subscription-task-executor" type="xsd:string"&gt;
+        &lt;xsd:annotation&gt;
+          &lt;xsd:documentation&gt;&lt;![CDATA[
+A reference to a Spring TaskExecutor (or standard JDK 1.5 Executor) for listening
+to Redis messages. By default reuses the 'task-executor' value.
+          ]]&gt;&lt;/xsd:documentation&gt;
+          &lt;xsd:appinfo&gt;
+            &lt;tool:annotation kind="ref"&gt;
+              &lt;tool:expected-type type="java.util.concurrent.Executor"/&gt;
+            &lt;/tool:annotation&gt;
+          &lt;/xsd:appinfo&gt;
+        &lt;/xsd:annotation&gt;
+      &lt;/xsd:attribute&gt;
+      &lt;xsd:attribute name="topic-serializer" type="xsd:string"&gt;
+        &lt;xsd:annotation&gt;
+          &lt;xsd:documentation&gt;&lt;![CDATA[
+A reference to the RedisSerializer strategy for converting Redis channels/patterns to
+serialized format. Default is a StringRedisSerializer.
+          ]]&gt;&lt;/xsd:documentation&gt;
+          &lt;xsd:appinfo&gt;
+            &lt;tool:annotation kind="ref"&gt;
+              &lt;tool:expected-type type="org.springframework.data.redis.serializer.RedisSerializer"/&gt;
+            &lt;/tool:annotation&gt;
+          &lt;/xsd:appinfo&gt;
+        &lt;/xsd:annotation&gt;
+      &lt;/xsd:attribute&gt;
+      &lt;xsd:attribute name="phase" type="xsd:string"&gt;
+        &lt;xsd:annotation&gt;
+          &lt;xsd:documentation&gt;&lt;![CDATA[
+The lifecycle phase within which this container should start and stop. The lower
+the value the earlier this container will start and the later it will stop. The
+default is Integer.MAX_VALUE meaning the container will start as late as possible
+and stop as soon as possible.
+          ]]&gt;&lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+      &lt;/xsd:attribute&gt;
+    &lt;/xsd:complexType&gt;
+  &lt;/xsd:element&gt;
+
+  &lt;xsd:complexType name="listenerType"&gt;
+    &lt;xsd:attribute name="ref" type="xsd:string" use="required"&gt;
+      &lt;xsd:annotation&gt;
+        &lt;xsd:documentation&gt;&lt;![CDATA[
+  The bean name of the listener object, implementing
+  the MessageListener interface or defining the specified listener method.
+  Required.
+        ]]&gt;&lt;/xsd:documentation&gt;
+        &lt;xsd:appinfo&gt;
+          &lt;tool:annotation kind="ref"/&gt;
+        &lt;/xsd:appinfo&gt;
+      &lt;/xsd:annotation&gt;
+    &lt;/xsd:attribute&gt;
+    &lt;xsd:attribute name="topic" type="xsd:string"&gt;
+      &lt;xsd:annotation&gt;
+        &lt;xsd:documentation&gt;&lt;![CDATA[
+The topics(s) to which the listener is subscribed. Can be (in Redis terminology) a
+channel or/and a pattern. Multiple values can be specified by separating them with
+spaces. Patterns can be specified by using the '*' character.
+        ]]&gt;&lt;/xsd:documentation&gt;
+      &lt;/xsd:annotation&gt;
+    &lt;/xsd:attribute&gt;
+    &lt;xsd:attribute name="method" type="xsd:string"&gt;
+      &lt;xsd:annotation&gt;
+        &lt;xsd:documentation&gt;&lt;![CDATA[
+The name of the listener method to invoke. If not specified,
+the target bean is supposed to implement the MessageListener
+interface or provide a method named 'handleMessage'.
+        ]]&gt;&lt;/xsd:documentation&gt;
+      &lt;/xsd:annotation&gt;
+    &lt;/xsd:attribute&gt;
+    &lt;xsd:attribute name="serializer" type="xsd:string"&gt;
+      &lt;xsd:annotation&gt;
+        &lt;xsd:documentation&gt;&lt;![CDATA[
+A reference to the RedisSerializer strategy for converting Redis Messages to
+listener method arguments. Default is a StringRedisSerializer.
+        ]]&gt;&lt;/xsd:documentation&gt;
+        &lt;xsd:appinfo&gt;
+          &lt;tool:annotation kind="ref"&gt;
+            &lt;tool:expected-type type="org.springframework.data.redis.serializer.RedisSerializer"/&gt;
+          &lt;/tool:annotation&gt;
+        &lt;/xsd:appinfo&gt;
+      &lt;/xsd:annotation&gt;
+    &lt;/xsd:attribute&gt;
+  &lt;/xsd:complexType&gt;
+
+  &lt;xsd:element name="collection"&gt;
+    &lt;xsd:annotation&gt;
+      &lt;xsd:documentation&gt;&lt;![CDATA[
+Factory creating collections on top of Redis keys.
+      ]]&gt;&lt;/xsd:documentation&gt;
+      &lt;xsd:appinfo&gt;
+        &lt;tool:annotation&gt;
+          &lt;tool:exports type="org.springframework.data.redis.support.collections.RedisCollectionFactoryBean"/&gt;
+        &lt;/tool:annotation&gt;
+      &lt;/xsd:appinfo&gt;
+    &lt;/xsd:annotation&gt;
+    &lt;xsd:complexType&gt;
+	  &lt;xsd:attribute name="id" type="xsd:ID"&gt;
+		&lt;xsd:annotation&gt;
+			&lt;xsd:documentation&gt;&lt;![CDATA[
+The name of the Redis collection.]]&gt;&lt;/xsd:documentation&gt;
+		&lt;/xsd:annotation&gt;
+	  &lt;/xsd:attribute&gt;
+      &lt;xsd:attribute name="key" type="xsd:string" use="optional"&gt;
+        &lt;xsd:annotation&gt;
+          &lt;xsd:documentation&gt;&lt;![CDATA[
+Redis key of the created collection. Defaults to bean id.
+          ]]&gt;&lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+      &lt;/xsd:attribute&gt;
+      &lt;xsd:attribute name="template" type="xsd:string" default="redisTemplate"&gt;
+        &lt;xsd:annotation&gt;
+          &lt;xsd:documentation&gt;&lt;![CDATA[
+A reference to a RedisTemplate bean.Default is "redisTemplate".
+          ]]&gt;&lt;/xsd:documentation&gt;
+          &lt;xsd:appinfo&gt;
+            &lt;tool:annotation kind="ref"&gt;
+              &lt;tool:expected-type type="org.springframework.data.redis.core.RedisTemplate"/&gt;
+            &lt;/tool:annotation&gt;
+          &lt;/xsd:appinfo&gt;
+        &lt;/xsd:annotation&gt;
+      &lt;/xsd:attribute&gt;
+      &lt;xsd:attribute name="type" default="LIST" use="optional"&gt;
+        &lt;xsd:annotation&gt;
+          &lt;xsd:documentation&gt;&lt;![CDATA[
+The collection type (default is list).
+If the key exists, its type takes priority. The type is used to disambiguate the collection type (map vs properties) or
+specify one in case the key is missing.]]&gt;&lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:simpleType&gt;
+        	&lt;xsd:restriction base="xsd:string"&gt;
+        		&lt;xsd:enumeration value="LIST"/&gt;
+        		&lt;xsd:enumeration value="SET"/&gt;
+        		&lt;xsd:enumeration value="ZSET"/&gt;
+        		&lt;xsd:enumeration value="MAP"/&gt;
+        		&lt;xsd:enumeration value="PROPERTIES"/&gt;
+        	&lt;/xsd:restriction&gt;
+        &lt;/xsd:simpleType&gt;
+      &lt;/xsd:attribute&gt;
+    &lt;/xsd:complexType&gt;
+  &lt;/xsd:element&gt;
+&lt;/xsd:schema&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="appendix:command-reference"><a class="anchor" href="#appendix:command-reference"></a>Appendix B: Command Reference</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_supported_commands"><a class="anchor" href="#_supported_commands"></a>Supported commands</h3>
+<table class="tableblock frame-all grid-all" style="width: 50%;">
+<caption class="title">Table 2. Redis commands supported by RedisTemplate.</caption>
+<colgroup>
+<col style="width: 66%;">
+<col style="width: 33%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Command</th>
+<th class="tableblock halign-center valign-top">Template Support</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">APPEND</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AUTH</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BGREWRITEAOF</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BGSAVE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BITCOUNT</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BITOP</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BLPOP</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BRPOP</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BRPOPLPUSH</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CLIENT KILL</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CLIENT GETNAME</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CLIENT LIST</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CLIENT SETNAME</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CLUSTER SLOTS</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">COMMAND</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">COMMAND COUNT</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">COMMAND GETKEYS</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">COMMAND INFO</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CONFIG GET</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CONFIG RESETSTAT</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CONFIG REWRITE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CONFIG SET</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DBSIZE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DEBUG OBJECT</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DEBUG SEGFAULT</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DECR</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DECRBY</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DEL</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DISCARD</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DUMP</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ECHO</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EVAL</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EVALSHA</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EXEC</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EXISTS</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EXPIRE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EXPIREAT</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FLUSHALL</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FLUSHDB</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GET</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GETBIT</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GETRANGE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GETSET</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HDEL</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HEXISTS</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HGET</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HGETALL</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HINCRBY</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HINCRBYFLOAT</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HKEYS</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HLEN</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HMGET</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HMSET</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HSCAN</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HSET</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HSETNX</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HVALS</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">INCR</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">INCRBY</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">INCRBYFLOAT</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">INFO</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">KEYS</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LASTSAVE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LINDEX</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LINSERT</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LLEN</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LPOP</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LPUSH</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LPUSHX</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LRANGE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LREM</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LSET</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LTRIM</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MGET</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MIGRATE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MONITOR</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MOVE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MSET</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MSETNX</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MULTI</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OBJECT</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PERSIST</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PEXIPRE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PEXPIREAT</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PFADD</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PFCOUNT</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PFMERGE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PING</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PSETEX</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PSUBSCRIBE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PTTL</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PUBLISH</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PUBSUB</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PUBSUBSCRIBE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">QUIT</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RANDOMKEY</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RENAME</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RENAMENX</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RESTORE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ROLE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RPOP</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RPOPLPUSH</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RPUSH</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RPUSHX</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SADD</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SAVE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SCAN</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SCARD</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SCRIPT EXITS</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SCRIPT FLUSH</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SCRIPT KILL</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SCRIPT LOAD</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SDIFF</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SDIFFSTORE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SELECT</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SENTINEL FAILOVER</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SENTINEL GET-MASTER-ADD-BY-NAME</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SENTINEL MASTER</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SENTINEL MASTERS</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SENTINEL MONITOR</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SENTINEL REMOVE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SENTINEL RESET</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SENTINEL SET</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SENTINEL SLAVES</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SET</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SETBIT</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SETEX</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SETNX</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SETRANGE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SHUTDOWN</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SINTER</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SINTERSTORE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SISMEMBER</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SLAVEOF</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SLOWLOG</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SMEMBERS</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SMOVE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SORT</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SPOP</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SRANDMEMBER</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SREM</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SSCAN</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRLEN</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SUBSCRIBE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SUNION</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SUNIONSTORE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SYNC</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TIME</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TTL</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TYPE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UNSUBSCRIBE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UNWATCH</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WATCH</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ZADD</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ZCARD</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ZCOUNT</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ZINCRBY</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ZINTERSTORE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ZLEXCOUNT</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ZRANGE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ZRANGEBYLEX</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ZREVRANGEBYLEX</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ZRANGEBYSCORE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ZRANK</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ZREM</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ZREMRANGEBYLEX</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ZREMRANGEBYRANK</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ZREVRANGE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ZREVRANGEBYSCORE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ZREVRANK</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ZSCAN</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ZSCORE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ZUNINONSTORE</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">X</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 1.5.1.RELEASE<br>
+Last updated 2015-06-30 04:17:20 PDT
+</div>
+</div>
+ 
+</body>
+</html>
