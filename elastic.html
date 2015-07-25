@@ -413,7 +413,7 @@ The Spring Data Elasticsearch project applies core Spring concepts to the develo
 <td class="content">
 <div class="paragraph">
     <div class="translateArticle">
-      <p><em>스프링 데이터 리파지토리 문서화와 당신의 모듈</em></p>
+      <p><em>스프링 데이터 리파지토리 문서와 당신의 모듈</em></p>
 
     </div>
     <div class="originalArticle">
@@ -758,7 +758,12 @@ class Config {}</code></pre>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Get the repository instance injected and use it.</p>
+ <div class="translateArticle">
+      <p>리파지토리 인스턴스를 주입시키고 사용하세요</p>
+    </div>
+    <div class="originalArticle">
+      <p>Get the repository instance injected and use it.</p>
+    </div>  
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">public class SomeClient {
@@ -1301,7 +1306,12 @@ List&lt;User&gt; findTop10ByLastname(String lastname, Pageable pageable);</code>
       
 </div>
 <div class="exampleblock">
-<div class="title">예제 9. 자바8로 결과값 하기 : <code>Stream&lt;T&gt;</code></div>
+<div class="title"> <div class="translateArticle">
+      예제 9.  자바8 <code>Stream&lt;T&gt;</code>로 쿼리 결과 Stream하기 :
+    </div>
+    <div class="originalArticle">
+      Example 9. Stream the result of a query with Java 8 <code>Stream&lt;T&gt;</code>
+    </div>  </div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -1495,7 +1505,7 @@ Stream&lt;User&gt; streamAllPaged(Pageable pageable);</code></pre>
       
 </div>
 <div class="exampleblock">
-<div class="title">예제 13. 간단한 어노테이션 리파지토리 설정 기반의 </div>
+<div class="title">예제 13. 간단한 어노테이션 기반의 리파지토리 설정</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -1612,7 +1622,7 @@ UserRepository repository = factory.getRepository(UserRepository.class);</code><
 </div>
 </div>
 <div class="exampleblock">
-<div class="title">예제 16. 커스텀 리파지토리 기능 구현체</div>
+<div class="title">예제 16. 커스텀 리파지토리 기능 구현</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2593,14 +2603,14 @@ public class UserController {
 </div>
 </div>
 <div class="paragraph">
-<p>    <div class="translateArticle">
-      먼저 당신은 각각의 컨트롤러에 대한 각각의 의존선을 선언하여 컨트롤러나 repository에서 각자 엔티티들을 찾아야 합니다. 엔티티를 찾는 것은 또한 보일러플레이트한 작업이 될 수가 있으면 이것은 언제나 <code>findOne(…)</code> 을 호출합니다. 다행스럽게도 스프링은 <code>String</code>값을 무작위의 값으로 전환시킬수 있는 커스텀 컴포넌트를 등록하게 해주는 방법을 제공합니다. 
+    <div class="translateArticle">
+      <p>먼저 당신은 각각의 컨트롤러에 대한 각각의 의존선을 선언하여 컨트롤러나 repository에서 각자 엔티티들을 찾아야 합니다. 엔티티를 찾는 것은 또한 보일러플레이트한 작업이 될 수가 있으면 이것은 언제나 <code>findOne(…)</code> 을 호출합니다. 다행스럽게도 스프링은 <code>String</code>값을 무작위의 값으로 전환시킬수 있는 커스텀 컴포넌트를 등록하게 해주는 방법을 제공합니다. </p>
     </div>
     <div class="originalArticle">
-      First you declare a repository dependency for each controller to look up the entity managed by the controller or repository respectively. Looking up the entity is boilerplate as well, as it&#8217;s always a <code>findOne(…)</code> call. Fortunately Spring provides means to register custom components that allow conversion between a <code>String</code> value to an arbitrary type.
+      <p>First you declare a repository dependency for each controller to look up the entity managed by the controller or repository respectively. Looking up the entity is boilerplate as well, as it&#8217;s always a <code>findOne(…)</code> call. Fortunately Spring provides means to register custom components that allow conversion between a <code>String</code> value to an arbitrary type.</p>
     </div>  
 
-      </p>
+      
 </div>
 <div class="sect5">
 <h6 id="web.legacy.property-editors"><a class="anchor" href="#web.legacy.property-editors"></a>PropertyEditors</h6>
@@ -3349,10 +3359,10 @@ while (hasRecords){
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>base-package</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">    <div class="translateArticle">
+<td class="tableblock halign-left valign-top"> <div class="translateArticle"><p class="tableblock">   
       *Repository를 상속하는 리파지토리 인터페이스를 자동 감지 모드 아래 스캔하기 위해 사용됨. (실제 인터페이스는 스프링 데이터 모듈에 따라 결정된다.) 설정된 패키지의 아래 있는 모든 패키지는 스캔되며 와일드 카드 또한 가능하다. </p>
     </div>
-    <div class="originalArticle">
+    <div class="originalArticle"><p class="tableblock">   
       Defines the package to be used to be scanned for repository interfaces extending *Repository (actual interface is determined by specific Spring Data module) in auto detection mode. All packages below the configured package will be scanned, too. Wildcards are allowed.</p>
     </div>  
 
@@ -3360,28 +3370,30 @@ while (hasRecords){
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>repository-impl-postfix</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><div class="translateArticle">커스텀 리파지토리 구현체를 자동감지하기 위한 접미사를 설정한다. 설정된 접미사를 가진 클래스들은 그 후보로 고려되며 기본값은 <code>Impl</code>이다. 
+<td class="tableblock halign-left valign-top"><div class="translateArticle"><p class="tableblock">커스텀 리파지토리 구현체를 자동감지하기 위한 접미사를 설정한다. 설정된 접미사를 가진 클래스들은 그 후보로 고려되며 기본값은 <code>Impl</code>이다. </p>
     </div>
     <div class="originalArticle">
-      transDefines the postfix to autodetect custom repository implementations. Classes whose names end with the configured postfix will be considered as candidates. Defaults to <code>Impl</code>.
+      <p class="tableblock">
+      transDefines the postfix to autodetect custom repository implementations. Classes whose names end with the configured postfix will be considered as candidates. Defaults to <code>Impl</code>.</p>
     </div>  
 
       </p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>query-lookup-strategy</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">    <div class="translateArticle">쿼리 검색자를 만드는데 사용되는 전략을 결정하기 위함. <a href="#repositories.query-methods.query-lookup-strategies">쿼리 탐색 전략</a>을 보시고 기본값은 <code>create-if-not-found</code>이다. 
+<td class="tableblock halign-left valign-top">    <div class="translateArticle"><p class="tableblock">쿼리 검색자를 만드는데 사용되는 전략을 결정하기 위함. <a href="#repositories.query-methods.query-lookup-strategies">쿼리 탐색 전략</a>을 보시고 기본값은 <code>create-if-not-found</code>이다. </p>
     </div>
     <div class="originalArticle">
-      Determines the strategy to be used to create finder queries. See <a href="#repositories.query-methods.query-lookup-strategies">Query lookup strategies</a> for details. Defaults to <code>create-if-not-found</code>.
+      <p class="tableblock">
+      Determines the strategy to be used to create finder queries. See <a href="#repositories.query-methods.query-lookup-strategies">Query lookup strategies</a> for details. Defaults to <code>create-if-not-found</code>.</p>
     </div>  
 
       </p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>named-queries-location</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">    <div class="translateArticle">
-      외부적으로 정의된 쿼리들을 포함하는 설정파일을 찾기 위한 위치를 정의함
+<td class="tableblock halign-left valign-top">   <div class="translateArticle"><p class="tableblock"> 
+      외부적으로 정의된 쿼리들을 포함하는 설정파일을 찾기 위한 위치를 정의함</p>
     </div>
     <div class="originalArticle">
       Defines the location to look for a Properties file containing externally defined queries.
@@ -3391,11 +3403,11 @@ while (hasRecords){
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>consider-nested-repositories</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">    <div class="translateArticle">
-      중첩(nested) 리파지토리 인터페이스 정의를 조정할지 고려함. 기본값은  <code>false</code>.
+<td class="tableblock halign-left valign-top">    <div class="translateArticle"><p class="tableblock">
+      중첩(nested) 리파지토리 인터페이스 정의를 조정할지 고려함. 기본값은  <code>false</code>.</p>
     </div>
-    <div class="originalArticle">
-      Controls whether nested repository interface definitions should be considered. Defaults to <code>false</code>.
+    <div class="originalArticle"><p class="tableblock">
+      Controls whether nested repository interface definitions should be considered. Defaults to <code>false</code>.</p>
     </div>  
 
       </p></td>
@@ -3851,40 +3863,6 @@ Last updated 2015-06-30 13:17:05 MESZ <br>
 </div>
 </div>
  
-<script type="text/javascript">
-        var _gaq = _gaq || [];
-        var pluginUrl = '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
-        _gaq.push(
-            ['_require', 'inpage_linkid', pluginUrl],
-            ['_setAccount', 'UA-2728886-23'],
-            ['_trackPageview'],
-            ['b._require', 'inpage_linkid', pluginUrl],
-            ['b._setAccount', 'UA-2728886-19'],
-            ['b._trackPageview']
-        );
-        (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-        })();
-    </script>
- 
-<script type="text/javascript">
 
-function detectLastFrame() {
-   var thisF = this.window;
-   var allF = parent.top.frames;
-   return allF[allF.length - 1] == thisF; }
-
-// Only inject the following code if this is a normal page or the last // frame of a frameset.
-if (parent.top.frames.length == 0 || detectLastFrame()) {
-    // Inject the SpringSource search widget too.
-    document.write(unescape("%3Cscript src='http://search.springsource.org/widget/searchtool.js' type='text/javascript'%3E%3C/script%3E"));
-    // Inject the Eloqua code
-    //document.write(unescape("%3Cscript src='/elqNow/elqCfg.js' type='text/javascript'%3E%3C/script%3E"));
-    //document.write(unescape("%3Cscript src='/elqNow/elqImg.js' type='text/javascript'%3E%3C/script%3E"));
-
-}
-</script>
 </body>
 </html>
